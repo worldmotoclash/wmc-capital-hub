@@ -73,12 +73,11 @@ const HeroSection: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
             <div className="w-full h-[500px] relative rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 blur-load" style={{ backgroundImage: 'url(https://unsplash.com/photos/man-riding-white-and-black-suzuki-sportbike-gLlZDVjkar4?ixlib=rb-1.2.1&auto=format&fit=crop&w=50&q=20)' }}>
+              <div className="absolute inset-0">
                 <img 
-                  src="https://unsplash.com/photos/man-riding-white-and-black-suzuki-sportbike-gLlZDVjkar4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
-                  alt="Motorcycle racer at Laguna Seca" 
+                  src="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png" 
+                  alt="Motorcycle racer on Suzuki sportbike" 
                   className="w-full h-full object-cover"
-                  onLoad={(e) => e.currentTarget.parentElement?.classList.add('loaded')}
                 />
               </div>
               {/* Overlay gradient */}
