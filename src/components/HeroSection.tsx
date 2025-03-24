@@ -73,10 +73,10 @@ const HeroSection: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
             <div className="w-full h-[500px] relative rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 blur-load" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=50&q=20)' }}>
+              <div className="absolute inset-0 blur-load" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1458668383970-8ddd3927deed?ixlib=rb-1.2.1&auto=format&fit=crop&w=50&q=20)' }}>
                 <img 
-                  src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
-                  alt="Racing motorcycle" 
+                  src="https://images.unsplash.com/photo-1458668383970-8ddd3927deed?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
+                  alt="Motorcycle racer at Laguna Seca" 
                   className="w-full h-full object-cover"
                   onLoad={(e) => e.currentTarget.parentElement?.classList.add('loaded')}
                 />
