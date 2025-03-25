@@ -31,7 +31,9 @@ const LoginForm: React.FC = () => {
       // For demo purposes, we'll accept any login
       // In production, this would validate against a real auth system
       toast.success('Login successful');
-      navigate('/dashboard');
+      
+      // Redirect to user dashboard instead of investor dashboard
+      navigate('/user-dashboard');
     } catch (error) {
       toast.error('Invalid credentials. Please try again.');
     } finally {
