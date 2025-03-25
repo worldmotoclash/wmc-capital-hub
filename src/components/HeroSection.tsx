@@ -1,8 +1,15 @@
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from '@/components/ui/carousel';
 
 const HeroSection: React.FC = () => {
   return (
@@ -73,15 +80,52 @@ const HeroSection: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
             <div className="w-full h-[500px] relative rounded-2xl overflow-hidden">
-              <div className="absolute inset-0">
-                <img 
-                  src="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png" 
-                  alt="Motorcycle racer on Suzuki sportbike" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              {/* Overlay gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+              <Carousel className="w-full h-full">
+                <CarouselContent className="h-full">
+                  <CarouselItem className="h-full">
+                    <div className="relative h-full w-full">
+                      <img 
+                        src="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png" 
+                        alt="Motorcycle racer on Suzuki sportbike" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                    </div>
+                  </CarouselItem>
+                  <CarouselItem className="h-full">
+                    <div className="relative h-full w-full">
+                      <img 
+                        src="https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
+                        alt="Racing motorcycle on track" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                    </div>
+                  </CarouselItem>
+                  <CarouselItem className="h-full">
+                    <div className="relative h-full w-full">
+                      <img 
+                        src="https://images.unsplash.com/photo-1616789916423-d85fb91e0dc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
+                        alt="Motorcycle racing team in pit lane" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                    </div>
+                  </CarouselItem>
+                  <CarouselItem className="h-full">
+                    <div className="relative h-full w-full">
+                      <img 
+                        src="https://images.unsplash.com/photo-1547549082-6bc09f2049ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
+                        alt="Close-up of racing motorcycle" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                    </div>
+                  </CarouselItem>
+                </CarouselContent>
+                <CarouselPrevious className="left-2 bg-white/70 hover:bg-white/90 backdrop-blur-sm border-none" />
+                <CarouselNext className="right-2 bg-white/70 hover:bg-white/90 backdrop-blur-sm border-none" />
+              </Carousel>
             </div>
           </motion.div>
         </div>
