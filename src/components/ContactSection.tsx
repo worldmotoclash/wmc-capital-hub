@@ -8,9 +8,9 @@ import { toast } from 'sonner';
 
 const ContactSection: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    // Form submission is now handled by Salesforce
+    // This function is just for any additional client-side logic
     toast.success("Message sent successfully. Our team will contact you shortly.");
-    // Form would be cleared and data sent to backend in a real implementation
   };
 
   return (
@@ -42,47 +42,99 @@ const ContactSection: React.FC = () => {
           >
             <h3 className="text-2xl font-bold mb-6">Send Us a Message</h3>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form 
+              action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00D5e000000HEcP" 
+              method="POST"
+              onSubmit={handleSubmit}
+              className="space-y-6"
+            >
+              <input type="hidden" name="oid" value="00D5e000000HEcP" />
+              <input type="hidden" name="retURL" value="http://worldmotoclash.com/thankyou" />
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name</label>
-                  <Input id="firstName" placeholder="John" required />
+                  <label htmlFor="first_name" className="text-sm font-medium text-gray-700">First Name</label>
+                  <Input id="first_name" name="first_name" maxLength={40} placeholder="John" required />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last Name</label>
-                  <Input id="lastName" placeholder="Doe" required />
+                  <label htmlFor="last_name" className="text-sm font-medium text-gray-700">Last Name</label>
+                  <Input id="last_name" name="last_name" maxLength={80} placeholder="Doe" required />
                 </div>
               </div>
               
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-gray-700">Email</label>
-                <Input id="email" type="email" placeholder="john@example.com" required />
+                <Input id="email" name="email" type="email" maxLength={80} placeholder="john@example.com" required />
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone (Optional)</label>
-                <Input id="phone" placeholder="+1 (123) 456-7890" />
+                <label htmlFor="mobile" className="text-sm font-medium text-gray-700">Phone (Optional)</label>
+                <Input id="mobile" name="mobile" placeholder="+1 (123) 456-7890" maxLength={40} />
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="investorType" className="text-sm font-medium text-gray-700">Investor Type</label>
+                <label htmlFor="company" className="text-sm font-medium text-gray-700">Company</label>
+                <Input id="company" name="company" placeholder="Your Company" maxLength={40} />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="city" className="text-sm font-medium text-gray-700">City</label>
+                  <Input id="city" name="city" placeholder="City" maxLength={40} />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="state" className="text-sm font-medium text-gray-700">State</label>
+                  <Input id="state" name="state" placeholder="State" maxLength={20} />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="lead_source" className="text-sm font-medium text-gray-700">How Did You Hear About Us</label>
                 <select 
-                  id="investorType" 
+                  id="lead_source" 
+                  name="lead_source" 
+                  className="w-full rounded-md border border-gray-200 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                >
+                  <option value="">--None--</option>
+                  <option value="Advertisement">Advertisement</option>
+                  <option value="Employee Referral">Employee Referral</option>
+                  <option value="External Referral">External Referral</option>
+                  <option value="In-Store">In-Store</option>
+                  <option value="On Site">On Site</option>
+                  <option value="Other">Other</option>
+                  <option value="Social">Social</option>
+                  <option value="Trade Show">Trade Show</option>
+                  <option value="Web">Web</option>
+                  <option value="Word of mouth">Word of mouth</option>
+                </select>
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="00N5e00000gt2r6" className="text-sm font-medium text-gray-700">Investor Type</label>
+                <select 
+                  id="00N5e00000gt2r6" 
+                  name="00N5e00000gt2r6" 
+                  title="Investor Type"
                   className="w-full rounded-md border border-gray-200 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                   required
                 >
-                  <option value="">Select Investor Type</option>
-                  <option value="individual">Individual Investor</option>
-                  <option value="institution">Institutional Investor</option>
-                  <option value="vc">Venture Capital</option>
-                  <option value="pe">Private Equity</option>
-                  <option value="family">Family Office</option>
+                  <option value="">--None--</option>
+                  <option value="Individual Investor">Individual Investor</option>
+                  <option value="Institutional Investor">Institutional Investor</option>
+                  <option value="Venture Capital">Venture Capital</option>
+                  <option value="Private Equity">Private Equity</option>
+                  <option value="Family Trust">Family Trust</option>
                 </select>
               </div>
               
               <div className="space-y-2">
                 <label htmlFor="message" className="text-sm font-medium text-gray-700">Message</label>
-                <Textarea id="message" placeholder="Please provide details about your investment interests..." required className="min-h-[120px]" />
+                <Textarea 
+                  id="message" 
+                  name="description" 
+                  placeholder="Please provide details about your investment interests..." 
+                  className="min-h-[120px]" 
+                />
               </div>
               
               <Button type="submit" className="w-full bg-black hover:bg-black/80 text-white">
