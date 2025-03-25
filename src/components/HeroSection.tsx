@@ -84,41 +84,65 @@ const HeroSection: React.FC = () => {
                 <CarouselContent className="h-full">
                   <CarouselItem className="h-full">
                     <div className="relative h-full w-full">
-                      <img 
-                        src="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png" 
-                        alt="Motorcycle racer on Suzuki sportbike" 
+                      <video 
                         className="w-full h-full object-cover"
-                      />
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        poster="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png"
+                      >
+                        <source src="https://player.vimeo.com/external/369662209.sd.mp4?s=ee85e8a4ed09ce7a8e4c403d7fb5f9171ec5b322&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                     </div>
                   </CarouselItem>
                   <CarouselItem className="h-full">
                     <div className="relative h-full w-full">
-                      <img 
-                        src="https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
-                        alt="Racing motorcycle on track" 
+                      <video 
                         className="w-full h-full object-cover"
-                      />
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        poster="https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
+                      >
+                        <source src="https://player.vimeo.com/external/363625007.sd.mp4?s=001c5607b5e258583ea8475d476846d0820e29f3&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                     </div>
                   </CarouselItem>
                   <CarouselItem className="h-full">
                     <div className="relative h-full w-full">
-                      <img 
-                        src="https://images.unsplash.com/photo-1616789916423-d85fb91e0dc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
-                        alt="Motorcycle racing team in pit lane" 
+                      <video 
                         className="w-full h-full object-cover"
-                      />
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        poster="https://images.unsplash.com/photo-1616789916423-d85fb91e0dc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
+                      >
+                        <source src="https://player.vimeo.com/external/371843609.sd.mp4?s=b82fe4552afbc9806268f6efdb5e9a7b6cd12999&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                     </div>
                   </CarouselItem>
                   <CarouselItem className="h-full">
                     <div className="relative h-full w-full">
-                      <img 
-                        src="https://images.unsplash.com/photo-1547549082-6bc09f2049ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
-                        alt="Close-up of racing motorcycle" 
+                      <video 
                         className="w-full h-full object-cover"
-                      />
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        poster="https://images.unsplash.com/photo-1547549082-6bc09f2049ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
+                      >
+                        <source src="https://player.vimeo.com/external/403913645.sd.mp4?s=a5a02195d5b4c584be36dada05b1c93968822a18&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                     </div>
                   </CarouselItem>
