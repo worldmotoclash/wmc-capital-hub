@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -12,6 +12,13 @@ import {
 } from '@/components/ui/carousel';
 
 const HeroSection: React.FC = () => {
+  const [videoError, setVideoError] = useState<{[key: string]: boolean}>({});
+
+  const handleVideoError = (index: number) => {
+    setVideoError(prev => ({...prev, [index]: true}));
+    console.log(`Video ${index} failed to load`);
+  };
+
   return (
     <section className="min-h-screen w-full flex items-center justify-center relative overflow-hidden pt-20">
       {/* Background gradient effects */}
@@ -84,65 +91,101 @@ const HeroSection: React.FC = () => {
                 <CarouselContent className="h-full">
                   <CarouselItem className="h-full">
                     <div className="relative h-full w-full">
-                      <video 
-                        className="w-full h-full object-cover"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        poster="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png"
-                      >
-                        <source src="https://player.vimeo.com/external/369662209.sd.mp4?s=ee85e8a4ed09ce7a8e4c403d7fb5f9171ec5b322&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
+                      {videoError[0] ? (
+                        <img 
+                          src="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png" 
+                          alt="Motorcycle racing" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <video 
+                          className="w-full h-full object-cover"
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          poster="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png"
+                          onError={() => handleVideoError(0)}
+                        >
+                          <source src="https://player.vimeo.com/progressive_redirect/playback/369662209/rendition/540p?loc=external&oauth2_token_id=57447761&signature=02cdfd9ed53d1f4a519bf3aff9c479e8ac025b7df8a7d8180bf92a6edc4fca93" type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                     </div>
                   </CarouselItem>
                   <CarouselItem className="h-full">
                     <div className="relative h-full w-full">
-                      <video 
-                        className="w-full h-full object-cover"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        poster="https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
-                      >
-                        <source src="https://player.vimeo.com/external/363625007.sd.mp4?s=001c5607b5e258583ea8475d476846d0820e29f3&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
+                      {videoError[1] ? (
+                        <img 
+                          src="https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
+                          alt="Racing motorcycle on track" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <video 
+                          className="w-full h-full object-cover"
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          poster="https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
+                          onError={() => handleVideoError(1)}
+                        >
+                          <source src="https://player.vimeo.com/progressive_redirect/playback/363625007/rendition/540p?loc=external&oauth2_token_id=57447761&signature=81d87d00b2c8bf7ec1d23f5465d1854e873e43a38640dc68b0022887182c95c6" type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                     </div>
                   </CarouselItem>
                   <CarouselItem className="h-full">
                     <div className="relative h-full w-full">
-                      <video 
-                        className="w-full h-full object-cover"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        poster="https://images.unsplash.com/photo-1616789916423-d85fb91e0dc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
-                      >
-                        <source src="https://player.vimeo.com/external/371843609.sd.mp4?s=b82fe4552afbc9806268f6efdb5e9a7b6cd12999&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
+                      {videoError[2] ? (
+                        <img 
+                          src="https://images.unsplash.com/photo-1616789916423-d85fb91e0dc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
+                          alt="Motorcycle racing team in pit lane" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <video 
+                          className="w-full h-full object-cover"
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          poster="https://images.unsplash.com/photo-1616789916423-d85fb91e0dc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
+                          onError={() => handleVideoError(2)}
+                        >
+                          <source src="https://player.vimeo.com/progressive_redirect/playback/371843609/rendition/540p?loc=external&oauth2_token_id=57447761&signature=6d76a5db09c4486ce876c95a9c2b85bbad9d154b6307deb93afd3598ba8f0f58" type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                     </div>
                   </CarouselItem>
                   <CarouselItem className="h-full">
                     <div className="relative h-full w-full">
-                      <video 
-                        className="w-full h-full object-cover"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        poster="https://images.unsplash.com/photo-1547549082-6bc09f2049ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
-                      >
-                        <source src="https://player.vimeo.com/external/403913645.sd.mp4?s=a5a02195d5b4c584be36dada05b1c93968822a18&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
+                      {videoError[3] ? (
+                        <img 
+                          src="https://images.unsplash.com/photo-1547549082-6bc09f2049ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
+                          alt="Close-up of racing motorcycle" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <video 
+                          className="w-full h-full object-cover"
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          poster="https://images.unsplash.com/photo-1547549082-6bc09f2049ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
+                          onError={() => handleVideoError(3)}
+                        >
+                          <source src="https://player.vimeo.com/progressive_redirect/playback/403913645/rendition/540p?loc=external&oauth2_token_id=57447761&signature=97da84d3dcbad4d4e5d7eb01e2fe2c77f27f0d5e60ebc3166bc0856f9b3c2a89" type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                     </div>
                   </CarouselItem>
