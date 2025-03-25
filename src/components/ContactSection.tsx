@@ -49,7 +49,7 @@ const ContactSection: React.FC = () => {
               className="space-y-6"
             >
               <input type="hidden" name="oid" value="00D5e000000HEcP" />
-              <input type="hidden" name="retURL" value="http://worldmotoclash.com/thankyou" />
+              <input type="hidden" name="retURL" value="http://worldmotoclash.com/thankyouinvestor" />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
