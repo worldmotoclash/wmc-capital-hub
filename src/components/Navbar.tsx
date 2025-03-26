@@ -23,6 +23,20 @@ const Navbar: React.FC = () => {
     };
   }, [scrolled]);
 
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const navbarHeight = 80; // Approximate navbar height
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - navbarHeight;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
+
   return (
     <motion.header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all-cubic ${
@@ -45,27 +59,36 @@ const Navbar: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <Link to="/#about" className="text-sm font-medium hover:text-gray-600 transition-colors">
+            <button
+              onClick={() => scrollToSection('about')}
+              className="text-sm font-medium hover:text-gray-600 transition-colors"
+            >
               About
-            </Link>
+            </button>
           </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            <Link to="/#investment" className="text-sm font-medium hover:text-gray-600 transition-colors">
+            <button
+              onClick={() => scrollToSection('investment')}
+              className="text-sm font-medium hover:text-gray-600 transition-colors"
+            >
               Investment
-            </Link>
+            </button>
           </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            <Link to="/#contact" className="text-sm font-medium hover:text-gray-600 transition-colors">
+            <button
+              onClick={() => scrollToSection('contact')}
+              className="text-sm font-medium hover:text-gray-600 transition-colors"
+            >
               Contact
-            </Link>
+            </button>
           </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
