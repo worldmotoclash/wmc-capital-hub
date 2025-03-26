@@ -190,8 +190,7 @@ const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold mb-1">Headquarters</h4>
-                    <p className="text-gray-600">100 Innovation Drive</p>
-                    <p className="text-gray-600">Austin, TX 78701</p>
+                    <p className="text-gray-600">Palo Alto, California </p>
                     <p className="text-sm text-gray-500 mt-1">By appointment only</p>
                   </div>
                 </div>
