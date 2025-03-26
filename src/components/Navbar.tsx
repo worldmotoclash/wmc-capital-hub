@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -41,17 +40,17 @@ const Navbar: React.FC = () => {
     <motion.header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all-cubic ${
         scrolled 
-          ? 'py-4 bg-white/80 backdrop-blur-md shadow-sm' 
-          : 'py-6 bg-transparent'
+          ? 'py-2 bg-white/80 backdrop-blur-md shadow-sm' 
+          : 'py-4 bg-transparent'
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
-        <Link to="/" className="z-10">
+        <div className="z-10">
           <AnimatedLogo />
-        </Link>
+        </div>
         
         <nav className="hidden md:flex items-center space-x-8">
           <motion.div
