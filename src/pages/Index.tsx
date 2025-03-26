@@ -51,6 +51,11 @@ const Index: React.FC = () => {
       }
     });
     
+    // Fix to handle form redirections
+    if (window.location.pathname === "/thankyouinvestor") {
+      window.location.href = "/thankyou";
+    }
+    
     return () => {
       blurDivs.forEach(div => {
         const img = div.querySelector('img');

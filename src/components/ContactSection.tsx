@@ -7,10 +7,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 
 const ContactSection: React.FC = () => {
-  const handleSubmit = (e: React.FormEvent) => {
-    // Form submission is now handled by Salesforce
-    // This function is just for any additional client-side logic
+  const handleFormSubmit = (e: React.FormEvent) => {
+    // We're not preventing default behavior anymore, but still showing a toast
+    // This allows the native form submission to Salesforce to proceed
     toast.success("Message sent successfully. Our team will contact you shortly.");
+    // Form will naturally redirect to the retURL after submission
+    console.log("Form submitted to Salesforce");
   };
 
   return (
@@ -45,11 +47,14 @@ const ContactSection: React.FC = () => {
             <form 
               action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00D5e000000HEcP" 
               method="POST"
-              onSubmit={handleSubmit}
+              onSubmit={handleFormSubmit}
               className="space-y-6"
             >
               <input type="hidden" name="oid" value="00D5e000000HEcP" />
-              <input type="hidden" name="retURL" value="http://worldmotoclash.com/thankyouinvestor" />
+              <input type="hidden" name="retURL" value="https://worldmotoclash.com/thankyou" />
+              
+              {/* This META tag is required for proper form submission */}
+              <meta HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8" />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -137,9 +142,12 @@ const ContactSection: React.FC = () => {
                 />
               </div>
               
-              <Button type="submit" className="w-full bg-black hover:bg-black/80 text-white">
+              <button 
+                type="submit" 
+                className="w-full bg-black hover:bg-black/80 text-white px-4 py-2 rounded transition-colors"
+              >
                 Send Message
-              </Button>
+              </button>
             </form>
           </motion.div>
           

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
@@ -27,6 +27,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/user-dashboard" element={<UserDashboard />} />
             <Route path="/thankyou" element={<ThankYou />} />
+            <Route path="/thankyouinvestor" element={<Navigate to="/thankyou" replace />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AnimatePresence>
