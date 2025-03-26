@@ -95,21 +95,15 @@ const Navbar: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <Button asChild className="bg-black hover:bg-black/80 text-white rounded-md mr-2">
-              <Link to="/dashboard">Investor Dashboard</Link>
-            </Button>
-            <Button asChild variant="outline" className="border-black text-black hover:bg-black/5">
-              <Link to="/user-dashboard">User Dashboard</Link>
+            <Button asChild className="bg-black hover:bg-black/80 text-white rounded-md">
+              <Link to="/login">Investor Login</Link>
             </Button>
           </motion.div>
         </nav>
         
         <div className="md:hidden">
-          <Button asChild variant="outline" className="border-black text-black hover:bg-black/5 mr-2">
-            <Link to="/dashboard">Investor</Link>
-          </Button>
           <Button asChild variant="outline" className="border-black text-black hover:bg-black/5">
-            <Link to="/user-dashboard">User</Link>
+            <Link to="/login">Login</Link>
           </Button>
         </div>
       </div>
