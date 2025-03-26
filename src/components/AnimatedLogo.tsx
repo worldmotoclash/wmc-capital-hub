@@ -29,7 +29,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({ className = "" }) => {
         className="flex flex-col items-center"
       >
         <img 
-          src="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png" 
+          src="/lovable-uploads/3b997f48-dd7e-4f42-8002-e3613bfa91a1.png" 
           alt="WORLDMOTOCLASH Logo" 
           className="h-10 md:h-12 w-auto"
         />
