@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import UserDashboard from "./pages/UserDashboard";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
+import DashboardComparison from "./components/DashboardComparison";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/user-dashboard" element={<UserDashboard />} />
+            <Route path="/dashboard-comparison" element={<DashboardComparison />} />
             <Route path="/thankyou" element={<ThankYou />} />
             <Route path="/thankyouinvestor" element={<Navigate to="/thankyou" replace />} />
             <Route path="*" element={<NotFound />} />
