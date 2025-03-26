@@ -30,7 +30,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({ className = "" }) => {
       >
         <img 
           src="/lovable-uploads/3b997f48-dd7e-4f42-8002-e3613bfa91a1.png" 
-          alt="WORLDMOTOCLASH Logo" 
+          alt="WORLD MOTO CLASH Logo" 
           className="h-10 md:h-12 w-auto"
         />
         <motion.span 
@@ -39,7 +39,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({ className = "" }) => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          WORLDMOTOCLASH
+          WORLD MOTO CLASH
         </motion.span>
       </motion.div>
       <motion.div 
@@ -53,3 +53,4 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({ className = "" }) => {
 };
 
 export default AnimatedLogo;
+
