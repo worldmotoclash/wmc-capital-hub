@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -53,8 +52,8 @@ const ContactSection: React.FC = () => {
               <input type="hidden" name="oid" value="00D5e000000HEcP" />
               <input type="hidden" name="retURL" value="https://worldmotoclash.com/thankyou" />
               
-              {/* This META tag is required for proper form submission */}
-              <meta HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8" />
+              {/* Corrected meta tag with proper React/TypeScript syntax */}
+              <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
