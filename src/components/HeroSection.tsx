@@ -11,13 +11,47 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel';
 
-const HeroSection: React.FC = () => {
-  const [videoError, setVideoError] = useState<{[key: string]: boolean}>({});
+// Define the video data structure
+interface VideoData {
+  id: number;
+  videoSrc: string;
+  videoTitle: string;
+  title: string;
+  subtitle: string;
+}
 
-  const handleVideoError = (index: number) => {
-    setVideoError(prev => ({...prev, [index]: true}));
-    console.log(`Video ${index} failed to load`);
-  };
+const HeroSection: React.FC = () => {
+  // Array of video data
+  const videos: VideoData[] = [
+    {
+      id: 1,
+      videoSrc: "https://www.youtube.com/embed/mVkp_elkgQk?start=55&autoplay=1&mute=1&loop=1&playlist=mVkp_elkgQk&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1",
+      videoTitle: "The Corkscrew",
+      title: "NOTHING LIKE IT",
+      subtitle: "Danger. Danger. Danger"
+    },
+    {
+      id: 2,
+      videoSrc: "https://www.youtube.com/embed/VJm7IPrBmLY?autoplay=1&mute=1&loop=1&playlist=VJm7IPrBmLY&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1",
+      videoTitle: "MotoGP Racing",
+      title: "PURE SPEED",
+      subtitle: "Feel the adrenaline"
+    },
+    {
+      id: 3,
+      videoSrc: "https://www.youtube.com/embed/iGd9Sm3EJpQ?autoplay=1&mute=1&loop=1&playlist=iGd9Sm3EJpQ&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1",
+      videoTitle: "Circuit Racing",
+      title: "PRECISION MATTERS",
+      subtitle: "Every corner counts"
+    },
+    {
+      id: 4,
+      videoSrc: "https://www.youtube.com/embed/6Qm9kf1-C6Q?autoplay=1&mute=1&loop=1&playlist=6Qm9kf1-C6Q&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1",
+      videoTitle: "Championship Race",
+      title: "ELITE COMPETITION",
+      subtitle: "Where legends are made"
+    }
+  ];
 
   return (
     <section className="min-h-screen w-full flex items-center justify-center relative overflow-hidden pt-20">
@@ -89,106 +123,26 @@ const HeroSection: React.FC = () => {
             <div className="w-full h-[500px] relative rounded-2xl overflow-hidden">
               <Carousel className="w-full h-full">
                 <CarouselContent className="h-full">
-                  <CarouselItem className="h-full">
-                    <div className="relative h-full w-full">
-                      {videoError[0] ? (
-                        <img 
-                          src="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png" 
-                          alt="Motorcycle racing" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <video 
-                          className="w-full h-full object-cover"
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          poster="/lovable-uploads/0013f60b-009d-4542-b07f-67d8e14977d3.png"
-                          onError={() => handleVideoError(0)}
-                        >
-                          <source src="https://player.vimeo.com/progressive_redirect/playback/369662209/rendition/540p?loc=external&oauth2_token_id=57447761&signature=02cdfd9ed53d1f4a519bf3aff9c479e8ac025b7df8a7d8180bf92a6edc4fca93" type="video/mp4" />
-                          Your browser does not support the video tag.
-                        </video>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                    </div>
-                  </CarouselItem>
-                  <CarouselItem className="h-full">
-                    <div className="relative h-full w-full">
-                      {videoError[1] ? (
-                        <img 
-                          src="https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
-                          alt="Racing motorcycle on track" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <video 
-                          className="w-full h-full object-cover"
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          poster="https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
-                          onError={() => handleVideoError(1)}
-                        >
-                          <source src="https://player.vimeo.com/progressive_redirect/playback/363625007/rendition/540p?loc=external&oauth2_token_id=57447761&signature=81d87d00b2c8bf7ec1d23f5465d1854e873e43a38640dc68b0022887182c95c6" type="video/mp4" />
-                          Your browser does not support the video tag.
-                        </video>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                    </div>
-                  </CarouselItem>
-                  <CarouselItem className="h-full">
-                    <div className="relative h-full w-full">
-                      {videoError[2] ? (
-                        <img 
-                          src="https://images.unsplash.com/photo-1616789916423-d85fb91e0dc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
-                          alt="Motorcycle racing team in pit lane" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <video 
-                          className="w-full h-full object-cover"
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          poster="https://images.unsplash.com/photo-1616789916423-d85fb91e0dc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
-                          onError={() => handleVideoError(2)}
-                        >
-                          <source src="https://player.vimeo.com/progressive_redirect/playback/371843609/rendition/540p?loc=external&oauth2_token_id=57447761&signature=6d76a5db09c4486ce876c95a9c2b85bbad9d154b6307deb93afd3598ba8f0f58" type="video/mp4" />
-                          Your browser does not support the video tag.
-                        </video>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                    </div>
-                  </CarouselItem>
-                  <CarouselItem className="h-full">
-                    <div className="relative h-full w-full">
-                      {videoError[3] ? (
-                        <img 
-                          src="https://images.unsplash.com/photo-1547549082-6bc09f2049ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
-                          alt="Close-up of racing motorcycle" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <video 
-                          className="w-full h-full object-cover"
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          poster="https://images.unsplash.com/photo-1547549082-6bc09f2049ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80"
-                          onError={() => handleVideoError(3)}
-                        >
-                          <source src="https://player.vimeo.com/progressive_redirect/playback/403913645/rendition/540p?loc=external&oauth2_token_id=57447761&signature=97da84d3dcbad4d4e5d7eb01e2fe2c77f27f0d5e60ebc3166bc0856f9b3c2a89" type="video/mp4" />
-                          Your browser does not support the video tag.
-                        </video>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                    </div>
-                  </CarouselItem>
+                  {videos.map((video) => (
+                    <CarouselItem key={video.id} className="h-full">
+                      <div className="relative h-full w-full">
+                        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                          <iframe 
+                            className="w-[130%] h-[130%]" 
+                            src={video.videoSrc}
+                            title={video.videoTitle}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            frameBorder="0"
+                            loading="lazy"
+                          ></iframe>
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex flex-col justify-end p-6">
+                          <h3 className="text-white text-3xl font-bold">{video.title}</h3>
+                          <p className="text-white text-lg opacity-80">{video.subtitle}</p>
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
                 </CarouselContent>
                 <CarouselPrevious className="left-2 bg-white/70 hover:bg-white/90 backdrop-blur-sm border-none" />
                 <CarouselNext className="right-2 bg-white/70 hover:bg-white/90 backdrop-blur-sm border-none" />
