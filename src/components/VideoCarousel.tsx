@@ -3,6 +3,8 @@ import React, { useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Autoplay, Navigation } from 'swiper/modules';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -16,6 +18,7 @@ export interface VideoData {
   videoTitle: string;
   title: string;
   subtitle: string;
+  duration?: number;
 }
 
 interface VideoCarouselProps {
@@ -23,7 +26,7 @@ interface VideoCarouselProps {
 }
 
 const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
-  const swiperRef = useRef<SwiperType>();
+  const [swiper, setSwiper] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Function to extract video ID from YouTube URL
@@ -48,9 +51,8 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
     
     if (!videoId) return url;
     
-    // Build a clean embed URL with the necessary parameters
-    // Using autoplay=1&mute=1 to enable autoplay (must be muted for autoplay to work in modern browsers)
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${videoId}&origin=${window.location.origin}`;
+    // Match the specific format from the reference implementation
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1&origin=${window.location.origin}`;
   };
 
   return (
@@ -60,11 +62,11 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
         spaceBetween={0}
         slidesPerView={1}
         autoplay={{ delay: 8000, disableOnInteraction: false }}
-        navigation
-        loop
+        loop={true}
+        speed={1000}
         className="h-full rounded-2xl"
         onSwiper={(swiper) => {
-          swiperRef.current = swiper;
+          setSwiper(swiper);
           setActiveIndex(swiper.realIndex);
         }}
         onSlideChange={(swiper) => {
@@ -76,17 +78,23 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
         {videos.map((video, index) => (
           <SwiperSlide key={video.id} className="h-full">
             <div className="relative h-full w-full">
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black/40 z-10"></div>
+              
               <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                <iframe 
-                  className="w-[130%] h-[130%]" 
-                  src={index === activeIndex ? getEnhancedVideoUrl(video.videoSrc) : video.videoSrc}
-                  title={video.videoTitle}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  frameBorder="0"
-                  loading="lazy"
-                ></iframe>
+                <AspectRatio ratio={16/9} className="w-full h-full">
+                  <iframe 
+                    className="w-full h-full" 
+                    src={index === activeIndex ? getEnhancedVideoUrl(video.videoSrc) : video.videoSrc}
+                    title={video.videoTitle}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    frameBorder="0"
+                    loading="lazy"
+                  ></iframe>
+                </AspectRatio>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex flex-col justify-end p-6">
+              
+              <div className="absolute inset-0 flex flex-col justify-end p-6 z-20">
                 <h3 className="text-white text-3xl font-bold">{video.title}</h3>
                 <p className="text-white text-lg opacity-80">{video.subtitle}</p>
               </div>
@@ -94,6 +102,23 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
           </SwiperSlide>
         ))}
       </Swiper>
+
+      {/* Navigation Arrows */}
+      <button
+        onClick={() => swiper?.slidePrev()}
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-30 text-white hover:text-gray-200 transition-colors duration-300"
+        aria-label="Previous slide"
+      >
+        <ArrowLeft className="h-8 w-8" />
+      </button>
+
+      <button
+        onClick={() => swiper?.slideNext()}
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-30 text-white hover:text-gray-200 transition-colors duration-300"
+        aria-label="Next slide"
+      >
+        <ArrowRight className="h-8 w-8" />
+      </button>
     </div>
   );
 };

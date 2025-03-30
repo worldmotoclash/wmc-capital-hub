@@ -10,31 +10,35 @@ const HeroSection: React.FC = () => {
   const videos: VideoData[] = [
     {
       id: 1,
-      videoSrc: "https://www.youtube.com/embed/mVkp_elkgQk",
+      videoSrc: "https://www.youtube.com/embed/mVkp_elkgQk?start=55",
       videoTitle: "The Corkscrew",
       title: "NOTHING LIKE IT",
-      subtitle: "Danger. Danger. Danger"
+      subtitle: "Danger. Danger. Danger",
+      duration: 8000
     },
     {
       id: 2,
       videoSrc: "https://www.youtube.com/embed/VJm7IPrBmLY",
       videoTitle: "MotoGP Racing",
       title: "PURE SPEED",
-      subtitle: "Feel the adrenaline"
+      subtitle: "Feel the adrenaline",
+      duration: 8000
     },
     {
       id: 3,
       videoSrc: "https://www.youtube.com/embed/iGd9Sm3EJpQ",
       videoTitle: "Circuit Racing",
       title: "PRECISION MATTERS",
-      subtitle: "Every corner counts"
+      subtitle: "Every corner counts",
+      duration: 8000
     },
     {
       id: 4,
       videoSrc: "https://www.youtube.com/embed/6Qm9kf1-C6Q",
       videoTitle: "Championship Race",
       title: "ELITE COMPETITION",
-      subtitle: "Where legends are made"
+      subtitle: "Where legends are made",
+      duration: 8000
     }
   ];
 
