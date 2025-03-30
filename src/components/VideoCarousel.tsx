@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import type { Swiper as SwiperType } from 'swiper';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 
@@ -23,29 +24,71 @@ interface VideoCarouselProps {
 }
 
 const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
+  const swiperRef = useRef<SwiperType>();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Function to ensure YouTube parameters are properly set
+  const getEnhancedVideoUrl = (url: string) => {
+    // Make sure we're using the embed URL
+    if (!url.includes('embed')) {
+      const videoId = url.split('v=')[1]?.split('&')[0];
+      if (videoId) {
+        url = `https://www.youtube.com/embed/${videoId}`;
+      }
+    }
+    
+    // Ensure necessary YouTube parameters are included
+    if (!url.includes('autoplay=1')) {
+      url += (url.includes('?') ? '&' : '?') + 'autoplay=1';
+    }
+    if (!url.includes('mute=1')) {
+      url += '&mute=1';
+    }
+    if (!url.includes('enablejsapi=1')) {
+      url += '&enablejsapi=1';
+    }
+    
+    return url;
+  };
+
   return (
     <div className="w-full h-full relative rounded-2xl overflow-hidden">
       <Swiper
         modules={[Autoplay, Navigation]}
         spaceBetween={0}
         slidesPerView={1}
-        autoplay={{ delay: 5000, disableOnInteraction: false }}
+        autoplay={{ delay: 8000, disableOnInteraction: false }}
         navigation
         loop
         className="h-full rounded-2xl"
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+          setActiveIndex(swiper.realIndex);
+        }}
+        onSlideChange={(swiper) => {
+          setActiveIndex(swiper.realIndex);
+        }}
+        watchSlidesProgress={true}
+        preloadImages={true}
       >
-        {videos.map((video) => (
+        {videos.map((video, index) => (
           <SwiperSlide key={video.id} className="h-full">
             <div className="relative h-full w-full">
               <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                <iframe 
-                  className="w-[130%] h-[130%]" 
-                  src={video.videoSrc}
-                  title={video.videoTitle}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  frameBorder="0"
-                  loading="lazy"
-                ></iframe>
+                {/* Only load the active slide and adjacent slides to improve performance */}
+                {Math.abs(index - activeIndex) < 2 || (index === videos.length - 1 && activeIndex === 0) || (index === 0 && activeIndex === videos.length - 1) ? (
+                  <iframe 
+                    className="w-[130%] h-[130%]" 
+                    src={getEnhancedVideoUrl(video.videoSrc)}
+                    title={video.videoTitle}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    frameBorder="0"
+                    loading="lazy"
+                    allowFullScreen
+                  ></iframe>
+                ) : (
+                  <div className="w-full h-full bg-gray-900"></div>
+                )}
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex flex-col justify-end p-6">
                 <h3 className="text-white text-3xl font-bold">{video.title}</h3>

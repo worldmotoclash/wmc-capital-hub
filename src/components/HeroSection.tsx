@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -6,32 +5,32 @@ import { Link } from 'react-router-dom';
 import VideoCarousel, { VideoData } from '@/components/VideoCarousel';
 
 const HeroSection: React.FC = () => {
-  // Array of video data
+  // Array of video data with enhanced video parameters
   const videos: VideoData[] = [
     {
       id: 1,
-      videoSrc: "https://www.youtube.com/embed/mVkp_elkgQk?start=55&autoplay=1&mute=1&loop=1&playlist=mVkp_elkgQk&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1",
+      videoSrc: "https://www.youtube.com/embed/mVkp_elkgQk?start=55&autoplay=1&mute=1&loop=1&playlist=mVkp_elkgQk&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1&enablejsapi=1",
       videoTitle: "The Corkscrew",
       title: "NOTHING LIKE IT",
       subtitle: "Danger. Danger. Danger"
     },
     {
       id: 2,
-      videoSrc: "https://www.youtube.com/embed/VJm7IPrBmLY?autoplay=1&mute=1&loop=1&playlist=VJm7IPrBmLY&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1",
+      videoSrc: "https://www.youtube.com/embed/VJm7IPrBmLY?autoplay=1&mute=1&loop=1&playlist=VJm7IPrBmLY&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1&enablejsapi=1",
       videoTitle: "MotoGP Racing",
       title: "PURE SPEED",
       subtitle: "Feel the adrenaline"
     },
     {
       id: 3,
-      videoSrc: "https://www.youtube.com/embed/iGd9Sm3EJpQ?autoplay=1&mute=1&loop=1&playlist=iGd9Sm3EJpQ&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1",
+      videoSrc: "https://www.youtube.com/embed/iGd9Sm3EJpQ?autoplay=1&mute=1&loop=1&playlist=iGd9Sm3EJpQ&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1&enablejsapi=1",
       videoTitle: "Circuit Racing",
       title: "PRECISION MATTERS",
       subtitle: "Every corner counts"
     },
     {
       id: 4,
-      videoSrc: "https://www.youtube.com/embed/6Qm9kf1-C6Q?autoplay=1&mute=1&loop=1&playlist=6Qm9kf1-C6Q&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1",
+      videoSrc: "https://www.youtube.com/embed/6Qm9kf1-C6Q?autoplay=1&mute=1&loop=1&playlist=6Qm9kf1-C6Q&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1&enablejsapi=1",
       videoTitle: "Championship Race",
       title: "ELITE COMPETITION",
       subtitle: "Where legends are made"
