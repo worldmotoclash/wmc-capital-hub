@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -68,15 +67,18 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
         onSlideChange={(swiper) => {
           setActiveIndex(swiper.realIndex);
         }}
-        watchSlidesProgress={true}
-        preloadImages={true}
+        watchSlidesProgress
       >
         {videos.map((video, index) => (
           <SwiperSlide key={video.id} className="h-full">
             <div className="relative h-full w-full">
               <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                {/* Only load the active slide and adjacent slides to improve performance */}
-                {Math.abs(index - activeIndex) < 2 || (index === videos.length - 1 && activeIndex === 0) || (index === 0 && activeIndex === videos.length - 1) ? (
+                {/* Only load the active slide and adjacent slides */}
+                {(index === activeIndex) || 
+                 (index === activeIndex - 1) || 
+                 (index === activeIndex + 1) || 
+                 (index === 0 && activeIndex === videos.length - 1) || 
+                 (index === videos.length - 1 && activeIndex === 0) ? (
                   <iframe 
                     className="w-[130%] h-[130%]" 
                     src={getEnhancedVideoUrl(video.videoSrc)}
