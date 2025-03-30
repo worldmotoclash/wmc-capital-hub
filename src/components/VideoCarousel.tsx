@@ -10,6 +10,14 @@ import 'swiper/css';
 import 'swiper/css/autoplay';
 import 'swiper/css/navigation';
 
+// Add type declarations for YouTube API
+declare global {
+  interface Window {
+    YT?: any;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
+
 // Define the video data structure
 export interface VideoData {
   id: number;
