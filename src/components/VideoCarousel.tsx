@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -25,30 +26,76 @@ interface VideoCarouselProps {
 const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
   const swiperRef = useRef<SwiperType>();
   const [activeIndex, setActiveIndex] = useState(0);
+  const iframeRefs = useRef<Record<number, HTMLIFrameElement | null>>({});
 
   // Function to ensure YouTube parameters are properly set
   const getEnhancedVideoUrl = (url: string) => {
-    // Make sure we're using the embed URL
-    if (!url.includes('embed')) {
-      const videoId = url.split('v=')[1]?.split('&')[0];
-      if (videoId) {
-        url = `https://www.youtube.com/embed/${videoId}`;
-      }
+    // Extract video ID from various YouTube URL formats
+    let videoId;
+    
+    if (url.includes('embed')) {
+      videoId = url.split('/embed/')[1]?.split('?')[0];
+    } else if (url.includes('v=')) {
+      videoId = url.split('v=')[1]?.split('&')[0];
     }
     
-    // Ensure necessary YouTube parameters are included
-    if (!url.includes('autoplay=1')) {
-      url += (url.includes('?') ? '&' : '?') + 'autoplay=1';
-    }
-    if (!url.includes('mute=1')) {
-      url += '&mute=1';
-    }
-    if (!url.includes('enablejsapi=1')) {
-      url += '&enablejsapi=1';
-    }
+    if (!videoId) return url;
     
-    return url;
+    // Build a clean embed URL with the necessary parameters
+    return `https://www.youtube.com/embed/${videoId}?autoplay=0&mute=1&enablejsapi=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${videoId}`;
   };
+
+  // Function to play the active video and pause others
+  const controlVideoPlayback = (newIndex: number) => {
+    Object.entries(iframeRefs.current).forEach(([idx, iframe]) => {
+      if (!iframe || !iframe.contentWindow) return;
+      
+      const index = parseInt(idx);
+      
+      if (index === newIndex) {
+        // Play the active video
+        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        // Update the src to include autoplay=1
+        if (!iframe.src.includes('autoplay=1')) {
+          iframe.src = iframe.src.replace('autoplay=0', 'autoplay=1');
+        }
+      } else {
+        // Pause other videos
+        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      }
+    });
+  };
+
+  // Initialize YouTube API
+  useEffect(() => {
+    // Create YouTube API script if it doesn't exist
+    if (!window.YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+    }
+    
+    // Handle API ready event
+    window.onYouTubeIframeAPIReady = () => {
+      console.log('YouTube API ready');
+      
+      // Play the initial video after a short delay to ensure API is fully loaded
+      setTimeout(() => {
+        controlVideoPlayback(activeIndex);
+      }, 1000);
+    };
+    
+    return () => {
+      // Clean up
+      window.onYouTubeIframeAPIReady = null;
+    };
+  }, []);
+
+  // Play the active video when the slide changes
+  useEffect(() => {
+    controlVideoPlayback(activeIndex);
+  }, [activeIndex]);
 
   return (
     <div className="w-full h-full relative rounded-2xl overflow-hidden">
@@ -73,24 +120,16 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
           <SwiperSlide key={video.id} className="h-full">
             <div className="relative h-full w-full">
               <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                {/* Only load the active slide and adjacent slides */}
-                {(index === activeIndex) || 
-                 (index === activeIndex - 1) || 
-                 (index === activeIndex + 1) || 
-                 (index === 0 && activeIndex === videos.length - 1) || 
-                 (index === videos.length - 1 && activeIndex === 0) ? (
-                  <iframe 
-                    className="w-[130%] h-[130%]" 
-                    src={getEnhancedVideoUrl(video.videoSrc)}
-                    title={video.videoTitle}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    frameBorder="0"
-                    loading="lazy"
-                    allowFullScreen
-                  ></iframe>
-                ) : (
-                  <div className="w-full h-full bg-gray-900"></div>
-                )}
+                <iframe 
+                  ref={(el) => { iframeRefs.current[index] = el; }}
+                  className="w-[130%] h-[130%]" 
+                  src={getEnhancedVideoUrl(video.videoSrc)}
+                  title={video.videoTitle}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  frameBorder="0"
+                  loading="lazy"
+                  allowFullScreen
+                ></iframe>
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex flex-col justify-end p-6">
                 <h3 className="text-white text-3xl font-bold">{video.title}</h3>
