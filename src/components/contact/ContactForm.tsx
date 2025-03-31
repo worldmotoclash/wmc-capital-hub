@@ -21,7 +21,7 @@ const ContactForm: React.FC = () => {
       transition={{ duration: 0.8 }}
       className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100"
     >
-      <h3 className="text-2xl font-bold mb-6">Send Us a Message</h3>
+      <h3 className="text-2xl font-bold mb-6">Investor Registration</h3>
       
       <form 
         action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00D5e000000HEcP" 
