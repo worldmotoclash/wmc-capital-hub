@@ -76,7 +76,7 @@ const ContactSection: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="company" className="text-sm font-medium text-gray-700">Company</label>
+                <label htmlFor="company" className="text-sm font-medium text-gray-700">Company (Optional)</label>
                 <Input id="company" name="company" placeholder="Your Company" maxLength={40} />
               </div>
               
