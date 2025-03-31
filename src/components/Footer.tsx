@@ -74,22 +74,7 @@ const Footer: React.FC = () => {
           </div>
           
           <div className="md:col-span-3">
-            <h4 className="text-lg font-semibold mb-4">Subscribe to Updates</h4>
-            <p className="text-gray-400 mb-4">Stay informed about investment opportunities and company news.</p>
-            <form className="flex space-x-2">
-              <input 
-                type="email" 
-                placeholder="Your email"
-                className="flex-1 rounded-md py-2 px-3 text-sm bg-white/10 border border-white/20 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent" 
-                required
-              />
-              <button
-                type="submit"
-                className="bg-white text-black px-3 py-2 rounded-md text-sm font-medium hover:bg-white/90 transition-colors"
-              >
-                Subscribe
-              </button>
-            </form>
+            {/* This section is now empty and can be removed if needed */}
           </div>
         </div>
         
