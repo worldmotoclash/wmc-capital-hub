@@ -1,14 +1,13 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 
 const InvestmentHighlights: React.FC = () => {
   return (
-    <section id="investment" className="py-24 bg-black text-white relative overflow-hidden">
+    <section id="investment" className="py-24 bg-science-blue text-white relative overflow-hidden">
       {/* Background gradient effects */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-gradient-to-br from-gray-800 to-transparent opacity-30 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-gradient-to-tl from-gray-800 to-transparent opacity-30 rounded-full blur-3xl transform translate-x-1/4 translate-y-1/4"></div>
+        <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-gradient-to-br from-science-blue/50 to-transparent opacity-30 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-gradient-to-tl from-science-blue/50 to-transparent opacity-30 rounded-full blur-3xl transform translate-x-1/4 translate-y-1/4"></div>
       </div>
       
       <div className="container mx-auto px-6 relative z-10">
@@ -20,7 +19,7 @@ const InvestmentHighlights: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Investment Opportunity</h2>
-            <p className="text-lg text-gray-300 text-balance">
+            <p className="text-lg text-white/80 text-balance">
               A unique opportunity to participate in the future of motorsport entertainment during our Series A funding round.
             </p>
           </motion.div>
