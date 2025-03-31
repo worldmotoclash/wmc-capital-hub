@@ -1,3 +1,17 @@
+
+:root {
+  --color-silver: #c2c1c1;
+  --color-woodsmoke: #0a0b0e;
+  --color-dodger-blue: #0d9af8;
+  --color-cinnabar: #e34536;
+  --color-ming: #3d6586;
+  --color-emperor: #545151;
+  --color-havelock-blue: #5498d4;
+  --color-malibu: #78c0f4;
+  --color-siam: #61645b;
+  --color-science-blue: #0464c4;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -12,10 +26,10 @@
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em var(--color-dodger-blue));
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em var(--color-malibu));
 }
 
 @keyframes logo-spin {
@@ -38,5 +52,5 @@
 }
 
 .read-the-docs {
-  color: #888;
+  color: var(--color-emperor);
 }

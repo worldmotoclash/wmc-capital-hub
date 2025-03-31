@@ -1,4 +1,5 @@
 
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
@@ -7,6 +8,7 @@
 
 @layer base {
   :root {
+    /* Original theme colors */
     --background: 0 0% 99%;
     --foreground: 240 10% 4%;
 
@@ -45,6 +47,18 @@
     --sidebar-accent-foreground: 240 6% 10%;
     --sidebar-border: 240 6% 90%;
     --sidebar-ring: 240 6% 70%;
+    
+    /* New custom color variables */
+    --color-silver: #c2c1c1;
+    --color-woodsmoke: #0a0b0e;
+    --color-dodger-blue: #0d9af8;
+    --color-cinnabar: #e34536;
+    --color-ming: #3d6586;
+    --color-emperor: #545151;
+    --color-havelock-blue: #5498d4;
+    --color-malibu: #78c0f4;
+    --color-siam: #61645b;
+    --color-science-blue: #0464c4;
   }
 
   .dark {
@@ -112,6 +126,15 @@
   
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* New utility classes for the color palette */
+  .bg-brand-gradient {
+    @apply bg-gradient-to-r from-dodger-blue to-science-blue;
+  }
+  
+  .text-brand-gradient {
+    @apply bg-gradient-to-r from-dodger-blue to-science-blue bg-clip-text text-transparent;
   }
 }
 

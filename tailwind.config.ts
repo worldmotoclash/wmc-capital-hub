@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -20,6 +19,19 @@ export default {
 		},
 		extend: {
 			colors: {
+				// Custom color palette
+				silver: "#c2c1c1",
+				woodsmoke: "#0a0b0e",
+				"dodger-blue": "#0d9af8",
+				cinnabar: "#e34536",
+				ming: "#3d6586",
+				emperor: "#545151",
+				"havelock-blue": "#5498d4",
+				malibu: "#78c0f4",
+				siam: "#61645b",
+				"science-blue": "#0464c4",
+				
+				// Keep original shadcn colors
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
