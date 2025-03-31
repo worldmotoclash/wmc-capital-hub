@@ -57,7 +57,7 @@ const AboutSection: React.FC = () => {
             </div>
             <h3 className="text-xl font-semibold mb-3">Market Opportunity</h3>
             <p className="text-gray-600">
-              Targeting the rapidly growing $12 billion motorsport entertainment market with innovative formats and digital-first engagement.
+              The USA is the largest motorcycle market in the world with 40 billion in motorcycle sales and accessories and is ripe for a change.
             </p>
           </motion.div>
           
