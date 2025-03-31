@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -121,7 +120,7 @@ const AboutSection: React.FC = () => {
                   <span className="text-white text-xs">1</span>
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold mb-1">Global Championship Format</h4>
+                  <h4 className="text-lg font-semibold mb-1">One Class the Go Fast Class</h4>
                   <p className="text-gray-600">
                     Innovative race formats across multiple continents with the world's top riders competing for unprecedented prizes.
                   </p>
