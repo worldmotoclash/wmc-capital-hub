@@ -12,6 +12,9 @@ import UserDashboard from "./pages/UserDashboard";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
 import DashboardComparison from "./components/DashboardComparison";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookiePolicy from "./pages/CookiePolicy";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +33,9 @@ const App = () => (
             <Route path="/dashboard-comparison" element={<DashboardComparison />} />
             <Route path="/thankyou" element={<ThankYou />} />
             <Route path="/thankyouinvestor" element={<Navigate to="/thankyou" replace />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/cookie-policy" element={<CookiePolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AnimatePresence>

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import AnimatedLogo from './AnimatedLogo';
+import { Shield, FileText, Cookie } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -77,9 +78,18 @@ const Footer: React.FC = () => {
             &copy; {currentYear} World Moto Clash. All rights reserved.
           </div>
           <div className="flex space-x-6">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>
+            <Link to="/privacy-policy" className="flex items-center hover:text-white transition-colors">
+              <Shield className="w-4 h-4 mr-1" />
+              <span>Privacy Policy</span>
+            </Link>
+            <Link to="/terms-of-service" className="flex items-center hover:text-white transition-colors">
+              <FileText className="w-4 h-4 mr-1" />
+              <span>Terms of Service</span>
+            </Link>
+            <Link to="/cookie-policy" className="flex items-center hover:text-white transition-colors">
+              <Cookie className="w-4 h-4 mr-1" />
+              <span>Cookie Policy</span>
+            </Link>
           </div>
         </div>
       </div>
