@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Link } from 'react-router-dom';
 import VideoCarousel, { VideoData } from '@/components/VideoCarousel';
 
 const HeroSection: React.FC = () => {
-  // Array of video data with clean YouTube URLs
+  // Array of video data with improved YouTube URLs and better titles
   const videos: VideoData[] = [
     {
       id: 1,
@@ -34,10 +33,26 @@ const HeroSection: React.FC = () => {
     },
     {
       id: 4,
-      videoSrc: "https://www.youtube.com/embed/6Qm9kf1-C6Q",
-      videoTitle: "Championship Race",
-      title: "ELITE COMPETITION",
-      subtitle: "Where legends are made",
+      videoSrc: "https://www.youtube.com/embed/Ka2X73qTQ5Y",
+      videoTitle: "Laguna Seca Racing",
+      title: "NO RULES, ONE CLASS",
+      subtitle: "Where speed meets innovation",
+      duration: 8000
+    },
+    {
+      id: 5,
+      videoSrc: "https://www.youtube.com/embed/YboT6kMWjoY",
+      videoTitle: "MIGUEL DUHAMEL",
+      title: "VEGAS VENOM",
+      subtitle: "5 Time Daytona 200 Champion",
+      duration: 8000
+    },
+    {
+      id: 6,
+      videoSrc: "https://www.youtube.com/embed/kopVOs0gfRM",
+      videoTitle: "Norman Reedus",
+      title: "ACTION STARS RACING",
+      subtitle: "Walking Dead Star Norman Reedus",
       duration: 8000
     }
   ];
@@ -104,7 +119,7 @@ const HeroSection: React.FC = () => {
           </motion.div>
           
           <motion.div 
-            className="flex-1 relative"
+            className="flex-1 relative w-full"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}

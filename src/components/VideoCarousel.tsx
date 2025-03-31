@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Autoplay, Navigation } from 'swiper/modules';
@@ -28,10 +28,15 @@ interface VideoCarouselProps {
 const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
 
   // Function to extract video ID from YouTube URL
   const extractVideoId = (url: string): string | null => {
-    // Extract video ID from various YouTube URL formats
     let videoId = null;
     
     if (url.includes('embed/')) {
@@ -51,8 +56,14 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
     
     if (!videoId) return url;
     
-    // Match the specific format from the reference implementation
+    // Always include autoplay parameters
     return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1&origin=${window.location.origin}`;
+  };
+
+  // Handle slide change and log for debugging
+  const handleSlideChange = (swiper: SwiperType) => {
+    console.log('Slide changed to:', swiper.realIndex);
+    setActiveIndex(swiper.realIndex);
   };
 
   return (
@@ -61,36 +72,40 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
         modules={[Autoplay, Navigation]}
         spaceBetween={0}
         slidesPerView={1}
-        autoplay={{ delay: 8000, disableOnInteraction: false }}
+        autoplay={{ 
+          delay: 8000, 
+          disableOnInteraction: false,
+          pauseOnMouseEnter: false
+        }}
         loop={true}
         speed={1000}
-        className="h-full rounded-2xl"
+        className="h-full w-full rounded-2xl"
         onSwiper={(swiper) => {
           setSwiper(swiper);
           setActiveIndex(swiper.realIndex);
         }}
-        onSlideChange={(swiper) => {
-          console.log('Slide changed to:', swiper.realIndex);
-          setActiveIndex(swiper.realIndex);
-        }}
+        onSlideChange={handleSlideChange}
         watchSlidesProgress
       >
         {videos.map((video, index) => (
-          <SwiperSlide key={video.id} className="h-full">
+          <SwiperSlide key={video.id} className="h-full w-full">
             <div className="relative h-full w-full">
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black/40 z-10"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/50 z-10"></div>
               
               <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
                 <AspectRatio ratio={16/9} className="w-full h-full">
-                  <iframe 
-                    className="w-full h-full" 
-                    src={index === activeIndex ? getEnhancedVideoUrl(video.videoSrc) : video.videoSrc}
-                    title={video.videoTitle}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    frameBorder="0"
-                    loading="lazy"
-                  ></iframe>
+                  {isMounted && (
+                    <iframe 
+                      className="w-full h-full" 
+                      src={getEnhancedVideoUrl(video.videoSrc)}
+                      title={video.videoTitle}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                      frameBorder="0"
+                      loading="lazy"
+                      allowFullScreen
+                    ></iframe>
+                  )}
                 </AspectRatio>
               </div>
               
