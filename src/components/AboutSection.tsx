@@ -122,7 +122,7 @@ const AboutSection: React.FC = () => {
                 <div>
                   <h4 className="text-lg font-semibold mb-1">One Class the Go Fast Class</h4>
                   <p className="text-gray-600">
-                  The Riches Races in History Focused on Fan Experience and Entertainment
+                    The Riches Races in History Focused on Fan Experience and Entertainment with a unique with No Equipment Rules
                   </p>
                 </div>
               </div>
