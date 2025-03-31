@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
               onClick={() => scrollToSection('contact')}
               className="text-sm font-medium hover:text-gray-600 transition-colors"
             >
-              Contact
+              Register
             </button>
           </motion.div>
           
