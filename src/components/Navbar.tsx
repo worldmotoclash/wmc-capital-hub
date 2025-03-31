@@ -1,12 +1,14 @@
 
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import AnimatedLogo from './AnimatedLogo';
 import { Button } from '@/components/ui/button';
 
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
   
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +26,12 @@ const Navbar: React.FC = () => {
   }, [scrolled]);
 
   const scrollToSection = (id: string) => {
+    if (!isHomePage) {
+      // Redirect to home page with section hash
+      window.location.href = `/#${id}`;
+      return;
+    }
+    
     const element = document.getElementById(id);
     if (element) {
       const navbarHeight = 80; // Approximate navbar height
@@ -50,7 +58,9 @@ const Navbar: React.FC = () => {
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
         <div className="z-10">
-          <AnimatedLogo />
+          <Link to="/">
+            <AnimatedLogo />
+          </Link>
         </div>
         
         <nav className="hidden md:flex items-center space-x-8">
