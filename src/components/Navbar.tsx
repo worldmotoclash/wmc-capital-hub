@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -95,14 +96,14 @@ const Navbar: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <Button asChild className="bg-black hover:bg-black/80 text-white rounded-md">
+            <Button asChild className="bg-science-blue hover:bg-science-blue/80 text-white rounded-md">
               <Link to="/login">Investor Login</Link>
             </Button>
           </motion.div>
         </nav>
         
         <div className="md:hidden">
-          <Button asChild variant="outline" className="border-black text-black hover:bg-black/5">
+          <Button asChild variant="outline" className="border-science-blue text-science-blue hover:bg-science-blue/5">
             <Link to="/login">Login</Link>
           </Button>
         </div>

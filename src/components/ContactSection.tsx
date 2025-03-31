@@ -143,7 +143,7 @@ const ContactSection: React.FC = () => {
               
               <button 
                 type="submit" 
-                className="w-full bg-black hover:bg-black/80 text-white px-4 py-2 rounded transition-colors"
+                className="w-full bg-science-blue hover:bg-science-blue/80 text-white px-4 py-2 rounded transition-colors"
               >
                 Send Message
               </button>
