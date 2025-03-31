@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -8,10 +7,9 @@ import { toast } from 'sonner';
 
 const ContactSection: React.FC = () => {
   const handleFormSubmit = (e: React.FormEvent) => {
-    // We're not preventing default behavior anymore, but still showing a toast
-    // This allows the native form submission to Salesforce to proceed
+    // We're not preventing default behavior to allow native form submission
+    // Just show a toast to give feedback to the user
     toast.success("Message sent successfully. Our team will contact you shortly.");
-    // Form will naturally redirect to the retURL after submission
     console.log("Form submitted to Salesforce");
   };
 
@@ -51,10 +49,10 @@ const ContactSection: React.FC = () => {
               className="space-y-6"
             >
               <input type="hidden" name="oid" value="00D5e000000HEcP" />
-              <input type="hidden" name="retURL" value="https://worldmotoclash.com/thankyou" />
+              <input type="hidden" name="retURL" value="http://worldmotoclash.com/thankyou" />
               
-              {/* Corrected meta tag with proper React/TypeScript syntax */}
-              <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
+              {/* This meta tag needs to be in the form */}
+              <meta httpEquiv="Content-type" content="text/html; charset=UTF-8" />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">

@@ -51,7 +51,7 @@ const Index: React.FC = () => {
       }
     });
     
-    // Fix to handle form redirections
+    // Fix to handle form redirections from Salesforce
     if (window.location.pathname === "/thankyouinvestor") {
       window.location.href = "/thankyou";
     }
