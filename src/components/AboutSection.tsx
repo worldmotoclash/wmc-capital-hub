@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -39,7 +38,7 @@ const AboutSection: React.FC = () => {
             </div>
             <h3 className="text-xl font-semibold mb-3">Our Vision</h3>
             <p className="text-gray-600">
-              To revolutionize motorsport by creating the most technologically advanced and globally accessible racing competition in the world.
+              To revolutionize motorsport by creating the Greatest Motorcycle racing on the planet.
             </p>
           </motion.div>
           
