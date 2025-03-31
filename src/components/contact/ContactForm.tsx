@@ -125,7 +125,7 @@ const ContactForm: React.FC = () => {
           type="submit" 
           className="w-full bg-science-blue hover:bg-science-blue/80 text-white px-4 py-2 rounded transition-colors"
         >
-          Send Message
+          Register
         </button>
       </form>
     </motion.div>
