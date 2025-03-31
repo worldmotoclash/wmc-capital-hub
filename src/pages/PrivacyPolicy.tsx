@@ -16,7 +16,7 @@ const PrivacyPolicy: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="flex-grow container mx-auto px-6 py-12"
+        className="flex-grow container mx-auto px-6 pt-24 pb-12" // Added pt-24 for top padding
       >
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold mb-6">🌐 Privacy Policy – World Moto Clash</h1>
