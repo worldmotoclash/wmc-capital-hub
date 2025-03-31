@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import AboutSection from '@/components/AboutSection';
 import InvestmentHighlights from '@/components/InvestmentHighlights';
-import ContactSection from '@/components/ContactSection';
+import ContactSection from '@/components/contact/ContactSection';
 import Footer from '@/components/Footer';
 
 const Index: React.FC = () => {
