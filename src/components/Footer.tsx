@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import AnimatedLogo from './AnimatedLogo';
@@ -70,18 +69,7 @@ const Footer: React.FC = () => {
           <div className="md:col-span-2">
             <h4 className="text-lg font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">News</a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Press Kit</a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Media</a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Careers</a>
-              </li>
+              {/* Resources section now left intentionally empty */}
             </ul>
           </div>
           
