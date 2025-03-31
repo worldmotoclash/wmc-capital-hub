@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
@@ -52,8 +51,14 @@ const ContactForm: React.FC = () => {
         </div>
         
         <div className="space-y-2">
-          <label htmlFor="mobile" className="text-sm font-medium text-gray-700">Phone (Optional)</label>
-          <Input id="mobile" name="mobile" placeholder="+1 (123) 456-7890" maxLength={40} />
+          <label htmlFor="mobile" className="text-sm font-medium text-gray-700">Mobile</label>
+          <Input 
+            id="mobile" 
+            name="mobile" 
+            placeholder="+1 (123) 456-7890" 
+            maxLength={40} 
+            required 
+          />
         </div>
         
         <div className="space-y-2">
