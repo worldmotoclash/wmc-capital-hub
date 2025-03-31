@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -100,7 +101,7 @@ const HeroSection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
             >
-              Join the future of competitive motorsport with World Moto Clash. Exclusive investment opportunities for visionary partners.
+              Bringing pure racing and big time prize money to Motocycle racing.
             </motion.p>
             
             <motion.div 
