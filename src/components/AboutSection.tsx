@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -81,7 +82,7 @@ const AboutSection: React.FC = () => {
             </div>
             <h3 className="text-xl font-semibold mb-3">Business Model</h3>
             <p className="text-gray-600">
-              Multi-revenue streams through media rights, sponsorships, merchandise, and digital products with strong licensing potential.
+              Multi-revenue streams through live events, media rights, sponsorships, merchandise, and digital products with strong licensing potential and no sanctioning fees. Our reliance on strategic partners to lower G & A makes us more capital efficient.
             </p>
           </motion.div>
         </div>
