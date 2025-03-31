@@ -18,22 +18,6 @@ const HeroSection: React.FC = () => {
     },
     {
       id: 2,
-      videoSrc: "https://www.youtube.com/embed/VJm7IPrBmLY",
-      videoTitle: "MotoGP Racing",
-      title: "PURE SPEED",
-      subtitle: "Feel the adrenaline",
-      duration: 8000
-    },
-    {
-      id: 3,
-      videoSrc: "https://www.youtube.com/embed/iGd9Sm3EJpQ",
-      videoTitle: "Circuit Racing",
-      title: "PRECISION MATTERS",
-      subtitle: "Every corner counts",
-      duration: 8000
-    },
-    {
-      id: 4,
       videoSrc: "https://www.youtube.com/embed/Ka2X73qTQ5Y",
       videoTitle: "Laguna Seca Racing",
       title: "NO RULES, ONE CLASS",
@@ -41,7 +25,7 @@ const HeroSection: React.FC = () => {
       duration: 8000
     },
     {
-      id: 5,
+      id: 3,
       videoSrc: "https://www.youtube.com/embed/YboT6kMWjoY",
       videoTitle: "MIGUEL DUHAMEL",
       title: "VEGAS VENOM",
@@ -49,7 +33,7 @@ const HeroSection: React.FC = () => {
       duration: 8000
     },
     {
-      id: 6,
+      id: 4,
       videoSrc: "https://www.youtube.com/embed/kopVOs0gfRM",
       videoTitle: "Norman Reedus",
       title: "ACTION STARS RACING",
