@@ -56,7 +56,7 @@ const HeroSection: React.FC = () => {
       duration: 8000
     }
   ];
-
+  
   return (
     <section className="min-h-screen w-full flex items-center justify-center relative overflow-hidden pt-20">
       {/* Background gradient effects */}
@@ -109,7 +109,7 @@ const HeroSection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.6 }}
             >
-              <Button asChild className="bg-black hover:bg-black/80 text-white px-8 py-6 rounded-md text-base">
+              <Button asChild className="bg-science-blue hover:bg-science-blue/80 text-white px-8 py-6 rounded-md text-base">
                 <Link to="/login">Investor Login</Link>
               </Button>
               <Button asChild variant="outline" className="border-black text-black hover:bg-black/5 px-8 py-6 rounded-md text-base">
