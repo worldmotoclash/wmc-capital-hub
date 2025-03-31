@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -206,7 +207,7 @@ const ContactSection: React.FC = () => {
             <div className="bg-gray-100 p-6 rounded-xl">
               <h4 className="text-lg font-semibold mb-4">Next Steps</h4>
               <p className="text-gray-600 mb-4">
-                After contacting us, our investor relations team will:
+                Contact us by either filling out the form or calling 855-WMC-MOTO, our investor relations team will:
               </p>
               <ol className="space-y-2 list-decimal list-inside text-gray-600">
                 <li>Schedule an initial consultation</li>
