@@ -72,7 +72,45 @@ const ContactForm: React.FC = () => {
           </div>
         </div>
         
-   
+        <div className="space-y-2">
+          <label htmlFor="lead_source" className="text-sm font-medium text-gray-700">How Did You Hear About Us</label>
+          <select 
+            id="lead_source" 
+            name="lead_source" 
+            className="w-full rounded-md border border-gray-200 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+          >
+            <option value="">--None--</option>
+            <option value="Advertisement">Advertisement</option>
+            <option value="Employee Referral">Employee Referral</option>
+            <option value="External Referral">External Referral</option>
+            <option value="In-Store">In-Store</option>
+            <option value="On Site">On Site</option>
+            <option value="Other">Other</option>
+            <option value="Social">Social</option>
+            <option value="Trade Show">Trade Show</option>
+            <option value="Web">Web</option>
+            <option value="Word of mouth">Word of mouth</option>
+          </select>
+        </div>
+        
+        <div className="space-y-2">
+          <label htmlFor="00N5e00000gt2r6" className="text-sm font-medium text-gray-700">Investor Type</label>
+          <select 
+            id="00N5e00000gt2r6" 
+            name="00N5e00000gt2r6" 
+            title="Investor Type"
+            className="w-full rounded-md border border-gray-200 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+            required
+          >
+            <option value="">--None--</option>
+            <option value="Individual Investor">Individual Investor</option>
+            <option value="Institutional Investor">Institutional Investor</option>
+            <option value="Venture Capital">Venture Capital</option>
+            <option value="Private Equity">Private Equity</option>
+            <option value="Family Trust">Family Trust</option>
+          </select>
+        </div>
+        
         <div className="space-y-2">
           <label htmlFor="message" className="text-sm font-medium text-gray-700">Message</label>
           <Textarea 
