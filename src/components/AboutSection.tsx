@@ -132,7 +132,7 @@ const AboutSection: React.FC = () => {
                   <span className="text-white text-xs">2</span>
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold mb-1">Cutting-Edge Technology</h4>
+                  <h4 className="text-lg font-semibold mb-1">Cutting Edge AI Driven Sports Technology</h4>
                   <p className="text-gray-600">
                     Proprietary racing telemetry and integrated digital platforms providing unparalleled viewer engagement.
                   </p>
