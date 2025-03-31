@@ -12,13 +12,40 @@ const LoginForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{email?: string; password?: string}>({});
   const navigate = useNavigate();
+
+  const validateForm = (): boolean => {
+    const newErrors: {email?: string; password?: string} = {};
+    let isValid = true;
+
+    // Email validation
+    if (!email) {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Email is invalid';
+      isValid = false;
+    }
+
+    // Password validation
+    if (!password) {
+      newErrors.password = 'Password is required';
+      isValid = false;
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password) {
-      toast.error('Please fill in all fields');
+    if (!validateForm()) {
+      toast.error('Please correct the errors in the form');
       return;
     }
     
@@ -28,14 +55,15 @@ const LoginForm: React.FC = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // For demo purposes, we'll accept any login
-      // In production, this would validate against a real auth system
-      toast.success('Login successful');
-      
-      // Redirect to user dashboard instead of investor dashboard
-      navigate('/user-dashboard');
+      // For demo purposes, we'll check specific credentials
+      if (email === 'investor@example.com' && password === 'password123') {
+        toast.success('Login successful');
+        navigate('/dashboard');
+      } else {
+        toast.error('Invalid credentials. Please try again.');
+      }
     } catch (error) {
-      toast.error('Invalid credentials. Please try again.');
+      toast.error('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -66,9 +94,11 @@ const LoginForm: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
-            required
-            className="w-full"
+            className={`w-full ${errors.email ? 'border-red-500' : ''}`}
           />
+          {errors.email && (
+            <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+          )}
         </div>
         
         <div className="space-y-2">
@@ -86,9 +116,11 @@ const LoginForm: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            required
-            className="w-full"
+            className={`w-full ${errors.password ? 'border-red-500' : ''}`}
           />
+          {errors.password && (
+            <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+          )}
         </div>
         
         <div className="flex items-center space-x-2">
