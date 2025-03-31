@@ -169,8 +169,7 @@ const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold mb-1">Phone</h4>
-                    <p className="text-gray-600">+1 (855) WMC-MOTO</p>
-                    <p className="text-sm text-gray-500 mt-1">Monday - Friday, 9AM - 5PM EST</p>
+                    <p className="text-gray-600">+1 (855) WMC-MOTO - (855-969-6686)</p>
                   </div>
                 </div>
                 
