@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
+import { useUser, User } from '@/contexts/UserContext';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ const LoginForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{email?: string; password?: string}>({});
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const validateForm = (): boolean => {
     const newErrors: {email?: string; password?: string} = {};
@@ -72,9 +74,14 @@ const LoginForm: React.FC = () => {
         const memberElements = xmlDoc.getElementsByTagName('member');
         
         data = Array.from(memberElements).map(member => ({
-          id: member.getElementsByTagName('id')[0]?.textContent,
-          email: member.getElementsByTagName('email')[0]?.textContent,
-          ripassword: member.getElementsByTagName('ripassword')[0]?.textContent
+          id: member.getElementsByTagName('id')[0]?.textContent || '',
+          email: member.getElementsByTagName('email')[0]?.textContent || '',
+          ripassword: member.getElementsByTagName('ripassword')[0]?.textContent || '',
+          name: member.getElementsByTagName('name')[0]?.textContent || '',
+          status: member.getElementsByTagName('status')[0]?.textContent || '',
+          phone: member.getElementsByTagName('phone')[0]?.textContent || '',
+          mobile: member.getElementsByTagName('mobile')[0]?.textContent || '',
+          mailingstreet: member.getElementsByTagName('mailingstreet')[0]?.textContent || ''
         }));
       } else {
         // Assume JSON response
@@ -95,6 +102,19 @@ const LoginForm: React.FC = () => {
         
         // Check if password matches, handling potential undefined or null values
         if (investor.ripassword && password === investor.ripassword.toString()) {
+          // Store user data
+          const userData: User = {
+            id: investor.id,
+            name: investor.name,
+            email: investor.email,
+            status: investor.status,
+            phone: investor.phone,
+            mobile: investor.mobile,
+            mailingstreet: investor.mailingstreet
+          };
+          
+          setUser(userData);
+          
           toast.success('Login successful');
           navigate('/dashboard');
         } else {
