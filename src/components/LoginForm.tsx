@@ -61,18 +61,38 @@ const LoginForm: React.FC = () => {
         throw new Error('Failed to fetch investor data');
       }
       
-      const data = await response.json();
-      console.log('Investor data:', data); // Debug: log the data structure
+      const contentType = response.headers.get('content-type');
+      let data;
+
+      if (contentType?.includes('xml')) {
+        // Parse XML response
+        const text = await response.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(text, 'text/xml');
+        const memberElements = xmlDoc.getElementsByTagName('member');
+        
+        data = Array.from(memberElements).map(member => ({
+          id: member.getElementsByTagName('id')[0]?.textContent,
+          email: member.getElementsByTagName('email')[0]?.textContent,
+          ripassword: member.getElementsByTagName('ripassword')[0]?.textContent
+        }));
+      } else {
+        // Assume JSON response
+        data = await response.json();
+      }
+
+      console.log('Parsed investor data:', data);
       
       // Find the investor by email (case-insensitive comparison)
       const investor = data.find((inv: any) => 
         inv.email && inv.email.toLowerCase() === email.toLowerCase()
       );
       
-      console.log('Found investor:', investor); // Debug: log the matched investor
+      console.log('Found investor:', investor);
       
       if (investor) {
-        console.log(`Password comparison: '${password}' vs '${investor.ripassword}'`); // Debug password values
+        console.log(`Password comparison: '${password}' vs '${investor.ripassword}'`);
+        
         // Check if password matches, handling potential undefined or null values
         if (investor.ripassword && password === investor.ripassword.toString()) {
           toast.success('Login successful');
