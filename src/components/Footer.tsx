@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
           <div className="md:col-span-5 space-y-6">
             <AnimatedLogo className="text-white" />
             <p className="text-gray-400 max-w-md">
-              World Moto Clash is revolutionizing motorsport entertainment through innovation, technology, and global competition.
+              World Moto Clash is reimagining motorsport entertainment through innovation, technology, and global competition.
             </p>
           </div>
           
