@@ -51,19 +51,30 @@ const LoginForm: React.FC = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Fetch investor data from the provided API
+      const apiUrl = `https://api.realintelligence.com/api/specific-investor-list.py?orgId=00D5e000000HEcP&campaignId=7014V000002lcY2&sandbox=False`;
       
-      // For demo purposes, we'll check specific credentials
-      if (email === 'investor@example.com' && password === 'password123') {
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch investor data');
+      }
+      
+      const data = await response.json();
+      
+      // Find the investor by email
+      const investor = data.find((inv: any) => inv.email === email);
+      
+      if (investor && investor.ripassword === password) {
         toast.success('Login successful');
         navigate('/dashboard');
       } else {
         toast.error('Invalid credentials. Please try again.');
       }
     } catch (error) {
-      toast.error('An error occurred. Please try again.');
+      console.error('Login error:', error);
+      toast.error('An error occurred during login. Please try again.');
     } finally {
       setIsLoading(false);
     }
