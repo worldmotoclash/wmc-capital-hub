@@ -62,15 +62,26 @@ const LoginForm: React.FC = () => {
       }
       
       const data = await response.json();
+      console.log('Investor data:', data); // Debug: log the data structure
       
-      // Find the investor by email
-      const investor = data.find((inv: any) => inv.email === email);
+      // Find the investor by email (case-insensitive comparison)
+      const investor = data.find((inv: any) => 
+        inv.email && inv.email.toLowerCase() === email.toLowerCase()
+      );
       
-      if (investor && investor.ripassword === password) {
-        toast.success('Login successful');
-        navigate('/dashboard');
+      console.log('Found investor:', investor); // Debug: log the matched investor
+      
+      if (investor) {
+        console.log(`Password comparison: '${password}' vs '${investor.ripassword}'`); // Debug password values
+        // Check if password matches, handling potential undefined or null values
+        if (investor.ripassword && password === investor.ripassword.toString()) {
+          toast.success('Login successful');
+          navigate('/dashboard');
+        } else {
+          toast.error('Invalid password. Please try again.');
+        }
       } else {
-        toast.error('Invalid credentials. Please try again.');
+        toast.error('Email not found. Please check your credentials.');
       }
     } catch (error) {
       console.error('Login error:', error);
