@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import AnimatedLogo from './AnimatedLogo';
-import { Shield, FileText, Cookie } from 'lucide-react';
+import { Shield, FileText, Cookie, Info, Briefcase, Contact } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -22,16 +22,28 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/#about" className="text-gray-400 hover:text-white transition-colors">About</Link>
+                <a href="/#about" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                  <Info className="w-4 h-4 mr-2" />
+                  About
+                </a>
               </li>
               <li>
-                <Link to="/#investment" className="text-gray-400 hover:text-white transition-colors">Investment</Link>
+                <a href="/#investment" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                  <Briefcase className="w-4 h-4 mr-2" />
+                  Investment
+                </a>
               </li>
               <li>
-                <Link to="/#contact" className="text-gray-400 hover:text-white transition-colors">Contact</Link>
+                <a href="/#contact" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                  <Contact className="w-4 h-4 mr-2" />
+                  Contact
+                </a>
               </li>
               <li>
-                <Link to="/login" className="text-gray-400 hover:text-white transition-colors">Investor Login</Link>
+                <Link to="/login" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                  <Briefcase className="w-4 h-4 mr-2" />
+                  Investor Login
+                </Link>
               </li>
             </ul>
           </div>
