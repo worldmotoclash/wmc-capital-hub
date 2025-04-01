@@ -1,18 +1,40 @@
 
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import AnimatedLogo from '@/components/AnimatedLogo';
 import { motion } from 'framer-motion';
+import { useUser } from '@/contexts/UserContext';
+import UserInfoCard from '@/components/UserInfoCard';
+import { toast } from 'sonner';
 
 const Dashboard: React.FC = () => {
+  const { user, setUser } = useUser();
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
-  }, []);
+    
+    // Redirect if no user is logged in
+    if (!user) {
+      toast.error('Please log in to access the dashboard');
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
+  const handleSignOut = () => {
+    setUser(null);
+    toast.success('Successfully logged out');
+    navigate('/');
+  };
+
+  if (!user) {
+    return null; // Don't render anything while redirecting
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -24,14 +46,14 @@ const Dashboard: React.FC = () => {
           
           <div className="flex items-center gap-4">
             <div className="text-sm text-right">
-              <div className="font-medium">John Investor</div>
-              <div className="text-gray-500">Premium Tier</div>
+              <div className="font-medium">{user.name}</div>
+              <div className="text-gray-500">{user.status}</div>
             </div>
             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-lg font-medium">
-              JI
+              {user.name.split(' ').map(n => n[0]).join('')}
             </div>
-            <Button variant="outline" asChild className="border-black text-black hover:bg-black/5">
-              <Link to="/">Sign Out</Link>
+            <Button variant="outline" className="border-black text-black hover:bg-black/5" onClick={handleSignOut}>
+              Sign Out
             </Button>
           </div>
         </div>
@@ -44,7 +66,7 @@ const Dashboard: React.FC = () => {
           transition={{ duration: 0.6 }}
         >
           <h1 className="text-3xl font-bold mb-2">Investor Dashboard</h1>
-          <p className="text-gray-600 mb-8">Welcome back, access your exclusive investor information below.</p>
+          <p className="text-gray-600 mb-8">Welcome back {user.name}, access your exclusive investor information below.</p>
         </motion.div>
         
         <motion.div
@@ -63,25 +85,7 @@ const Dashboard: React.FC = () => {
             
             <TabsContent value="overview" className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">Investment Status</CardTitle>
-                    <CardDescription>Current investment status</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">$500,000</div>
-                    <p className="text-sm text-gray-500">Initial Investment</p>
-                    
-                    <div className="mt-4 space-y-2">
-                      <div className="flex justify-between items-center text-sm">
-                        <span>Current Value</span>
-                        <span className="font-medium">$575,000</span>
-                      </div>
-                      <Progress value={75} className="h-2" />
-                      <div className="text-xs text-gray-500">+15% increase since initial investment</div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <UserInfoCard />
                 
                 <Card>
                   <CardHeader className="pb-2">
