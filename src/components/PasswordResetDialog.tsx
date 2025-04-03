@@ -86,7 +86,7 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
 
       console.log('Found investor for password reset:', investor.id);
       
-      // Create the password reset request data
+      // Create the password reset request data - fixed format to match API requirements
       const resetData = {
         contactId: investor.id,
         text_Reset_Password__c: "Yes",
@@ -96,7 +96,8 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
       console.log('Sending reset request with data:', resetData);
       
       // Make the actual API call to update the password reset flag
-      const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
+      // Use a more direct approach with fewer headers
+      const updateUrl = 'https://api.realintelligence.com/api/update-investor.php';
       
       const updateResponse = await fetch(updateUrl, {
         method: 'POST',
@@ -104,18 +105,23 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(resetData),
-        mode: 'cors'
       });
+      
+      const responseText = await updateResponse.text();
+      console.log('Password reset raw response:', responseText);
       
       if (!updateResponse.ok) {
         console.error('Password reset request failed with status:', updateResponse.status);
-        const errorText = await updateResponse.text();
-        console.error('Error response:', errorText);
-        throw new Error('Failed to send password reset request');
+        console.error('Error response:', responseText);
+        throw new Error(`Failed to send password reset request: ${responseText}`);
       }
       
-      const updateResult = await updateResponse.text();
-      console.log('Password reset response:', updateResult);
+      // Check if the response indicates success (may vary based on API)
+      if (responseText.includes('error') || responseText.includes('Error')) {
+        throw new Error(`API returned error: ${responseText}`);
+      }
+      
+      console.log('Password reset successful response:', responseText);
       
       setIsSuccess(true);
       toast.success(
@@ -131,8 +137,21 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
       
     } catch (error) {
       console.error('Password reset error:', error);
-      setErrorMessage('An error occurred while processing your request. Please try again later or contact support.');
-      toast.error('Password reset request failed. Please try again later.');
+      
+      // More specific error messaging based on the error
+      let errorMsg = 'An error occurred while processing your request. Please try again later or contact support.';
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch')) {
+          errorMsg = 'Network error. Please check your internet connection and try again.';
+        } else if (error.message.includes('not found')) {
+          errorMsg = 'Email not found. Please check your email address.';
+        }
+        
+        console.error('Error details:', error.message);
+      }
+      
+      setErrorMessage(errorMsg);
+      toast.error('Password reset request failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
