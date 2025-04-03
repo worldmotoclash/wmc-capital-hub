@@ -8,6 +8,7 @@ import { AnimatePresence } from "framer-motion";
 import { UserProvider } from "./contexts/UserContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import UserDashboard from "./pages/UserDashboard";
 import ThankYou from "./pages/ThankYou";
@@ -30,6 +31,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/reset" element={<ResetPassword />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/user-dashboard" element={<UserDashboard />} />
               <Route path="/dashboard-comparison" element={<DashboardComparison />} />

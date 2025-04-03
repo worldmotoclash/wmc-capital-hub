@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -7,6 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { useUser, User } from '@/contexts/UserContext';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription,
+  DialogFooter,
+  DialogClose
+} from '@/components/ui/dialog';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,6 +24,12 @@ const LoginForm: React.FC = () => {
   const [errors, setErrors] = useState<{email?: string; password?: string}>({});
   const navigate = useNavigate();
   const { setUser } = useUser();
+  
+  // Forgot password states
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
+  const [resetError, setResetError] = useState('');
 
   const validateForm = (): boolean => {
     const newErrors: {email?: string; password?: string} = {};
@@ -130,6 +144,88 @@ const LoginForm: React.FC = () => {
       setIsLoading(false);
     }
   };
+  
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetError('');
+    
+    if (!resetEmail) {
+      setResetError('Email is required');
+      return;
+    }
+    
+    if (!/\S+@\S+\.\S+/.test(resetEmail)) {
+      setResetError('Email is invalid');
+      return;
+    }
+    
+    setIsResetting(true);
+    
+    try {
+      // Fetch investor data to find the contact ID
+      const apiUrl = `https://api.realintelligence.com/api/specific-investor-list.py?orgId=00D5e000000HEcP&campaignId=7014V000002lcY2&sandbox=False`;
+      
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch investor data');
+      }
+      
+      const contentType = response.headers.get('content-type');
+      let data;
+
+      if (contentType?.includes('xml')) {
+        // Parse XML response
+        const text = await response.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(text, 'text/xml');
+        const memberElements = xmlDoc.getElementsByTagName('member');
+        
+        data = Array.from(memberElements).map(member => ({
+          id: member.getElementsByTagName('id')[0]?.textContent || '',
+          email: member.getElementsByTagName('email')[0]?.textContent || '',
+        }));
+      } else {
+        // Assume JSON response
+        data = await response.json();
+      }
+      
+      // Find the investor by email (case-insensitive comparison)
+      const investor = data.find((inv: any) => 
+        inv.email && inv.email.toLowerCase() === resetEmail.toLowerCase()
+      );
+      
+      if (investor) {
+        // Submit to update endpoint with contactID and rie__Reset_Password__c = 1
+        const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
+        const updateResponse = await fetch(updateUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contactId: investor.id,
+            rie__Reset_Password__c: 1
+          }),
+        });
+        
+        if (!updateResponse.ok) {
+          throw new Error('Failed to request password reset');
+        }
+        
+        toast.success('Password reset email sent. Please check your inbox.');
+        setForgotPasswordOpen(false);
+        setResetEmail('');
+      } else {
+        setResetError('Email not found. Please check your email address.');
+      }
+    } catch (error) {
+      console.error('Password reset error:', error);
+      setResetError('An error occurred. Please try again later.');
+    } finally {
+      setIsResetting(false);
+    }
+  };
 
   return (
     <motion.div
@@ -168,9 +264,13 @@ const LoginForm: React.FC = () => {
             <label htmlFor="password" className="text-sm font-medium text-gray-700">
               Password
             </label>
-            <a href="#" className="text-sm text-gray-600 hover:text-black transition-colors">
+            <button 
+              type="button" 
+              onClick={() => setForgotPasswordOpen(true)}
+              className="text-sm text-gray-600 hover:text-black transition-colors"
+            >
               Forgot password?
-            </a>
+            </button>
           </div>
           <Input 
             id="password"
@@ -211,6 +311,45 @@ const LoginForm: React.FC = () => {
       <div className="mt-8 text-center text-sm text-gray-600">
         <p>Don't have access? <a href="/#contact" className="text-black font-medium hover:underline">Contact us</a> to request investor credentials.</p>
       </div>
+      
+      {/* Forgot Password Dialog */}
+      <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>
+              Enter your email address below. We'll send you a link to reset your password.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleForgotPassword} className="space-y-4 py-2">
+            <div className="space-y-2">
+              <label htmlFor="reset-email" className="text-sm font-medium text-gray-700">
+                Email Address
+              </label>
+              <Input 
+                id="reset-email"
+                type="email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                placeholder="name@company.com"
+              />
+              {resetError && (
+                <p className="text-sm text-red-500 mt-1">{resetError}</p>
+              )}
+            </div>
+            
+            <DialogFooter className="mt-6">
+              <DialogClose asChild>
+                <Button variant="outline" type="button" disabled={isResetting}>Cancel</Button>
+              </DialogClose>
+              <Button type="submit" disabled={isResetting}>
+                {isResetting ? 'Sending...' : 'Send Reset Link'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 };
