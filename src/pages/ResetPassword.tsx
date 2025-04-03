@@ -23,6 +23,12 @@ const ResetPassword: React.FC = () => {
     const id = searchParams.get('id');
     setContactId(id);
     
+    if (!id) {
+      console.warn('No contact ID found in URL');
+    } else {
+      console.log('Contact ID found:', id);
+    }
+    
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
   }, [location]);
@@ -69,20 +75,29 @@ const ResetPassword: React.FC = () => {
     setIsLoading(true);
     
     try {
+      console.log('Submitting password reset for contact ID:', contactId);
+      
       // Submit to update endpoint with contactID and new password
       const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
+      const updateData = {
+        contactId: contactId,
+        string_ri__Password_c: password
+      };
+      
+      console.log('Sending password update with data:', updateData);
+      
       const updateResponse = await fetch(updateUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          contactId: contactId,
-          string_ri__Password_c: password
-        }),
+        body: JSON.stringify(updateData),
       });
       
       if (!updateResponse.ok) {
+        console.error('Password update failed with status:', updateResponse.status);
+        const errorText = await updateResponse.text();
+        console.error('Error response:', errorText);
         throw new Error('Failed to reset password');
       }
       

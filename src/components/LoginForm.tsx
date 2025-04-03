@@ -195,30 +195,40 @@ const LoginForm: React.FC = () => {
         inv.email && inv.email.toLowerCase() === resetEmail.toLowerCase()
       );
       
-      if (investor) {
-        // Submit to update endpoint with contactID and rie__Reset_Password__c = 1
-        const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
-        const updateResponse = await fetch(updateUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contactId: investor.id,
-            rie__Reset_Password__c: 1
-          }),
-        });
-        
-        if (!updateResponse.ok) {
-          throw new Error('Failed to request password reset');
-        }
-        
-        toast.success('Password reset email sent. Please check your inbox.');
-        setForgotPasswordOpen(false);
-        setResetEmail('');
-      } else {
+      if (!investor) {
         setResetError('Email not found. Please check your email address.');
+        return;
       }
+      
+      console.log('Found investor for password reset:', investor.id);
+      
+      // Submit to update endpoint with contactID and rie__Reset_Password__c = 1
+      const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
+      const updateData = {
+        contactId: investor.id,
+        rie__Reset_Password__c: 1
+      };
+      
+      console.log('Sending reset request with data:', updateData);
+      
+      const updateResponse = await fetch(updateUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+      
+      if (!updateResponse.ok) {
+        console.error('Reset request failed with status:', updateResponse.status);
+        const errorText = await updateResponse.text();
+        console.error('Error response:', errorText);
+        throw new Error('Failed to request password reset');
+      }
+      
+      toast.success('Password reset email sent. Please check your inbox.');
+      setForgotPasswordOpen(false);
+      setResetEmail('');
     } catch (error) {
       console.error('Password reset error:', error);
       setResetError('An error occurred. Please try again later.');
