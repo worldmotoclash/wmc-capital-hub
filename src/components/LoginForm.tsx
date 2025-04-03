@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -207,7 +206,8 @@ const LoginForm: React.FC = () => {
       const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
       const updateData = {
         contactId: investor.id,
-        rie__Reset_Password__c: "Yes"
+        rie__Reset_Password__c: "Yes",
+        sObj: "Contact" // Add the required sObj parameter
       };
       
       console.log('Sending reset request with data:', updateData);

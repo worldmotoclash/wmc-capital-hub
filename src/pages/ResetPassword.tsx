@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -82,7 +81,8 @@ const ResetPassword: React.FC = () => {
       const updateData = {
         contactId: contactId,
         text_Reset_Password__c: "",  // Clear the reset flag
-        string_ri__Password_c: password // Set the new password
+        string_ri__Password_c: password, // Set the new password
+        sObj: "Contact" // Add the required sObj parameter
       };
       
       console.log('Sending password update with data:', updateData);
