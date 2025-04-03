@@ -206,7 +206,7 @@ const LoginForm: React.FC = () => {
       const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
       const updateData = {
         contactId: investor.id,
-        rie__Reset_Password__c: "Yes",
+        text_Reset_Password__c: "Yes",
         sObj: "Contact" // Add the required sObj parameter
       };
       
