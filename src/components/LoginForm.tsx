@@ -30,7 +30,7 @@ const LoginForm: React.FC = () => {
   const [resetEmail, setResetEmail] = useState('');
   const [isResetting, setIsResetting] = useState(false);
   const [resetError, setResetError] = useState('');
-
+  
   const validateForm = (): boolean => {
     const newErrors: {email?: string; password?: string} = {};
     let isValid = true;
@@ -165,9 +165,11 @@ const LoginForm: React.FC = () => {
       // Fetch investor data to find the contact ID
       const apiUrl = `https://api.realintelligence.com/api/specific-investor-list.py?orgId=00D5e000000HEcP&campaignId=7014V000002lcY2&sandbox=False`;
       
+      console.log('Fetching investor data from:', apiUrl);
       const response = await fetch(apiUrl);
       
       if (!response.ok) {
+        console.error('Failed to fetch investor data with status:', response.status);
         throw new Error('Failed to fetch investor data');
       }
       
@@ -177,6 +179,7 @@ const LoginForm: React.FC = () => {
       if (contentType?.includes('xml')) {
         // Parse XML response
         const text = await response.text();
+        console.log('Received XML response:', text.substring(0, 200) + '...');
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(text, 'text/xml');
         const memberElements = xmlDoc.getElementsByTagName('member');
@@ -202,34 +205,72 @@ const LoginForm: React.FC = () => {
       
       console.log('Found investor for password reset:', investor.id);
       
-      // Submit to update endpoint with contactID and rie__Reset_Password__c = "Yes" instead of 1
-      const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
+      // Create the update data
       const updateData = {
         contactId: investor.id,
         text_Reset_Password__c: "Yes",
-        sObj: "Contact" // Add the required sObj parameter
+        sObj: "Contact"
       };
       
       console.log('Sending reset request with data:', updateData);
       
-      const updateResponse = await fetch(updateUrl, {
+      // Try as JSON
+      const updateResponse = await fetch('https://api.realintelligence.com/api/update-investor.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updateData),
+        mode: 'cors',
+      }).catch(error => {
+        console.error('JSON request failed with error:', error);
+        return null;
       });
       
-      if (!updateResponse.ok) {
+      if (updateResponse && updateResponse.ok) {
+        toast.success('Password reset email sent. Please check your inbox.');
+        setForgotPasswordOpen(false);
+        setResetEmail('');
+        return;
+      }
+      
+      if (updateResponse) {
         console.error('Reset request failed with status:', updateResponse.status);
         const errorText = await updateResponse.text();
         console.error('Error response:', errorText);
-        throw new Error('Failed to request password reset');
       }
       
-      toast.success('Password reset email sent. Please check your inbox.');
-      setForgotPasswordOpen(false);
-      setResetEmail('');
+      // If JSON approach failed, try URLEncoded approach
+      console.log('Trying URL encoded form data approach...');
+      const formData = new URLSearchParams();
+      formData.append('contactId', investor.id);
+      formData.append('text_Reset_Password__c', 'Yes');
+      formData.append('sObj', 'Contact');
+      
+      const formResponse = await fetch('https://api.realintelligence.com/api/update-investor.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString(),
+        mode: 'cors',
+      }).catch(error => {
+        console.error('Form request failed with error:', error);
+        return null;
+      });
+      
+      if (formResponse && formResponse.ok) {
+        toast.success('Password reset email sent. Please check your inbox.');
+        setForgotPasswordOpen(false);
+        setResetEmail('');
+      } else {
+        if (formResponse) {
+          console.error('Form reset request failed with status:', formResponse.status);
+          const errorText = await formResponse.text();
+          console.error('Form error response:', errorText);
+        }
+        throw new Error('Failed to request password reset. The server might be unavailable.');
+      }
     } catch (error) {
       console.error('Password reset error:', error);
       setResetError('An error occurred. Please try again later.');
