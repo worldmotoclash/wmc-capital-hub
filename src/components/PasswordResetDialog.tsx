@@ -95,11 +95,31 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
       
       console.log('Sending reset request with data:', resetData);
       
-      // Try with a direct server-side reset request instead of browser fetch
-      // This is a workaround for CORS issues
+      // Make the actual API call to update the password reset flag
+      const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
+      
+      const updateResponse = await fetch(updateUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(resetData),
+        mode: 'cors'
+      });
+      
+      if (!updateResponse.ok) {
+        console.error('Password reset request failed with status:', updateResponse.status);
+        const errorText = await updateResponse.text();
+        console.error('Error response:', errorText);
+        throw new Error('Failed to send password reset request');
+      }
+      
+      const updateResult = await updateResponse.text();
+      console.log('Password reset response:', updateResult);
+      
       setIsSuccess(true);
       toast.success(
-        'If your email exists in our system, you will receive password reset instructions shortly.',
+        'Password reset instructions have been sent to your email.',
         { duration: 5000 }
       );
       
