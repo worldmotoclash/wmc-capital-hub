@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -76,30 +77,35 @@ const ResetPassword: React.FC = () => {
     try {
       console.log('Submitting password reset for contact ID:', contactId);
       
-      // Submit to update endpoint with contactID and new password
-      const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
-      const updateData = {
-        contactId: contactId,
-        text_Reset_Password__c: "",  // Clear the reset flag
-        string_ri__Password_c: password, // Set the new password
-        sObj: "Contact" // Add the required sObj parameter
-      };
+      // Create FormData object for the password update
+      const formData = new FormData();
+      formData.append('contactId', contactId);
+      formData.append('text_Reset_Password__c', ''); // Clear the reset flag
+      formData.append('string_ri__Password_c', password); // Set the new password
+      formData.append('sObj', 'Contact'); // Add the required sObj parameter
       
-      console.log('Sending password update with data:', updateData);
+      console.log('Sending password update for contact ID:', contactId);
+      
+      // Submit to the correct update endpoint with FormData
+      const updateUrl = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/update-engine-contact.php';
       
       const updateResponse = await fetch(updateUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData),
+        body: formData, // Using FormData instead of JSON
       });
+      
+      const responseText = await updateResponse.text();
+      console.log('Password update response:', responseText);
       
       if (!updateResponse.ok) {
         console.error('Password update failed with status:', updateResponse.status);
-        const errorText = await updateResponse.text();
-        console.error('Error response:', errorText);
+        console.error('Error response:', responseText);
         throw new Error('Failed to reset password');
+      }
+      
+      // Check if the response indicates success (may vary based on API)
+      if (responseText.includes('error') || responseText.includes('Error')) {
+        throw new Error(`API returned error: ${responseText}`);
       }
       
       toast.success('Password has been reset successfully');

@@ -86,48 +86,41 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
 
       console.log('Found investor for password reset:', investor.id);
       
-      // CORS workaround - Instead of directly making the API call, we'll just log the request info
-      // and show a success message to the user. The server admin should enable CORS on their end.
-      console.log('Would send reset request with data:', {
-        contactId: investor.id,
-        text_Reset_Password__c: "Yes",
-        sObj: "Contact"
-      });
+      // Create FormData object for the password reset request
+      const formData = new FormData();
+      formData.append('contactId', investor.id);
+      formData.append('text_Reset_Password__c', 'Yes');
+      formData.append('sObj', 'Contact');
       
-      // For the actual implementation once CORS is fixed:
-      /*
-      const updateUrl = 'https://api.realintelligence.com/api/update-investor.php';
+      console.log('Sending reset request for contact ID:', investor.id);
+      
+      // Make the API call to request password reset using the correct endpoint
+      const updateUrl = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/update-engine-contact.php';
       
       const updateResponse = await fetch(updateUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contactId: investor.id,
-          text_Reset_Password__c: "Yes",
-          sObj: "Contact"
-        }),
+        body: formData, // Using FormData instead of JSON
       });
       
+      const responseText = await updateResponse.text();
+      console.log('Password reset response:', responseText);
+      
       if (!updateResponse.ok) {
-        const responseText = await updateResponse.text();
         console.error('Password reset request failed with status:', updateResponse.status);
         console.error('Error response:', responseText);
         throw new Error(`Failed to send password reset request: ${responseText}`);
       }
-      */
       
-      // Assuming success (in the interim until CORS is fixed)
+      // Check if the response indicates success (may vary based on API)
+      if (responseText.includes('error') || responseText.includes('Error')) {
+        throw new Error(`API returned error: ${responseText}`);
+      }
+      
       setIsSuccess(true);
       toast.success(
         'Password reset instructions have been sent to your email.',
         { duration: 5000 }
       );
-      
-      // Display a note about the CORS issue (for dev purposes)
-      console.warn('Note: Due to CORS restrictions, the actual API call cannot be made directly from the browser. ' +
-        'The server hosting api.realintelligence.com needs to include this application domain in its CORS allowed origins.');
       
       // Close dialog after showing success message
       setTimeout(() => {
@@ -142,9 +135,7 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
       
       if (error instanceof Error) {
         if (error.message.includes('Failed to fetch')) {
-          errorMsg = 'CORS error: The server does not allow requests from this domain. Please contact the server administrator to allow your domain in the CORS settings.';
-          console.error('CORS Issue: The API server at api.realintelligence.com needs to include ' + 
-            window.location.origin + ' in its allowed origins.');
+          errorMsg = 'Network error. Please check your internet connection and try again.';
         }
         
         console.error('Error details:', error.message);
