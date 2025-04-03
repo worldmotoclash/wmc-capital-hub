@@ -81,7 +81,8 @@ const ResetPassword: React.FC = () => {
       const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
       const updateData = {
         contactId: contactId,
-        string_ri__Password_c: password
+        text_Reset_Password__c: "",  // Clear the reset flag
+        string_ri__Password_c: password // Set the new password
       };
       
       console.log('Sending password update with data:', updateData);

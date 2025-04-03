@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -202,11 +203,11 @@ const LoginForm: React.FC = () => {
       
       console.log('Found investor for password reset:', investor.id);
       
-      // Submit to update endpoint with contactID and rie__Reset_Password__c = 1
+      // Submit to update endpoint with contactID and rie__Reset_Password__c = "Yes" instead of 1
       const updateUrl = `https://api.realintelligence.com/api/update-investor.php`;
       const updateData = {
         contactId: investor.id,
-        rie__Reset_Password__c: 1
+        rie__Reset_Password__c: "Yes"
       };
       
       console.log('Sending reset request with data:', updateData);
