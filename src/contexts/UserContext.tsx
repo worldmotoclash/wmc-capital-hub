@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Define the user type based on the XML feed structure
@@ -10,6 +9,7 @@ export interface User {
   phone?: string;
   mobile?: string;
   mailingstreet?: string;
+  ipaddress?: string;
 }
 
 interface UserContextType {

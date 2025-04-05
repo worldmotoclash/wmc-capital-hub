@@ -2,6 +2,18 @@
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
+// Function to get the user's current IP address
+export const getCurrentIpAddress = async (): Promise<string> => {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    return data.ip;
+  } catch (error) {
+    console.error('Error fetching IP address:', error);
+    return '';
+  }
+};
+
 // Fetch investor data from the API
 export const fetchInvestorData = async () => {
   const apiUrl = `https://api.realintelligence.com/api/specific-investor-list.py?orgId=00D5e000000HEcP&campaignId=7014V000002lcY2&sandbox=False`;
@@ -30,11 +42,79 @@ export const fetchInvestorData = async () => {
       status: member.getElementsByTagName('status')[0]?.textContent || '',
       phone: member.getElementsByTagName('phone')[0]?.textContent || '',
       mobile: member.getElementsByTagName('mobile')[0]?.textContent || '',
-      mailingstreet: member.getElementsByTagName('mailingstreet')[0]?.textContent || ''
+      mailingstreet: member.getElementsByTagName('mailingstreet')[0]?.textContent || '',
+      ipaddress: member.getElementsByTagName('ipaddress')[0]?.textContent || ''
     }));
   } else {
     // Assume JSON response
     return await response.json();
+  }
+};
+
+// Send a verification email when IP doesn't match
+export const sendVerificationEmail = async (contactId: string): Promise<boolean> => {
+  try {
+    console.log('Sending verification email for contact ID:', contactId);
+    
+    // Create a hidden iframe element
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    
+    // Set up the tracking endpoint
+    const verificationEndpoint = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/update-engine-contact.php";
+    
+    // Wait for iframe to load
+    await new Promise(resolve => {
+      iframe.onload = resolve;
+      iframe.src = 'about:blank';
+    });
+    
+    // Get the iframe document
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    
+    if (iframeDoc) {
+      // Create a form in the iframe
+      const form = iframeDoc.createElement('form');
+      form.method = 'POST';
+      form.action = verificationEndpoint;
+      form.enctype = 'multipart/form-data';
+      
+      // Add form fields
+      const fields = {
+        'sObj': 'Contact',
+        'id_Contact': contactId,
+        'text_IP_Verification_Required__c': 'Yes'
+      };
+      
+      // Add each field to the form
+      Object.entries(fields).forEach(([name, value]) => {
+        const input = iframeDoc.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      });
+      
+      // Add form to iframe document and submit it
+      iframeDoc.body.appendChild(form);
+      console.log('Submitting verification email request via iframe');
+      form.submit();
+      
+      // Remove iframe after some time to allow the request to complete
+      setTimeout(() => {
+        document.body.removeChild(iframe);
+        console.log('Verification request iframe removed');
+      }, 5000);
+      
+      return true;
+    } else {
+      console.error('Could not access iframe document');
+      return false;
+    }
+  } catch (error) {
+    console.error('Verification email error:', error);
+    return false;
   }
 };
 
@@ -122,6 +202,24 @@ export const authenticateUser = async (email: string, password: string): Promise
       
       // Check if password matches
       if (investor.ripassword && password === investor.ripassword.toString()) {
+        // If the investor has an IP address set, validate it
+        if (investor.ipaddress && investor.ipaddress.trim() !== '') {
+          console.log(`IP validation required. Stored IP: ${investor.ipaddress}`);
+          
+          // Get the user's current IP address
+          const currentIp = await getCurrentIpAddress();
+          console.log(`User's current IP: ${currentIp}`);
+          
+          // If IPs don't match, send verification email and deny access
+          if (currentIp && currentIp !== investor.ipaddress) {
+            console.log('IP mismatch detected. Sending verification email.');
+            await sendVerificationEmail(investor.id);
+            
+            toast.error('Access denied: Your IP address has changed. A verification email has been sent to confirm your identity.');
+            return null;
+          }
+        }
+        
         // Return user data
         const userData: User = {
           id: investor.id,
@@ -130,7 +228,8 @@ export const authenticateUser = async (email: string, password: string): Promise
           status: investor.status,
           phone: investor.phone,
           mobile: investor.mobile,
-          mailingstreet: investor.mailingstreet
+          mailingstreet: investor.mailingstreet,
+          ipaddress: investor.ipaddress
         };
         
         // Track the successful login

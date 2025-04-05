@@ -16,6 +16,7 @@ const LoginFormComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{email?: string; password?: string}>({});
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+  const [ipVerificationSent, setIpVerificationSent] = useState(false);
   
   const navigate = useNavigate();
   const { setUser } = useUser();
@@ -32,6 +33,7 @@ const LoginFormComponent: React.FC = () => {
     }
     
     setIsLoading(true);
+    setIpVerificationSent(false);
     
     try {
       const userData = await authenticateUser(email, password);
@@ -40,6 +42,11 @@ const LoginFormComponent: React.FC = () => {
         setUser(userData);
         toast.success('Login successful');
         navigate('/dashboard');
+      } else {
+        // Check if this was likely an IP verification issue
+        if (email && password.length >= 6) {
+          setIpVerificationSent(true);
+        }
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -62,6 +69,17 @@ const LoginFormComponent: React.FC = () => {
           Sign in to access exclusive investment materials
         </p>
       </div>
+      
+      {ipVerificationSent ? (
+        <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg mb-6">
+          <h3 className="font-medium text-amber-800 mb-2">Verification Required</h3>
+          <p className="text-amber-700 text-sm">
+            We detected a login attempt from a new location. For your security, we've sent a verification 
+            email to your registered email address. Please check your inbox and follow the verification 
+            instructions.
+          </p>
+        </div>
+      ) : null}
       
       <LoginFormFields 
         email={email}
