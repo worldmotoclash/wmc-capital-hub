@@ -12,7 +12,7 @@ export const requestPasswordReset = async (contactId: string): Promise<boolean> 
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
       
-      // Define the endpoint for the password reset request
+      // Define the full endpoint URL for the password reset request
       const updateUrl = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/update-engine-contact.php';
       
       // Wait for iframe to load
@@ -25,10 +25,11 @@ export const requestPasswordReset = async (contactId: string): Promise<boolean> 
           const form = iframeDoc.createElement('form');
           form.method = 'POST';
           form.action = updateUrl;
+          form.enctype = 'multipart/form-data'; // Set the correct form encoding
           
-          // Add form fields
+          // Add form fields with the correct field names
           const fields = {
-            'contactId': contactId,
+            'id_Contact': contactId,
             'text_Reset_Password__c': 'Yes',
             'sObj': 'Contact'
           };
@@ -44,7 +45,7 @@ export const requestPasswordReset = async (contactId: string): Promise<boolean> 
           
           // Add form to iframe document and submit it
           iframeDoc.body.appendChild(form);
-          console.log('Submitting password reset request via iframe');
+          console.log('Submitting password reset request via iframe with fields:', fields);
           
           // Track when iframe reloads after form submission
           iframe.onload = () => {
@@ -89,7 +90,7 @@ export const setNewPassword = async (contactId: string, password: string): Promi
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
       
-      // Define the endpoint for the password update
+      // Define the full endpoint URL for the password update
       const updateUrl = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/update-engine-contact.php';
       
       // Wait for iframe to load
@@ -102,10 +103,11 @@ export const setNewPassword = async (contactId: string, password: string): Promi
           const form = iframeDoc.createElement('form');
           form.method = 'POST';
           form.action = updateUrl;
+          form.enctype = 'multipart/form-data'; // Set the correct form encoding
           
-          // Add form fields
+          // Add form fields with the correct field names
           const fields = {
-            'contactId': contactId,
+            'id_Contact': contactId,
             'text_Reset_Password__c': '', // Clear the reset flag
             'string_ri__Password__c': password,
             'sObj': 'Contact'
@@ -122,7 +124,7 @@ export const setNewPassword = async (contactId: string, password: string): Promi
           
           // Add form to iframe document and submit it
           iframeDoc.body.appendChild(form);
-          console.log('Submitting password update via iframe');
+          console.log('Submitting password update via iframe with fields:', fields);
           
           // Track when iframe reloads after form submission
           iframe.onload = () => {

@@ -66,6 +66,7 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
       console.log('Found investor for password reset:', investor.id);
       
       // Use the iframe-based approach to request password reset
+      // Note: We're directly passing the ID from the investor data
       const success = await requestPasswordReset(investor.id);
       
       if (success) {
