@@ -119,9 +119,9 @@ export const sendVerificationEmail = async (contactId: string): Promise<boolean>
 };
 
 // Track login activity using an iframe to bypass CORS restrictions
-export const trackLogin = async (contactId: string) => {
+export const trackLogin = async (contactId: string, action: string = 'Login') => {
   try {
-    console.log('Tracking login for contact ID:', contactId);
+    console.log(`Tracking ${action} for contact ID:`, contactId);
     
     // Create a hidden iframe element
     const trackingIframe = document.createElement('iframe');
@@ -151,7 +151,7 @@ export const trackLogin = async (contactId: string) => {
         'sObj': 'ri__Portal__c',
         'string_ri__Contact__c': contactId,
         'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
-        'text_ri__Action__c': 'Login'
+        'text_ri__Action__c': action
       };
       
       // Add each field to the form
@@ -165,21 +165,21 @@ export const trackLogin = async (contactId: string) => {
       
       // Add form to iframe document and submit it
       iframeDoc.body.appendChild(form);
-      console.log('Submitting login tracking form via iframe');
+      console.log(`Submitting ${action} tracking form via iframe`);
       form.submit();
       
       // Remove iframe after some time to allow the request to complete
       setTimeout(() => {
         document.body.removeChild(trackingIframe);
-        console.log('Login tracking iframe removed');
+        console.log(`${action} tracking iframe removed`);
       }, 5000);
     } else {
       console.error('Could not access iframe document');
     }
   } catch (error) {
     // We don't want to disrupt the user experience if tracking fails
-    console.error('Login tracking error:', error);
-    console.log('Attempted to track login, but encountered an error');
+    console.error('Tracking error:', error);
+    console.log(`Attempted to track ${action}, but encountered an error`);
   }
 };
 
@@ -214,6 +214,9 @@ export const authenticateUser = async (email: string, password: string): Promise
           if (currentIp && currentIp !== investor.ipaddress) {
             console.log('IP mismatch detected. Sending verification email.');
             await sendVerificationEmail(investor.id);
+            
+            // Also track the IP mismatch event
+            await trackLogin(investor.id, "IP Address Mismatch");
             
             toast.error('Access denied: Your IP address has changed. A verification email has been sent to confirm your identity.');
             return null;
