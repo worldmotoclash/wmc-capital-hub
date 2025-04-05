@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 const Dashboard: React.FC = () => {
   const { user, setUser } = useUser();
   const navigate = useNavigate();
+  const isSecuredInvestor = user?.status === "Secured Investor";
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -66,7 +67,12 @@ const Dashboard: React.FC = () => {
           transition={{ duration: 0.6 }}
         >
           <h1 className="text-3xl font-bold mb-2">Investor Dashboard</h1>
-          <p className="text-gray-600 mb-8">Welcome back {user.name}, access your exclusive investor information below.</p>
+          <p className="text-gray-600 mb-8">
+            Welcome back {user.name}, 
+            {isSecuredInvestor 
+              ? " access your exclusive investment information below." 
+              : " here's your potential investor information."}
+          </p>
         </motion.div>
         
         <motion.div
@@ -78,7 +84,7 @@ const Dashboard: React.FC = () => {
             <TabsList className="bg-white border border-gray-200">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="documents">Documents</TabsTrigger>
-              <TabsTrigger value="financials">Financials</TabsTrigger>
+              {isSecuredInvestor && <TabsTrigger value="financials">Financials</TabsTrigger>}
               <TabsTrigger value="events">Events</TabsTrigger>
               <TabsTrigger value="updates">Updates</TabsTrigger>
             </TabsList>
@@ -136,24 +142,26 @@ const Dashboard: React.FC = () => {
                 </Card>
               </div>
               
-              <div className="grid grid-cols-1 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Investment Performance</CardTitle>
-                    <CardDescription>Track the growth of your investment over time</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[300px] flex items-center justify-center border border-dashed border-gray-200 rounded-md">
-                      <div className="text-center">
-                        <div className="mb-2 text-gray-500">Performance Chart</div>
-                        <div className="text-sm text-gray-500">
-                          Interactive chart showing investment growth would be displayed here
+              {isSecuredInvestor && (
+                <div className="grid grid-cols-1 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Investment Performance</CardTitle>
+                      <CardDescription>Track the growth of your investment over time</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="h-[300px] flex items-center justify-center border border-dashed border-gray-200 rounded-md">
+                        <div className="text-center">
+                          <div className="mb-2 text-gray-500">Performance Chart</div>
+                          <div className="text-sm text-gray-500">
+                            Interactive chart showing investment growth would be displayed here
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
@@ -288,22 +296,24 @@ const Dashboard: React.FC = () => {
               </Card>
             </TabsContent>
             
-            <TabsContent value="financials">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Financial Information</CardTitle>
-                  <CardDescription>Detailed financial data and reports</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <div className="mb-4 text-gray-500">Financials Tab Content</div>
-                    <div className="text-sm text-gray-500">
-                      Financial statements, projections, and analysis would be displayed here
+            {isSecuredInvestor && (
+              <TabsContent value="financials">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Financial Information</CardTitle>
+                    <CardDescription>Detailed financial data and reports</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-8">
+                      <div className="mb-4 text-gray-500">Financials Tab Content</div>
+                      <div className="text-sm text-gray-500">
+                        Financial statements, projections, and analysis would be displayed here
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
             
             <TabsContent value="events">
               <Card>
