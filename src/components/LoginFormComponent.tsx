@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -78,16 +77,30 @@ const LoginFormComponent: React.FC = () => {
         toast.success('Google login successful');
         navigate('/dashboard');
       } else {
-        // Location info should be handled by the authenticateWithGoogle function
-        // which calls the standard authenticateUser function
-        const ip = await getCurrentIpAddress();
-        const location = await getIPLocation(ip);
-        setIpVerificationSent(true);
-        setLocationInfo(location);
+        // If authentication returned null but no error was thrown, it's likely an IP verification issue
+        try {
+          const ip = await getCurrentIpAddress();
+          const location = await getIPLocation(ip);
+          setIpVerificationSent(true);
+          setLocationInfo(location);
+        } catch (error) {
+          console.error('Failed to get location information:', error);
+          toast.error('Authentication failed. Please try logging in with your email and password.');
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Google login error:', error);
-      toast.error('An error occurred during Google login. Please try again.');
+      
+      // Provide a more helpful error message
+      if (error.message && error.message.includes('Authorization Error')) {
+        toast.error('Google authentication failed. The OAuth client configuration may be incorrect or your account was not approved.');
+      } else if (error.message && error.message.includes('popup_closed')) {
+        toast.error('Google login was canceled. Please try again.');
+      } else if (error.message && error.message.includes('Email not found')) {
+        toast.error('Your Google account email is not registered as an approved investor. Please contact us for access.');
+      } else {
+        toast.error(`Google login failed: ${error.message || 'Unknown error'}`);
+      }
     } finally {
       setIsGoogleLoading(false);
     }

@@ -65,10 +65,15 @@ export const authenticateWithGoogle = async (): Promise<User | null> => {
             console.error('Google authentication error:', error);
             reject(error);
           }
+        },
+        error_callback: (error: any) => {
+          console.error('Google OAuth error:', error);
+          reject(new Error('Google authentication failed. Please try again.'));
         }
       });
 
-      client.requestAccessToken();
+      // Request access token with prompt to select account
+      client.requestAccessToken({ prompt: 'select_account' });
     });
   } catch (error) {
     console.error('Google authentication initialization error:', error);
