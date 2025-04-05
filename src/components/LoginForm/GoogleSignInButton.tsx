@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Google } from 'lucide-react';
+import { Chrome } from 'lucide-react';  // Changed from 'Google' to 'Chrome'
 
 interface GoogleSignInButtonProps {
   onClick: () => void;
@@ -17,7 +17,7 @@ const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({ onClick, isLoad
       disabled={isLoading}
       className="w-full flex items-center justify-center gap-2 border-gray-300 hover:bg-gray-50"
     >
-      <Google size={18} />
+      <Chrome size={18} />
       {isLoading ? 'Connecting...' : 'Sign in with Google'}
     </Button>
   );
