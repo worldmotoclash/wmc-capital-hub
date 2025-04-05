@@ -7,12 +7,14 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import AnimatedLogo from '@/components/AnimatedLogo';
 import { Link } from 'react-router-dom';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const ResetPassword: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{password?: string; confirmPassword?: string}>({});
+  const [generalError, setGeneralError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const [contactId, setContactId] = useState<string | null>(null);
@@ -61,6 +63,7 @@ const ResetPassword: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setGeneralError(null);
     
     if (!validateForm()) {
       toast.error('Please correct the errors in the form');
@@ -81,7 +84,7 @@ const ResetPassword: React.FC = () => {
       const formData = new FormData();
       formData.append('contactId', contactId);
       formData.append('text_Reset_Password__c', ''); // Clear the reset flag
-      formData.append('string_ri__Password_c', password); // Set the new password
+      formData.append('string_ri__Password__c', password); // Use correct field name
       formData.append('sObj', 'Contact'); // Add the required sObj parameter
       
       console.log('Sending password update for contact ID:', contactId);
@@ -91,28 +94,38 @@ const ResetPassword: React.FC = () => {
       
       const updateResponse = await fetch(updateUrl, {
         method: 'POST',
-        body: formData, // Using FormData instead of JSON
+        body: formData,
+        headers: {
+          // Remove Content-Type header to let the browser set it properly with boundary for FormData
+          'Accept': '*/*',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       });
       
       const responseText = await updateResponse.text();
       console.log('Password update response:', responseText);
       
-      if (!updateResponse.ok) {
-        console.error('Password update failed with status:', updateResponse.status);
-        console.error('Error response:', responseText);
-        throw new Error('Failed to reset password');
-      }
-      
-      // Check if the response indicates success (may vary based on API)
-      if (responseText.includes('error') || responseText.includes('Error')) {
-        throw new Error(`API returned error: ${responseText}`);
+      // Check if the response indicates success or error
+      if (responseText.includes('ERROR') || responseText.includes('Error') || !updateResponse.ok) {
+        console.error('Password update failed with response:', responseText);
+        throw new Error('Failed to reset password. Please try again later.');
       }
       
       toast.success('Password has been reset successfully');
-      navigate('/login');
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
     } catch (error) {
       console.error('Password reset error:', error);
-      toast.error('An error occurred while resetting your password. Please try again.');
+      
+      let errorMsg = 'An error occurred while resetting your password. Please try again.';
+      
+      if (error instanceof Error) {
+        errorMsg = error.message;
+      }
+      
+      setGeneralError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -145,6 +158,12 @@ const ResetPassword: React.FC = () => {
               Enter a new password for your account
             </p>
           </div>
+          
+          {generalError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>{generalError}</AlertDescription>
+            </Alert>
+          )}
           
           {!contactId ? (
             <div className="text-center py-6">

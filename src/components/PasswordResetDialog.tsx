@@ -99,21 +99,21 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
       
       const updateResponse = await fetch(updateUrl, {
         method: 'POST',
-        body: formData, // Using FormData instead of JSON
+        body: formData,
+        headers: {
+          // Remove Content-Type header to let the browser set it properly with boundary for FormData
+          'Accept': '*/*',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       });
       
       const responseText = await updateResponse.text();
       console.log('Password reset response:', responseText);
       
-      if (!updateResponse.ok) {
-        console.error('Password reset request failed with status:', updateResponse.status);
-        console.error('Error response:', responseText);
-        throw new Error(`Failed to send password reset request: ${responseText}`);
-      }
-      
-      // Check if the response indicates success (may vary based on API)
-      if (responseText.includes('error') || responseText.includes('Error')) {
-        throw new Error(`API returned error: ${responseText}`);
+      // Check if the response indicates success by checking for error keywords
+      if (responseText.includes('ERROR') || responseText.includes('Error') || !updateResponse.ok) {
+        console.error('Password reset request failed with response:', responseText);
+        throw new Error('Failed to send password reset request. Please try again later.');
       }
       
       setIsSuccess(true);
@@ -134,10 +134,7 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
       let errorMsg = 'An error occurred while processing your request.';
       
       if (error instanceof Error) {
-        if (error.message.includes('Failed to fetch')) {
-          errorMsg = 'Network error. Please check your internet connection and try again.';
-        }
-        
+        errorMsg = error.message;
         console.error('Error details:', error.message);
       }
       
