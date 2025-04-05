@@ -2,6 +2,9 @@
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
+// Cache duration in milliseconds (24 hours)
+const IP_CACHE_DURATION = 24 * 60 * 60 * 1000;
+
 // Function to get the user's current IP address
 export const getCurrentIpAddress = async (): Promise<string> => {
   try {
@@ -11,6 +14,64 @@ export const getCurrentIpAddress = async (): Promise<string> => {
   } catch (error) {
     console.error('Error fetching IP address:', error);
     return '';
+  }
+};
+
+// Function to get location information from IP address with caching
+interface IPLocation {
+  country: string;
+  city: string;
+  timestamp: number;
+}
+
+export const getIPLocation = async (ip: string): Promise<{country: string, city: string}> => {
+  try {
+    // Check if we have cached data
+    const cachedData = localStorage.getItem(`ip_location_${ip}`);
+    
+    if (cachedData) {
+      const parsedData: IPLocation = JSON.parse(cachedData);
+      const now = new Date().getTime();
+      
+      // If cache isn't expired, use it
+      if (now - parsedData.timestamp < IP_CACHE_DURATION) {
+        console.log('Using cached IP location data');
+        return {
+          country: parsedData.country,
+          city: parsedData.city
+        };
+      }
+    }
+    
+    // Fetch new data from free IP API
+    console.log('Fetching IP location data from API');
+    const response = await fetch(`http://ip-api.com/json/${ip}?fields=country,city`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch IP location data');
+    }
+    
+    const data = await response.json();
+    
+    // Cache the result
+    const locationData: IPLocation = {
+      country: data.country || 'Unknown',
+      city: data.city || 'Unknown',
+      timestamp: new Date().getTime()
+    };
+    
+    localStorage.setItem(`ip_location_${ip}`, JSON.stringify(locationData));
+    
+    return {
+      country: locationData.country,
+      city: locationData.city
+    };
+  } catch (error) {
+    console.error('Error fetching IP location:', error);
+    return {
+      country: 'Unknown',
+      city: 'Unknown'
+    };
   }
 };
 
@@ -52,7 +113,7 @@ export const fetchInvestorData = async () => {
 };
 
 // Send a verification email when IP doesn't match
-export const sendVerificationEmail = async (contactId: string): Promise<boolean> => {
+export const sendVerificationEmail = async (contactId: string, ipInfo?: {ip: string, country: string, city: string}): Promise<boolean> => {
   try {
     console.log('Sending verification email for contact ID:', contactId);
     
@@ -81,11 +142,18 @@ export const sendVerificationEmail = async (contactId: string): Promise<boolean>
       form.enctype = 'multipart/form-data';
       
       // Add form fields
-      const fields = {
+      const fields: Record<string, string> = {
         'sObj': 'Contact',
         'id_Contact': contactId,
         'text_IP_Verification_Required__c': 'Yes'
       };
+      
+      // Add location information if available
+      if (ipInfo) {
+        fields['text_New_Login_IP__c'] = ipInfo.ip;
+        fields['text_New_Login_Country__c'] = ipInfo.country;
+        fields['text_New_Login_City__c'] = ipInfo.city;
+      }
       
       // Add each field to the form
       Object.entries(fields).forEach(([name, value]) => {
@@ -127,6 +195,10 @@ export const trackLogin = async (contactId: string, action: string = 'Login') =>
     const currentIp = await getCurrentIpAddress();
     console.log(`Current IP address for tracking: ${currentIp}`);
     
+    // Get location data
+    const locationData = await getIPLocation(currentIp);
+    console.log(`Location data: Country - ${locationData.country}, City - ${locationData.city}`);
+    
     // Create a hidden iframe element
     const trackingIframe = document.createElement('iframe');
     trackingIframe.style.display = 'none';
@@ -150,13 +222,15 @@ export const trackLogin = async (contactId: string, action: string = 'Login') =>
       form.method = 'POST';
       form.action = trackingEndpoint;
       
-      // Add form fields
+      // Add form fields with updated field names
       const fields = {
         'sObj': 'ri__Portal__c',
         'string_ri__Contact__c': contactId,
         'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
         'text_ri__Action__c': action,
-        'text_IP_Address__c': currentIp // Add the IP address field
+        'text_ri__IP_Address__c': currentIp, // Updated field name
+        'text_ri__Login_Country__c': locationData.country, // New field for country
+        'text_ri__Login_City__c': locationData.city // New field for city
       };
       
       // Add each field to the form
@@ -170,7 +244,7 @@ export const trackLogin = async (contactId: string, action: string = 'Login') =>
       
       // Add form to iframe document and submit it
       iframeDoc.body.appendChild(form);
-      console.log(`Submitting ${action} tracking form via iframe with IP: ${currentIp}`);
+      console.log(`Submitting ${action} tracking form via iframe with IP: ${currentIp}, Country: ${locationData.country}, City: ${locationData.city}`);
       form.submit();
       
       // Remove iframe after some time to allow the request to complete
@@ -218,12 +292,21 @@ export const authenticateUser = async (email: string, password: string): Promise
           // If IPs don't match, send verification email and deny access
           if (currentIp && currentIp !== investor.ipaddress) {
             console.log('IP mismatch detected. Sending verification email.');
-            await sendVerificationEmail(investor.id);
+            
+            // Get location information for the new IP
+            const locationData = await getIPLocation(currentIp);
+            
+            // Send verification email with location data
+            await sendVerificationEmail(investor.id, {
+              ip: currentIp,
+              country: locationData.country,
+              city: locationData.city
+            });
             
             // Also track the IP mismatch event
             await trackLogin(investor.id, "IP Address Mismatch");
             
-            toast.error('Access denied: Your IP address has changed. A verification email has been sent to confirm your identity.');
+            toast.error(`Access denied: Your IP address has changed. A verification email has been sent to confirm your identity. Location detected: ${locationData.city}, ${locationData.country}`);
             return null;
           }
         }

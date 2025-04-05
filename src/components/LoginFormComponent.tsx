@@ -72,11 +72,11 @@ const LoginFormComponent: React.FC = () => {
       
       {ipVerificationSent ? (
         <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg mb-6">
-          <h3 className="font-medium text-amber-800 mb-2">Verification Required</h3>
+          <h3 className="font-medium text-amber-800 mb-2">Location Verification Required</h3>
           <p className="text-amber-700 text-sm">
             We detected a login attempt from a new location. For your security, we've sent a verification 
-            email to your registered email address. Please check your inbox and follow the verification 
-            instructions.
+            email to your registered email address with details about the new location. 
+            Please check your inbox and follow the verification instructions.
           </p>
         </div>
       ) : null}
