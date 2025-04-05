@@ -21,6 +21,47 @@ const LoginFormComponent: React.FC = () => {
   const navigate = useNavigate();
   const { setUser } = useUser();
   
+  // Track login activity by posting to the specified endpoint
+  const trackLogin = async (contactId: string) => {
+    try {
+      const trackingEndpoint = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+      
+      const formData = new FormData();
+      formData.append('sObj', 'ri__Portal__c');
+      formData.append('string_ri__Contact__c', contactId);
+      formData.append('text_ri__Login_URL__c', 'https://invest.worldmotoclash.com');
+      formData.append('text_ri__Action__c', 'Login');
+      
+      console.log('Tracking login for contact ID:', contactId);
+      console.log('Sending tracking data:', Object.fromEntries(formData.entries()));
+      
+      const response = await fetch(trackingEndpoint, {
+        method: 'POST',
+        body: formData,
+        mode: 'cors',
+        credentials: 'same-origin',
+        headers: {
+          'Accept': '*/*',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+      
+      const responseText = await response.text();
+      console.log('Login tracking response:', responseText);
+      
+      if (!response.ok) {
+        console.warn('Login tracking request returned non-OK status:', response.status);
+      }
+      
+    } catch (error) {
+      // We don't want to disrupt the user experience if tracking fails
+      console.error('Login tracking error:', error);
+      
+      // Log the attempt anyway for debugging
+      console.log('Attempted to track login, but encountered an error');
+    }
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -95,6 +136,9 @@ const LoginFormComponent: React.FC = () => {
           };
           
           setUser(userData);
+          
+          // Track the successful login
+          await trackLogin(investor.id);
           
           toast.success('Login successful');
           navigate('/dashboard');
