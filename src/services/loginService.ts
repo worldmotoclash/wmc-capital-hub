@@ -290,7 +290,7 @@ export const trackLogin = async (contactId: string, action: string = 'Login') =>
 };
 
 // Authenticate user
-export const authenticateUser = async (email: string, password: string): Promise<User | null> => {
+export const authenticateUser = async (email: string, password: string, isGoogleAuth: boolean = false): Promise<User | null> => {
   try {
     const data = await fetchInvestorData();
     
@@ -304,10 +304,10 @@ export const authenticateUser = async (email: string, password: string): Promise
     console.log('Found investor:', investor);
     
     if (investor) {
-      console.log(`Password comparison: '${password}' vs '${investor.ripassword}'`);
+      // For Google Auth, we skip password check
+      const isValidPassword = isGoogleAuth || (investor.ripassword && password === investor.ripassword.toString());
       
-      // Check if password matches
-      if (investor.ripassword && password === investor.ripassword.toString()) {
+      if (isValidPassword) {
         // If the investor has an IP address set, validate it
         if (investor.ipaddress && investor.ipaddress.trim() !== '') {
           console.log(`IP validation required. Stored IP: ${investor.ipaddress}`);
@@ -331,7 +331,7 @@ export const authenticateUser = async (email: string, password: string): Promise
             });
             
             // Also track the IP mismatch event
-            await trackLogin(investor.id, "IP Address Mismatch");
+            await trackLogin(investor.id, isGoogleAuth ? "Google Auth IP Mismatch" : "IP Address Mismatch");
             
             toast.error(`Access denied: Your IP address has changed. A verification email has been sent to confirm your identity. Location detected: ${locationData.city}, ${locationData.country}`);
             return null;
@@ -351,7 +351,7 @@ export const authenticateUser = async (email: string, password: string): Promise
         };
         
         // Track the successful login
-        await trackLogin(investor.id);
+        await trackLogin(investor.id, isGoogleAuth ? "Google Auth Login" : "Login");
         
         return userData;
       } else {

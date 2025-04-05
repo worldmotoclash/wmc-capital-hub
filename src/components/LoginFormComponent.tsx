@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -8,12 +8,14 @@ import PasswordResetDialog from './PasswordResetDialog';
 import { validateLoginForm } from '@/utils/loginValidation';
 import LoginFormFields from './LoginForm/LoginFormFields';
 import { authenticateUser, getCurrentIpAddress, getIPLocation } from '@/services/loginService';
+import { authenticateWithGoogle } from '@/services/googleAuthService';
 
 const LoginFormComponent: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errors, setErrors] = useState<{email?: string; password?: string}>({});
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [ipVerificationSent, setIpVerificationSent] = useState(false);
@@ -63,6 +65,34 @@ const LoginFormComponent: React.FC = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    setIpVerificationSent(false);
+    setLocationInfo(null);
+    
+    try {
+      const userData = await authenticateWithGoogle();
+      
+      if (userData) {
+        setUser(userData);
+        toast.success('Google login successful');
+        navigate('/dashboard');
+      } else {
+        // Location info should be handled by the authenticateWithGoogle function
+        // which calls the standard authenticateUser function
+        const ip = await getCurrentIpAddress();
+        const location = await getIPLocation(ip);
+        setIpVerificationSent(true);
+        setLocationInfo(location);
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      toast.error('An error occurred during Google login. Please try again.');
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -101,6 +131,8 @@ const LoginFormComponent: React.FC = () => {
         isLoading={isLoading}
         onSubmit={handleSubmit}
         onForgotPassword={() => setForgotPasswordOpen(true)}
+        onGoogleSignIn={handleGoogleSignIn}
+        isGoogleLoading={isGoogleLoading}
       />
       
       <div className="mt-8 text-center text-sm text-gray-600">

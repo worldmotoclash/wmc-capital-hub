@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import GoogleSignInButton from './GoogleSignInButton';
 
 interface LoginFormFieldsProps {
   email: string;
@@ -15,6 +16,8 @@ interface LoginFormFieldsProps {
   isLoading: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onForgotPassword: () => void;
+  onGoogleSignIn: () => void;
+  isGoogleLoading?: boolean;
 }
 
 const LoginFormFields: React.FC<LoginFormFieldsProps> = ({
@@ -27,7 +30,9 @@ const LoginFormFields: React.FC<LoginFormFieldsProps> = ({
   errors,
   isLoading,
   onSubmit,
-  onForgotPassword
+  onForgotPassword,
+  onGoogleSignIn,
+  isGoogleLoading = false
 }) => {
   return (
     <form onSubmit={onSubmit} className="space-y-6">
@@ -95,6 +100,20 @@ const LoginFormFields: React.FC<LoginFormFieldsProps> = ({
       >
         {isLoading ? 'Signing in...' : 'Sign In'}
       </Button>
+
+      <div className="relative my-4">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">Or continue with</span>
+        </div>
+      </div>
+
+      <GoogleSignInButton 
+        onClick={onGoogleSignIn} 
+        isLoading={isGoogleLoading} 
+      />
     </form>
   );
 };
