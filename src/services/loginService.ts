@@ -123,6 +123,10 @@ export const trackLogin = async (contactId: string, action: string = 'Login') =>
   try {
     console.log(`Tracking ${action} for contact ID:`, contactId);
     
+    // Get the current IP address
+    const currentIp = await getCurrentIpAddress();
+    console.log(`Current IP address for tracking: ${currentIp}`);
+    
     // Create a hidden iframe element
     const trackingIframe = document.createElement('iframe');
     trackingIframe.style.display = 'none';
@@ -151,7 +155,8 @@ export const trackLogin = async (contactId: string, action: string = 'Login') =>
         'sObj': 'ri__Portal__c',
         'string_ri__Contact__c': contactId,
         'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
-        'text_ri__Action__c': action
+        'text_ri__Action__c': action,
+        'text_IP_Address__c': currentIp // Add the IP address field
       };
       
       // Add each field to the form
@@ -159,13 +164,13 @@ export const trackLogin = async (contactId: string, action: string = 'Login') =>
         const input = iframeDoc.createElement('input');
         input.type = 'hidden';
         input.name = name;
-        input.value = value;
+        input.value = value as string;
         form.appendChild(input);
       });
       
       // Add form to iframe document and submit it
       iframeDoc.body.appendChild(form);
-      console.log(`Submitting ${action} tracking form via iframe`);
+      console.log(`Submitting ${action} tracking form via iframe with IP: ${currentIp}`);
       form.submit();
       
       // Remove iframe after some time to allow the request to complete
