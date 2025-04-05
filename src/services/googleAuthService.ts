@@ -1,4 +1,3 @@
-
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { authenticateUser, getCurrentIpAddress, getIPLocation } from './loginService';
@@ -29,8 +28,7 @@ export const authenticateWithGoogle = async (): Promise<User | null> => {
     await initializeGoogleAuth();
 
     return new Promise((resolve, reject) => {
-      // IMPORTANT: Replace this with the client ID from your Google Cloud Console
-      const clientId = 'YOUR_CLIENT_ID_FROM_GOOGLE_CLOUD_CONSOLE';
+      const clientId = '779355943255-k9dq2kjagq70utjad1qsp0eraah4ep4s.apps.googleusercontent.com';
       
       const client = window.google.accounts.oauth2.initTokenClient({
         client_id: clientId,
