@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import AnimatedLogo from '@/components/AnimatedLogo';
 import { Link } from 'react-router-dom';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { setNewPassword } from '@/services/passwordResetService';
 
 const ResetPassword: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -80,41 +81,17 @@ const ResetPassword: React.FC = () => {
     try {
       console.log('Submitting password reset for contact ID:', contactId);
       
-      // Create FormData object for the password update
-      const formData = new FormData();
-      formData.append('contactId', contactId);
-      formData.append('text_Reset_Password__c', ''); // Clear the reset flag
-      formData.append('string_ri__Password__c', password); // Use correct field name
-      formData.append('sObj', 'Contact'); // Add the required sObj parameter
+      // Use the iframe-based approach to set the new password
+      const success = await setNewPassword(contactId, password);
       
-      console.log('Sending password update for contact ID:', contactId);
-      
-      // Submit to the correct update endpoint with FormData
-      const updateUrl = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/update-engine-contact.php';
-      
-      const updateResponse = await fetch(updateUrl, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          // Remove Content-Type header to let the browser set it properly with boundary for FormData
-          'Accept': '*/*',
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      });
-      
-      const responseText = await updateResponse.text();
-      console.log('Password update response:', responseText);
-      
-      // Check if the response indicates success or error
-      if (responseText.includes('ERROR') || responseText.includes('Error') || !updateResponse.ok) {
-        console.error('Password update failed with response:', responseText);
+      if (success) {
+        toast.success('Password has been reset successfully');
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
         throw new Error('Failed to reset password. Please try again later.');
       }
-      
-      toast.success('Password has been reset successfully');
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
     } catch (error) {
       console.error('Password reset error:', error);
       

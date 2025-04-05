@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
+import { fetchInvestorData } from '@/services/loginService';
+import { requestPasswordReset } from '@/services/passwordResetService';
 
 interface PasswordResetDialogProps {
   open: boolean;
@@ -46,37 +48,12 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
     setErrorMessage('');
     
     try {
-      // Fetch investor data from the provided API to find the contact ID
-      const apiUrl = `https://api.realintelligence.com/api/specific-investor-list.py?orgId=00D5e000000HEcP&campaignId=7014V000002lcY2&sandbox=False`;
+      // First, fetch investor data to find the contact ID
+      console.log('Fetching investor data to find contact ID for:', email);
+      const investorData = await fetchInvestorData();
       
-      console.log('Fetching investor data from:', apiUrl);
-      
-      const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch investor data: ${response.status} ${response.statusText}`);
-      }
-      
-      const contentType = response.headers.get('content-type');
-      let data;
-      
-      // Parse the response based on content type
-      if (contentType?.includes('xml')) {
-        const text = await response.text();
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(text, 'text/xml');
-        const memberElements = xmlDoc.getElementsByTagName('member');
-        
-        data = Array.from(memberElements).map(member => ({
-          id: member.getElementsByTagName('id')[0]?.textContent || '',
-          email: member.getElementsByTagName('email')[0]?.textContent || '',
-        }));
-      } else {
-        data = await response.json();
-      }
-
-      // Find the investor by email
-      const investor = data.find((inv: any) => 
+      // Find the investor by email (case-insensitive)
+      const investor = investorData.find((inv: any) => 
         inv.email && inv.email.toLowerCase() === email.toLowerCase()
       );
       
@@ -88,42 +65,10 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
 
       console.log('Found investor for password reset:', investor.id);
       
-      // Create FormData object for the password reset request
-      const formData = new FormData();
-      formData.append('contactId', investor.id);
-      formData.append('text_Reset_Password__c', 'Yes');
-      formData.append('sObj', 'Contact');
+      // Use the iframe-based approach to request password reset
+      const success = await requestPasswordReset(investor.id);
       
-      console.log('Sending reset request for contact ID:', investor.id);
-      
-      // Make the API call to request password reset using the correct endpoint
-      const updateUrl = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/update-engine-contact.php';
-      
-      try {
-        console.log('Sending POST request to:', updateUrl);
-        console.log('With form data:', Object.fromEntries(formData.entries()));
-        
-        const updateResponse = await fetch(updateUrl, {
-          method: 'POST',
-          body: formData,
-          mode: 'cors',
-          credentials: 'same-origin',
-          headers: {
-            'Accept': '*/*',
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        });
-        
-        const responseText = await updateResponse.text();
-        console.log('Password reset response:', responseText);
-        
-        // Check if the response indicates success
-        if (responseText.includes('ERROR') || responseText.includes('Error') || !updateResponse.ok) {
-          console.error('Password reset request failed with response:', responseText);
-          throw new Error('Failed to send password reset request. Please try again later.');
-        }
-        
-        // If we got this far, the request was successful
+      if (success) {
         setIsSuccess(true);
         toast.success(
           'Password reset instructions have been sent to your email.',
@@ -135,29 +80,8 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
           onOpenChange(false);
           handleReset();
         }, 3000);
-        
-      } catch (fetchError) {
-        console.error('Password reset API call error:', fetchError);
-        
-        // If there's a CORS error or other network issue, we'll try our fallback approach
-        // This is not ideal but will provide a better user experience than just showing an error
-        console.log('Attempting fallback method due to CORS or network issue...');
-        
-        // Log the attempt for debugging
-        console.log('Password reset request attempted for contact ID:', investor.id);
-        
-        // Display success message with a note about potential issues
-        setIsSuccess(true);
-        toast.success(
-          'Password reset request received. If you don\'t receive an email within 10 minutes, please contact support.',
-          { duration: 5000 }
-        );
-        
-        // Close dialog after showing message
-        setTimeout(() => {
-          onOpenChange(false);
-          handleReset();
-        }, 3000);
+      } else {
+        throw new Error('Failed to send password reset request. Please try again later.');
       }
       
     } catch (error) {
@@ -167,12 +91,6 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
       
       if (error instanceof Error) {
         errorMsg = error.message;
-        console.error('Error details:', error.message);
-      }
-      
-      // Check for network-related errors which could indicate CORS issues
-      if (errorMsg.includes('Failed to fetch')) {
-        errorMsg = 'Network error: Unable to connect to the password reset service. This might be due to CORS restrictions or network connectivity issues.';
       }
       
       setErrorMessage(errorMsg);
