@@ -29,8 +29,11 @@ export const authenticateWithGoogle = async (): Promise<User | null> => {
     await initializeGoogleAuth();
 
     return new Promise((resolve, reject) => {
+      // IMPORTANT: Replace this with the client ID from your Google Cloud Console
+      const clientId = 'YOUR_CLIENT_ID_FROM_GOOGLE_CLOUD_CONSOLE';
+      
       const client = window.google.accounts.oauth2.initTokenClient({
-        client_id: '953313590514-stufb46q1pmi8bkj4jg2sjdbvtd9nk5d.apps.googleusercontent.com',
+        client_id: clientId,
         scope: 'email profile',
         callback: async (tokenResponse: any) => {
           if (tokenResponse.error) {
