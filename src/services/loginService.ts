@@ -1,4 +1,3 @@
-
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -43,9 +42,10 @@ export const getIPLocation = async (ip: string): Promise<{country: string, city:
       }
     }
     
-    // Fetch new data from free IP API
+    // Fetch new data from a secure HTTPS API
     console.log('Fetching IP location data from API');
-    const response = await fetch(`http://ip-api.com/json/${ip}?fields=country,city`);
+    // Using ipapi.co which supports HTTPS
+    const response = await fetch(`https://ipapi.co/${ip}/json/`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch IP location data');
@@ -55,7 +55,7 @@ export const getIPLocation = async (ip: string): Promise<{country: string, city:
     
     // Cache the result
     const locationData: IPLocation = {
-      country: data.country || 'Unknown',
+      country: data.country_name || 'Unknown',
       city: data.city || 'Unknown',
       timestamp: new Date().getTime()
     };
@@ -68,10 +68,37 @@ export const getIPLocation = async (ip: string): Promise<{country: string, city:
     };
   } catch (error) {
     console.error('Error fetching IP location:', error);
-    return {
-      country: 'Unknown',
-      city: 'Unknown'
-    };
+    
+    // Fallback to another API if first one fails
+    try {
+      console.log('Attempting fallback geolocation API');
+      const fallbackResponse = await fetch(`https://ipinfo.io/${ip}/json`);
+      
+      if (!fallbackResponse.ok) {
+        throw new Error('Fallback API also failed');
+      }
+      
+      const fallbackData = await fallbackResponse.json();
+      
+      const locationData: IPLocation = {
+        country: fallbackData.country ? (fallbackData.country_name || fallbackData.country) : 'Unknown',
+        city: fallbackData.city || 'Unknown',
+        timestamp: new Date().getTime()
+      };
+      
+      localStorage.setItem(`ip_location_${ip}`, JSON.stringify(locationData));
+      
+      return {
+        country: locationData.country,
+        city: locationData.city
+      };
+    } catch (fallbackError) {
+      console.error('Fallback geolocation also failed:', fallbackError);
+      return {
+        country: 'Unknown',
+        city: 'Unknown'
+      };
+    }
   }
 };
 

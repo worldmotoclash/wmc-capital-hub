@@ -7,7 +7,7 @@ import { useUser } from '@/contexts/UserContext';
 import PasswordResetDialog from './PasswordResetDialog';
 import { validateLoginForm } from '@/utils/loginValidation';
 import LoginFormFields from './LoginForm/LoginFormFields';
-import { authenticateUser } from '@/services/loginService';
+import { authenticateUser, getCurrentIpAddress, getIPLocation } from '@/services/loginService';
 
 const LoginFormComponent: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -17,6 +17,7 @@ const LoginFormComponent: React.FC = () => {
   const [errors, setErrors] = useState<{email?: string; password?: string}>({});
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [ipVerificationSent, setIpVerificationSent] = useState(false);
+  const [locationInfo, setLocationInfo] = useState<{country: string; city: string} | null>(null);
   
   const navigate = useNavigate();
   const { setUser } = useUser();
@@ -34,8 +35,13 @@ const LoginFormComponent: React.FC = () => {
     
     setIsLoading(true);
     setIpVerificationSent(false);
+    setLocationInfo(null);
     
     try {
+      // Try to get the user's location info for a better message if needed
+      const ip = await getCurrentIpAddress();
+      const location = await getIPLocation(ip);
+      
       const userData = await authenticateUser(email, password);
       
       if (userData) {
@@ -46,6 +52,7 @@ const LoginFormComponent: React.FC = () => {
         // Check if this was likely an IP verification issue
         if (email && password.length >= 6) {
           setIpVerificationSent(true);
+          setLocationInfo(location);
         }
       }
     } catch (error) {
@@ -74,7 +81,9 @@ const LoginFormComponent: React.FC = () => {
         <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg mb-6">
           <h3 className="font-medium text-amber-800 mb-2">Location Verification Required</h3>
           <p className="text-amber-700 text-sm">
-            We detected a login attempt from a new location. For your security, we've sent a verification 
+            We detected a login attempt from a new location
+            {locationInfo && locationInfo.city !== 'Unknown' ? ` (${locationInfo.city}, ${locationInfo.country})` : ''}.
+            For your security, we've sent a verification 
             email to your registered email address with details about the new location. 
             Please check your inbox and follow the verification instructions.
           </p>
