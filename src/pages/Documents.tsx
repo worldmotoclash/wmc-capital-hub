@@ -39,7 +39,7 @@ const Documents: React.FC = () => {
       title: "WMC March 2025 Business Plan",
       type: "PDF",
       source: "Google Drive",
-      thumbnail: "/lovable-uploads/wmc-business-thubnail.png",
+      thumbnail: "/lovable-uploads/wmc-business-thumbnail.png",
       url: "https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing"
     },
     {

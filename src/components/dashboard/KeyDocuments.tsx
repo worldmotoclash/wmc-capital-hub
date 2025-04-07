@@ -18,7 +18,7 @@ const KeyDocuments: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
               <img 
-                src="/lovable-uploads/wmc-business-thubnail.png" 
+                src="/lovable-uploads/wmc-business-thumbnail.png" 
                 alt="WMC Business Plan" 
                 className="w-full h-full object-cover"
               />
