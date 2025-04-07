@@ -8,7 +8,7 @@ const KeyDocuments: React.FC = () => {
     <Card>
       <CardHeader>
         <CardTitle>Key Documents</CardTitle>
-        <CardDescription>Access your important investment documents</CardDescription>
+        <CardDescription>Access your important documents</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
