@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ExternalLink, FileText, Film } from 'lucide-react';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
@@ -39,21 +39,21 @@ const Documents: React.FC = () => {
       title: "WMC March 2025 Business Plan",
       type: "PDF",
       source: "Google Drive",
-      icon: <FileText className="w-5 h-5" />,
+      thumbnail: "/lovable-uploads/wmc-business-thubnail.png",
       url: "https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing"
     },
     {
       title: "Sponsorship Primer (4.1.2025)",
       type: "PDF",
       source: "Google Drive",
-      icon: <FileText className="w-5 h-5" />,
+      thumbnail: "/lovable-uploads/sponsor-primier-thumbnail.png",
       url: "https://drive.google.com/file/d/1qTRq1r8IzM4kxtQA1rDhaWKN03JK6NNR/view?usp=drive_link"
     },
     {
       title: "WMC 2 Minute Sizzle Reel",
       type: "Video",
       source: "Vimeo",
-      icon: <Film className="w-5 h-5" />,
+      thumbnail: "/lovable-uploads/wmc-sizzle-thumbnail.png",
       url: "https://vimeo.com/1070513991?utm_source=email&utm_medium=vimeo-email&utm_campaign=44349"
     }
   ];
@@ -95,8 +95,12 @@ const Documents: React.FC = () => {
             <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow">
               <CardContent className="p-0">
                 <div className="p-6">
-                  <div className="w-full h-32 bg-gray-100 rounded mb-4 flex items-center justify-center">
-                    {doc.icon}
+                  <div className="w-full h-32 bg-gray-100 rounded mb-4 flex items-center justify-center overflow-hidden">
+                    <img 
+                      src={doc.thumbnail} 
+                      alt={doc.title} 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className="flex justify-between items-start">
                     <div>
