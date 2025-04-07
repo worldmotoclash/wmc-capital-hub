@@ -37,6 +37,10 @@ const Dashboard: React.FC = () => {
     navigate('/documents');
   };
 
+  const navigateToUpdates = () => {
+    navigate('/updates');
+  };
+
   if (!user) {
     return null; // Don't render anything while redirecting
   }
@@ -71,7 +75,7 @@ const Dashboard: React.FC = () => {
               <TabsTrigger value="documents" onClick={navigateToDocuments}>Documents</TabsTrigger>
               {isSecuredInvestor && <TabsTrigger value="financials">Financials</TabsTrigger>}
               <TabsTrigger value="events">Events</TabsTrigger>
-              <TabsTrigger value="updates">Updates</TabsTrigger>
+              <TabsTrigger value="updates" onClick={navigateToUpdates}>Updates</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview">
