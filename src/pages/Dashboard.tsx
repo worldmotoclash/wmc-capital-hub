@@ -33,6 +33,10 @@ const Dashboard: React.FC = () => {
     navigate('/');
   };
 
+  const navigateToDocuments = () => {
+    navigate('/documents');
+  };
+
   if (!user) {
     return null; // Don't render anything while redirecting
   }
@@ -64,7 +68,7 @@ const Dashboard: React.FC = () => {
           <Tabs defaultValue="overview" className="space-y-8">
             <TabsList className="bg-white border border-gray-200">
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="documents">Documents</TabsTrigger>
+              <TabsTrigger value="documents" onClick={navigateToDocuments}>Documents</TabsTrigger>
               {isSecuredInvestor && <TabsTrigger value="financials">Financials</TabsTrigger>}
               <TabsTrigger value="events">Events</TabsTrigger>
               <TabsTrigger value="updates">Updates</TabsTrigger>

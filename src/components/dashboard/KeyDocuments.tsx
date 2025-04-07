@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
@@ -83,7 +84,9 @@ const KeyDocuments: React.FC = () => {
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant="outline" className="w-full text-sm">View All Documents</Button>
+        <Button variant="outline" className="w-full text-sm" asChild>
+          <Link to="/documents">View All Documents</Link>
+        </Button>
       </CardFooter>
     </Card>
   );

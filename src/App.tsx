@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import UserDashboard from "./pages/UserDashboard";
+import Documents from "./pages/Documents";
 import ThankYou from "./pages/ThankYou";
 import NotFound from "./pages/NotFound";
 import DashboardComparison from "./components/DashboardComparison";
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/reset" element={<ResetPassword />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/user-dashboard" element={<UserDashboard />} />
+              <Route path="/documents" element={<Documents />} />
               <Route path="/dashboard-comparison" element={<DashboardComparison />} />
               <Route path="/thankyou" element={<ThankYou />} />
               <Route path="/thankyouinvestor" element={<Navigate to="/thankyou" replace />} />
