@@ -16,7 +16,7 @@ const KeyDocuments: React.FC = () => {
         
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
+            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
               <img 
                 src="/lovable-uploads/wmc-business-thubnail.png" 
                 alt="WMC Business Plan" 
@@ -24,11 +24,11 @@ const KeyDocuments: React.FC = () => {
               />
             </div>
             <div>
-              <div className="text-sm font-medium">WMC March 2025 Business Plan</div>
-              <div className="text-xs text-gray-500">PDF • Google Drive</div>
+              <div className="text-sm font-medium dark:text-white">WMC March 2025 Business Plan</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="text-gray-500" asChild>
+          <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
             <a href="https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing" target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-4 h-4" />
             </a>
@@ -37,7 +37,7 @@ const KeyDocuments: React.FC = () => {
         
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
+            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
               <img 
                 src="/lovable-uploads/sponsor-primier-thumbnail.png" 
                 alt="Sponsorship Primer" 
@@ -45,11 +45,11 @@ const KeyDocuments: React.FC = () => {
               />
             </div>
             <div>
-              <div className="text-sm font-medium">Sponsorship Primer (4.1.2025)</div>
-              <div className="text-xs text-gray-500">PDF • Google Drive</div>
+              <div className="text-sm font-medium dark:text-white">Sponsorship Primer (4.1.2025)</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="text-gray-500" asChild>
+          <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
             <a href="https://drive.google.com/file/d/1qTRq1r8IzM4kxtQA1rDhaWKN03JK6NNR/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-4 h-4" />
             </a>
@@ -58,7 +58,7 @@ const KeyDocuments: React.FC = () => {
         
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
+            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
               <img 
                 src="/lovable-uploads/wmc-sizzle-thumbnail.png" 
                 alt="WMC Sizzle Reel" 
@@ -66,11 +66,11 @@ const KeyDocuments: React.FC = () => {
               />
             </div>
             <div>
-              <div className="text-sm font-medium">WMC 2 Minute Sizzle Reel</div>
-              <div className="text-xs text-gray-500">Video • Vimeo</div>
+              <div className="text-sm font-medium dark:text-white">WMC 2 Minute Sizzle Reel</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">Video • Vimeo</div>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="text-gray-500" asChild>
+          <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
             <a href="https://vimeo.com/1070513991?utm_source=email&utm_medium=vimeo-email&utm_campaign=44349" target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-4 h-4" />
             </a>
@@ -78,7 +78,7 @@ const KeyDocuments: React.FC = () => {
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant="outline" className="w-full text-sm" asChild>
+        <Button variant="outline" className="w-full text-sm dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" asChild>
           <Link to="/documents">View All Documents</Link>
         </Button>
       </CardFooter>
