@@ -41,7 +41,7 @@ const KeyDocuments: React.FC = () => {
           </div>
         )}
         
-        {ndaSigned && (
+        {ndaSigned ? (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
@@ -53,6 +53,27 @@ const KeyDocuments: React.FC = () => {
               </div>
               <div>
                 <div className="text-sm font-medium dark:text-white">Signed NDA Document</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">DOCX • Secure Storage</div>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
+              <a href="/lovable-uploads/wmc nda 2025 blank.docx" target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/lovable-uploads/wmc nda 2025 blank.docx" 
+                  alt="WMC NDA Document" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <div className="text-sm font-medium dark:text-white">WMC NDA 2025 (Blank)</div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">DOCX • Secure Storage</div>
               </div>
             </div>

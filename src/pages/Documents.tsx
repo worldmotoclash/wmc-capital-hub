@@ -53,6 +53,15 @@ const Documents: React.FC = () => {
     }
   ];
   
+  // Document for investors who haven't signed the NDA yet
+  const blankNdaDocument = {
+    title: "WMC NDA 2025 (Blank)",
+    type: "DOCX",
+    source: "Secure Storage",
+    thumbnail: "/lovable-uploads/wmc nda 2025 blank.docx",
+    url: "/lovable-uploads/wmc nda 2025 blank.docx"
+  };
+  
   // Define documents that require NDA
   const ndaDocuments = [
     {
@@ -74,7 +83,7 @@ const Documents: React.FC = () => {
   // Combine documents based on NDA status
   const documents = ndaSigned 
     ? [...ndaDocuments, ...baseDocuments] 
-    : baseDocuments;
+    : [...baseDocuments, blankNdaDocument];
 
   return (
     <div className="min-h-screen bg-gray-50">

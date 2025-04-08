@@ -1,3 +1,4 @@
+
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -338,6 +339,9 @@ export const authenticateUser = async (email: string, password: string, isGoogle
           }
         }
         
+        // Set ndaSigned based on investor status
+        const isQualifiedOrSecured = investor.status === "Qualified Investor" || investor.status === "Secured Investor";
+        
         // Return user data
         const userData: User = {
           id: investor.id,
@@ -347,7 +351,8 @@ export const authenticateUser = async (email: string, password: string, isGoogle
           phone: investor.phone,
           mobile: investor.mobile,
           mailingstreet: investor.mailingstreet,
-          ipaddress: investor.ipaddress
+          ipaddress: investor.ipaddress,
+          ndaSigned: isQualifiedOrSecured // Set ndaSigned based on investor status
         };
         
         // Track the successful login
