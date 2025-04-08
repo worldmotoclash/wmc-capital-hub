@@ -12,16 +12,16 @@ const UpcomingEvents: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <div className="text-sm font-medium">Q3 Earnings Call</div>
-          <div className="text-xs text-gray-500">Oct 15, 2023 • 2:00 PM EST</div>
+          <div className="text-sm font-medium">Tenative WMC #1 - Texas Tornado COTA</div>
+          <div className="text-xs text-gray-500">Oct 17-19th, 2025 </div>
         </div>
         <div>
           <div className="text-sm font-medium">Investor Meet & Greet</div>
-          <div className="text-xs text-gray-500">Nov 5, 2023 • Austin, TX</div>
+          <div className="text-xs text-gray-500">Nov 5, 2025 • Austin, TX</div>
         </div>
         <div>
           <div className="text-sm font-medium">2024 Strategy Presentation</div>
-          <div className="text-xs text-gray-500">Dec 10, 2023 • 11:00 AM EST</div>
+          <div className="text-xs text-gray-500">Dec 10, 2025 • 11:00 AM EST</div>
         </div>
       </CardContent>
       <CardFooter>
