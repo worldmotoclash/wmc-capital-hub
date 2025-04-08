@@ -70,7 +70,7 @@ const InvestmentHighlights: React.FC = () => {
                   <svg className="w-5 h-5 text-white mt-1 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 6L9 17l-5-5"/>
                   </svg>
-                  <span>Public offering in 5-7 year timeframe</span>
+                  <span>Strategic investment in 5-7 year timeframe</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <svg className="w-5 h-5 text-white mt-1 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
