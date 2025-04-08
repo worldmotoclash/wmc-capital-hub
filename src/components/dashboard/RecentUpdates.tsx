@@ -19,15 +19,15 @@ const RecentUpdates: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <div className="text-sm font-medium">New Partnership Announced</div>
+          <div className="text-sm font-medium">Elevation Onboarding Started</div>
           <div className="text-xs text-gray-500">Mar 28, 2025</div>
         </div>
         <div>
-          <div className="text-sm font-medium">Q1 Earnings Report Available</div>
+          <div className="text-sm font-medium">Elevation Partnership Signed</div>
           <div className="text-xs text-gray-500">Mar 15, 2025</div>
         </div>
         <div>
-          <div className="text-sm font-medium">New Market Expansion</div>
+          <div className="text-sm font-medium">Investor Portal Lanuched</div>
           <div className="text-xs text-gray-500">Feb 22, 2025</div>
         </div>
       </CardContent>
