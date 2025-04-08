@@ -4,8 +4,12 @@ import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
+import { useUser } from '@/contexts/UserContext';
 
 const KeyDocuments: React.FC = () => {
+  const { user } = useUser();
+  const ndaSigned = user?.ndaSigned || false;
+  
   return (
     <Card>
       <CardHeader>
@@ -14,26 +18,51 @@ const KeyDocuments: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
-              <img 
-                src="/lovable-uploads/wmc-business-thumbnail.png" 
-                alt="WMC Business Plan" 
-                className="w-full h-full object-cover"
-              />
+        {ndaSigned && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/lovable-uploads/wmc-business-thumbnail.png" 
+                  alt="WMC Business Plan" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <div className="text-sm font-medium dark:text-white">WMC March 2025 Business Plan</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
+              </div>
             </div>
-            <div>
-              <div className="text-sm font-medium dark:text-white">WMC March 2025 Business Plan</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
-            </div>
+            <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
+              <a href="https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </Button>
           </div>
-          <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-            <a href="https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="w-4 h-4" />
-            </a>
-          </Button>
-        </div>
+        )}
+        
+        {ndaSigned && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/lovable-uploads/wmc nda 2025 blank.docx" 
+                  alt="WMC NDA Document" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <div className="text-sm font-medium dark:text-white">Signed NDA Document</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">DOCX • Secure Storage</div>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
+              <a href="/lovable-uploads/wmc nda 2025 blank.docx" target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </Button>
+          </div>
+        )}
         
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

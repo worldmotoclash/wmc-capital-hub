@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 const Documents: React.FC = () => {
   const navigate = useNavigate();
   const { user, setUser } = useUser();
+  const ndaSigned = user?.ndaSigned || false;
 
   React.useEffect(() => {
     // Scroll to top when component mounts
@@ -34,14 +35,8 @@ const Documents: React.FC = () => {
     return null; // Don't render anything while redirecting
   }
 
-  const documents = [
-    {
-      title: "WMC March 2025 Business Plan",
-      type: "PDF",
-      source: "Google Drive",
-      thumbnail: "/lovable-uploads/wmc-business-thumbnail.png",
-      url: "https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing"
-    },
+  // Define base documents that are always available
+  const baseDocuments = [
     {
       title: "Sponsorship Primer (4.1.2025)",
       type: "PDF",
@@ -57,6 +52,29 @@ const Documents: React.FC = () => {
       url: "https://vimeo.com/1070513991?utm_source=email&utm_medium=vimeo-email&utm_campaign=44349"
     }
   ];
+  
+  // Define documents that require NDA
+  const ndaDocuments = [
+    {
+      title: "WMC March 2025 Business Plan",
+      type: "PDF",
+      source: "Google Drive",
+      thumbnail: "/lovable-uploads/wmc-business-thumbnail.png",
+      url: "https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing"
+    },
+    {
+      title: "Signed NDA Document",
+      type: "DOCX",
+      source: "Secure Storage",
+      thumbnail: "/lovable-uploads/wmc nda 2025 blank.docx",
+      url: "/lovable-uploads/wmc nda 2025 blank.docx"
+    }
+  ];
+
+  // Combine documents based on NDA status
+  const documents = ndaSigned 
+    ? [...ndaDocuments, ...baseDocuments] 
+    : baseDocuments;
 
   return (
     <div className="min-h-screen bg-gray-50">
