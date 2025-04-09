@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -52,17 +51,17 @@ const Documents: React.FC = () => {
       url: "https://vimeo.com/1070513991?utm_source=email&utm_medium=vimeo-email&utm_campaign=44349"
     }
   ];
-  
-  // Document for investors who haven't signed the NDA yet
+
+  // Update the blankNdaDocument with the new image path
   const blankNdaDocument = {
     title: "WMC NDA 2025 (Blank)",
     type: "DOCX",
     source: "Secure Storage",
-    thumbnail: "/lovable-uploads/wmc nda 2025 blank.docx",
+    thumbnail: "/lovable-uploads/blank-nda.png", // Updated thumbnail
     url: "/lovable-uploads/wmc nda 2025 blank.docx"
   };
   
-  // Define documents that require NDA
+  // Update the signed NDA document to use the new image
   const ndaDocuments = [
     {
       title: "WMC March 2025 Business Plan",
@@ -75,7 +74,7 @@ const Documents: React.FC = () => {
       title: "Signed NDA Document",
       type: "DOCX",
       source: "Secure Storage",
-      thumbnail: "/lovable-uploads/wmc nda 2025 blank.docx",
+      thumbnail: "/lovable-uploads/we-signed-an-nda.png", // Updated thumbnail
       url: "/lovable-uploads/wmc nda 2025 blank.docx"
     }
   ];

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -17,36 +16,12 @@ const KeyDocuments: React.FC = () => {
         <CardDescription>Access your important documents</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        
-        {ndaSigned && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
-                <img 
-                  src="/lovable-uploads/wmc-business-thumbnail.png" 
-                  alt="WMC Business Plan" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                <div className="text-sm font-medium dark:text-white">WMC March 2025 Business Plan</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
-              </div>
-            </div>
-            <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-              <a href="https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </Button>
-          </div>
-        )}
-        
         {ndaSigned ? (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
                 <img 
-                  src="/lovable-uploads/wmc nda 2025 blank.docx" 
+                  src="/lovable-uploads/we-signed-an-nda.png" // Updated thumbnail for signed NDA
                   alt="WMC NDA Document" 
                   className="w-full h-full object-cover"
                 />
@@ -67,7 +42,7 @@ const KeyDocuments: React.FC = () => {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
                 <img 
-                  src="/lovable-uploads/wmc nda 2025 blank.docx" 
+                  src="/lovable-uploads/blank-nda.png" // Updated thumbnail for blank NDA
                   alt="WMC NDA Document" 
                   className="w-full h-full object-cover"
                 />
