@@ -1,5 +1,5 @@
 
-import { CompanyUpdate } from './companyUpdates';
+import { CompanyUpdate } from '../types/companyUpdates'; // Corrected import path
 
 export const companyUpdates: CompanyUpdate[] = [
   {
@@ -28,4 +28,3 @@ export const companyUpdates: CompanyUpdate[] = [
     category: "Technology"
   }
 ];
-
