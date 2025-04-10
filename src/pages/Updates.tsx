@@ -13,8 +13,9 @@ import { companyUpdates } from '@/data/companyUpdates';
 const Updates: React.FC = () => {
   const navigate = useNavigate();
   const { user, setUser } = useUser();
-  // Get only the 3 most recent updates
-  const recentUpdates = companyUpdates.slice(0, 3);
+  
+  // Use all updates, not just recent ones
+  const allUpdates = companyUpdates;
 
   React.useEffect(() => {
     // Scroll to top when component mounts
@@ -70,7 +71,7 @@ const Updates: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="space-y-6"
         >
-          {recentUpdates.map((update, index) => (
+          {allUpdates.map((update, index) => (
             <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">

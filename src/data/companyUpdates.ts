@@ -1,5 +1,5 @@
 
-import { CompanyUpdate } from '../types/companyUpdates'; // Corrected import path
+import { CompanyUpdate } from '../types/companyUpdates';
 
 export const companyUpdates: CompanyUpdate[] = [
   {
