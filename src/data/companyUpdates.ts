@@ -1,14 +1,13 @@
 
-// Define the CompanyUpdate interface first
-export interface CompanyUpdate {
-  title: string;
-  date: string;
-  description: string;
-  category: string;
-  url?: string;
-}
+import { CompanyUpdate } from './companyUpdates';
 
 export const companyUpdates: CompanyUpdate[] = [
+  {
+    title: "New Team Owners Video added to the portal",
+    date: "Apr 10, 2025",
+    description: "A new video featuring WMC Team Owners has been uploaded to the investor portal.",
+    category: "Content Update"
+  },
   {
     title: "Elevation Onboarding Started",
     date: "Mar 28, 2025",
@@ -29,3 +28,4 @@ export const companyUpdates: CompanyUpdate[] = [
     category: "Technology"
   }
 ];
+
