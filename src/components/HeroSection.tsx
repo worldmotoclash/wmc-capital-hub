@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -24,22 +23,24 @@ const HeroSection: React.FC = () => {
       subtitle: "Where speed meets innovation",
       duration: 8000
     },
-    {
-      id: 3,
-      videoSrc: "https://www.youtube.com/embed/YboT6kMWjoY",
-      videoTitle: "MIGUEL DUHAMEL",
-      title: "VEGAS VENOM",
-      subtitle: "5 Time Daytona 200 Champion",
-      duration: 8000
-    },
-    {
-      id: 4,
-      videoSrc: "https://www.youtube.com/embed/kopVOs0gfRM",
-      videoTitle: "Norman Reedus",
-      title: "ACTION STARS RACING",
-      subtitle: "Walking Dead Star Norman Reedus",
-      duration: 8000
-    }
+    // Commented out third video
+    // {
+    //   id: 3,
+    //   videoSrc: "https://www.youtube.com/embed/YboT6kMWjoY",
+    //   videoTitle: "MIGUEL DUHAMEL",
+    //   title: "VEGAS VENOM",
+    //   subtitle: "5 Time Daytona 200 Champion",
+    //   duration: 8000
+    // },
+    // Commented out fourth video
+    // {
+    //   id: 4,
+    //   videoSrc: "https://www.youtube.com/embed/kopVOs0gfRM",
+    //   videoTitle: "Norman Reedus",
+    //   title: "ACTION STARS RACING",
+    //   subtitle: "Walking Dead Star Norman Reedus",
+    //   duration: 8000
+    // }
   ];
   
   return (
