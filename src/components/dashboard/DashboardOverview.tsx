@@ -19,7 +19,7 @@ const DashboardOverview: React.FC = () => {
       <div className="rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm">
         <div className="aspect-video w-full">
           <iframe 
-            src="https://www.youtube.com/embed/ilJTemepdME" 
+            src="https://drive.google.com/file/d/1hrzu8GBarliZ0fwUwokkdCS-y7LTKJyH/preview" 
             title="WMC Team Owners"
             className="w-full h-full"
             allowFullScreen
