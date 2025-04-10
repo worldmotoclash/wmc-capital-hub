@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -23,7 +22,7 @@ const ContactInfo: React.FC = () => {
             </div>
             <div>
               <h4 className="text-lg font-semibold mb-1">Phone</h4>
-              <p className="text-gray-600">+1 (855) WMC-MOTO - (855-969-6686)</p>
+              <p className="text-gray-600">+1 (855) WMC-MOTO - (855-962-6686)</p>
             </div>
           </div>
           
