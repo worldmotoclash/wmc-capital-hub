@@ -100,7 +100,8 @@ const Dashboard: React.FC = () => {
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="documents" onClick={navigateToDocuments}>Documents</TabsTrigger>
               {isSecuredInvestor && <TabsTrigger value="financials">Financials</TabsTrigger>}
-              <TabsTrigger value="events">Events</TabsTrigger>
+              {/* Commented out Events tab for now */}
+              {/* <TabsTrigger value="events">Events</TabsTrigger> */}
               <TabsTrigger value="updates" onClick={navigateToUpdates}>Updates</TabsTrigger>
             </TabsList>
             
@@ -126,13 +127,14 @@ const Dashboard: React.FC = () => {
               </TabsContent>
             )}
             
-            <TabsContent value="events">
+            {/* Commented out Events tab content for now */}
+            {/* <TabsContent value="events">
               <TabContent 
                 title="Investor Events" 
                 description="Upcoming and past investor events"
                 message="Calendar of investor events, calls, and meetings would be displayed here"
               />
-            </TabsContent>
+            </TabsContent> */}
             
             <TabsContent value="updates">
               <TabContent 

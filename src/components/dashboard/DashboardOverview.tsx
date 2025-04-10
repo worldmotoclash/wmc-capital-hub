@@ -1,7 +1,6 @@
 
 import React from 'react';
 import UserInfoCard from '@/components/UserInfoCard';
-import UpcomingEvents from './UpcomingEvents';
 import RecentUpdates from './RecentUpdates';
 import InvestmentPerformance from './InvestmentPerformance';
 import KeyDocuments from './KeyDocuments';
@@ -14,9 +13,8 @@ const DashboardOverview: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <UserInfoCard />
-        <UpcomingEvents />
         <RecentUpdates />
       </div>
       
