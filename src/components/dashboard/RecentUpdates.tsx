@@ -17,19 +17,19 @@ const RecentUpdates: React.FC = () => {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">Recent Updates</CardTitle>
+        <CardTitle className="text-lg">Recent Updates</CardTitle>
         <CardDescription className="text-base">Latest company updates</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {recentUpdates.map((update, index) => (
           <div key={index}>
-            <div className="text-base font-medium">{update.title}</div>
-            <div className="text-sm text-gray-500">{update.date}</div>
+            <div className="text-lg font-medium">{update.title}</div>
+            <div className="text-base text-gray-500">{update.date}</div>
           </div>
         ))}
       </CardContent>
       <CardFooter>
-        <Button variant="outline" className="w-full text-sm" onClick={handleViewAll}>
+        <Button variant="outline" className="w-full text-base" onClick={handleViewAll}>
           View All Updates
         </Button>
       </CardFooter>

@@ -7,7 +7,7 @@ const InvestorSupport: React.FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Investor Support</CardTitle>
+        <CardTitle className="text-lg">Investor Support</CardTitle>
         <CardDescription className="text-base">Get support for your investment questions</CardDescription>
       </CardHeader>
       <CardContent>
@@ -18,11 +18,11 @@ const InvestorSupport: React.FC = () => {
               SM
             </div>
             <div>
-              <div className="font-medium text-base dark:text-white">Sarah Mitchell</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">Investor Relations Manager</div>
+              <div className="text-lg font-medium dark:text-white">Sarah Mitchell</div>
+              <div className="text-base text-gray-500 dark:text-gray-400">Investor Relations Manager</div>
               <a 
                 href="mailto:sarah.mitchell@worldmotoclash.com" 
-                className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+                className="text-base text-blue-600 hover:underline dark:text-blue-400"
               >
                 sarah.mitchell@worldmotoclash.com
               </a>

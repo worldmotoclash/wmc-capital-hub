@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -15,7 +14,7 @@ const KeyDocuments: React.FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Key Documents</CardTitle>
+        <CardTitle className="text-lg">Key Documents</CardTitle>
         <CardDescription className="text-base">Access your important documents</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -30,8 +29,8 @@ const KeyDocuments: React.FC = () => {
                 />
               </div>
               <div>
-                <div className="text-base font-medium dark:text-white">WMC March 2025 Business Plan</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
+                <div className="text-lg font-medium dark:text-white">WMC March 2025 Business Plan</div>
+                <div className="text-base text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
               </div>
             </div>
             <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
@@ -52,8 +51,8 @@ const KeyDocuments: React.FC = () => {
               />
             </div>
             <div>
-              <div className="text-base font-medium dark:text-white">WMC 2 Minute Sizzle Reel</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">Video • Vimeo</div>
+              <div className="text-lg font-medium dark:text-white">WMC 2 Minute Sizzle Reel</div>
+              <div className="text-base text-gray-500 dark:text-gray-400">Video • Vimeo</div>
             </div>
           </div>
           <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
@@ -73,8 +72,8 @@ const KeyDocuments: React.FC = () => {
               />
             </div>
             <div>
-              <div className="text-base font-medium dark:text-white">WMC Intro AB 2025</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
+              <div className="text-lg font-medium dark:text-white">WMC Intro AB 2025</div>
+              <div className="text-base text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
             </div>
           </div>
           <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
@@ -95,8 +94,8 @@ const KeyDocuments: React.FC = () => {
                 />
               </div>
               <div>
-                <div className="text-base font-medium dark:text-white">WMC NDA 2025 (Blank)</div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">DOCX • Secure Storage</div>
+                <div className="text-lg font-medium dark:text-white">WMC NDA 2025 (Blank)</div>
+                <div className="text-base text-gray-500 dark:text-gray-400">DOCX • Secure Storage</div>
               </div>
             </div>
             <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
@@ -108,7 +107,7 @@ const KeyDocuments: React.FC = () => {
         )}
       </CardContent>
       <CardFooter>
-        <Button variant="outline" className="w-full text-sm dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" asChild>
+        <Button variant="outline" className="w-full text-base dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800" asChild>
           <Link to="/documents">View All Documents</Link>
         </Button>
       </CardFooter>
