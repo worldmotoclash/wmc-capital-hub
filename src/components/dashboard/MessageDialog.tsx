@@ -57,14 +57,24 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
       // Get the member ID from the user context
       const memberId = user?.id || '0035e000003cugh';
       console.log('Using member ID:', memberId);
+      console.log('Message:', message);
+      console.log('Subject:', subject);
       
-      // Create a hidden iframe for submission
+      // Create a hidden iframe for submission using exactly the same pattern 
+      // that works in loginService.ts
       const iframe = document.createElement('iframe');
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
       
-      // Create a form in the iframe
+      // Wait for iframe to load
+      await new Promise(resolve => {
+        iframe.onload = resolve;
+        iframe.src = 'about:blank';
+      });
+      
+      // Get the iframe document
       const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      
       if (!iframeDoc) {
         throw new Error('Cannot access iframe document');
       }
@@ -74,7 +84,7 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
       form.method = 'POST';
       form.action = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php';
       
-      // Add form fields with EXACT parameter names
+      // Add form fields with EXACT parameter names - matching case sensitivity
       const fields = [
         { name: 'ContactId', value: memberId },
         { name: 'Question', value: subject || 'Investor Question' },
@@ -101,7 +111,7 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
       console.log('Submitting form now...');
       form.submit();
       
-      // Handle success
+      // Handle success with a longer timeout (matching loginService pattern)
       setTimeout(() => {
         // Clean up iframe
         document.body.removeChild(iframe);
@@ -115,18 +125,35 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
         // Close dialog after submission
         onOpenChange(false);
         handleReset();
-      }, 3000);
+      }, 5000); // Increased from 3000 to 5000 to match successful implementation
       
     } catch (error) {
       console.error('Error sending message:', error);
       setSubmissionStatus('error');
       toast.error('Failed to send message. Please try again.');
+      
+      // Try fallback method
+      console.log('Attempting fallback submission method...');
+      const fallbackSuccess = submitViaDirectUrl();
+      
+      if (fallbackSuccess) {
+        setTimeout(() => {
+          setSubmissionStatus('success');
+          toast.success(`Message sent to ${recipientName}`, {
+            description: "They will get back to you shortly.",
+          });
+          
+          // Close dialog after submission
+          onOpenChange(false);
+          handleReset();
+        }, 3000);
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
   
-  // Also implement a direct URL submission as a fallback
+  // Implement direct URL submission as a fallback
   const submitViaDirectUrl = () => {
     try {
       const memberId = user?.id || '0035e000003cugh';
@@ -137,16 +164,27 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
       
       console.log('Direct URL submission:', url);
       
-      // Open in hidden iframe
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = url;
-      document.body.appendChild(iframe);
+      // Create a hidden iframe for the URL submission
+      const fallbackIframe = document.createElement('iframe');
+      fallbackIframe.style.display = 'none';
+      document.body.appendChild(fallbackIframe);
       
-      // Remove iframe after a delay
-      setTimeout(() => {
-        document.body.removeChild(iframe);
-      }, 3000);
+      // Wait for iframe to load
+      const iframePromise = new Promise<void>(resolve => {
+        fallbackIframe.onload = () => resolve();
+        fallbackIframe.src = url;
+      });
+      
+      // Set a timeout for the iframe load
+      iframePromise.then(() => {
+        console.log('Fallback iframe loaded successfully');
+        
+        // Remove iframe after a delay
+        setTimeout(() => {
+          document.body.removeChild(fallbackIframe);
+          console.log('Fallback iframe removed');
+        }, 5000);
+      });
       
       return true;
     } catch (err) {
@@ -248,29 +286,6 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
               type="submit" 
               disabled={isSubmitting || !message.trim()}
               className="bg-black text-white hover:bg-black/80"
-              onClick={(e) => {
-                if (isSubmitting) return;
-                
-                handleSubmit(e);
-                
-                // Also try direct URL submission as a fallback
-                setTimeout(() => {
-                  if (submissionStatus !== 'success') {
-                    console.log('Attempting fallback URL submission...');
-                    const success = submitViaDirectUrl();
-                    if (success) {
-                      setSubmissionStatus('success');
-                      toast.success(`Message sent to ${recipientName}`, {
-                        description: "They will get back to you shortly.",
-                      });
-                      
-                      // Close dialog after submission
-                      onOpenChange(false);
-                      handleReset();
-                    }
-                  }
-                }, 3000);
-              }}
             >
               {isSubmitting ? 'Sending...' : 'Send Message'}
             </Button>
