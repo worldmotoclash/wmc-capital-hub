@@ -31,7 +31,12 @@ const InvestorSupport: React.FC = () => {
         </div>
         
         <div className="space-y-4">
-          <Button className="w-full bg-black hover:bg-black/80 text-white">Schedule a Call</Button>
+          <Button 
+            className="w-full bg-black hover:bg-black/80 text-white"
+            onClick={() => window.open('https://calendar.app.google/2qCX5aGphMmqUG5y5', '_blank', 'noopener,noreferrer')}
+          >
+            Schedule a Call
+          </Button>
           <Button variant="outline" className="w-full dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">Send a Message</Button>
         </div>
       </CardContent>
