@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Bell } from 'lucide-react';
+import { ArrowLeft, Bell, ExternalLink } from 'lucide-react';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
@@ -85,7 +85,17 @@ const Updates: React.FC = () => {
                         <span className="ml-2 px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">{update.category}</span>
                       </div>
                     </div>
-                    <p className="text-gray-600">{update.description}</p>
+                    <p className="text-gray-600 mb-2">{update.description}</p>
+                    {update.url && (
+                      <a 
+                        href={update.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+                      >
+                        Visit Website <ExternalLink className="ml-2 h-4 w-4" />
+                      </a>
+                    )}
                   </div>
                 </div>
               </CardContent>

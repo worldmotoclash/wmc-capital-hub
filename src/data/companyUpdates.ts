@@ -1,10 +1,5 @@
 
-export interface CompanyUpdate {
-  title: string;
-  date: string;
-  description: string;
-  category: string;
-}
+import { CompanyUpdate } from './companyUpdates';
 
 export const companyUpdates: CompanyUpdate[] = [
   {
@@ -17,7 +12,8 @@ export const companyUpdates: CompanyUpdate[] = [
     title: "Elevation Partnership Signed",
     date: "Mar 15, 2025",
     description: "WMC has officially signed a partnership agreement with Elevation, expanding our collaborative opportunities.",
-    category: "Partnership"
+    category: "Partnership",
+    url: "https://www.elevationgroup.com/"
   },
   {
     title: "Investor Portal Launched",
@@ -27,3 +23,11 @@ export const companyUpdates: CompanyUpdate[] = [
   }
 ];
 
+// Update the CompanyUpdate interface to include optional URL
+export interface CompanyUpdate {
+  title: string;
+  date: string;
+  description: string;
+  category: string;
+  url?: string;
+}
