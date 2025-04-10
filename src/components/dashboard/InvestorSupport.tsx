@@ -1,9 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import MessageDialog from './MessageDialog';
 
 const InvestorSupport: React.FC = () => {
+  const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
+  
   return (
     <Card>
       <CardHeader>
@@ -37,8 +40,21 @@ const InvestorSupport: React.FC = () => {
           >
             Schedule a Call
           </Button>
-          <Button variant="outline" className="w-full dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 text-base">Send a Message</Button>
+          <Button 
+            variant="outline" 
+            className="w-full dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 text-base"
+            onClick={() => setIsMessageDialogOpen(true)}
+          >
+            Send a Message
+          </Button>
         </div>
+        
+        <MessageDialog 
+          open={isMessageDialogOpen} 
+          onOpenChange={setIsMessageDialogOpen}
+          recipientName="Sarah Mitchell"
+          recipientEmail="sarah.mitchell@worldmotoclash.com"
+        />
       </CardContent>
     </Card>
   );
