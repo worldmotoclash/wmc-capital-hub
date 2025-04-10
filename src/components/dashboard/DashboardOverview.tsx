@@ -26,7 +26,7 @@ const DashboardOverview: React.FC = () => {
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           ></iframe>
         </div>
-        <div className="p-4 text-sm text-gray-600 text-center">
+        <div className="p-4 text-base text-gray-600 text-center">
           Listen to WMC Team Owners Colin Edwards, Miguel Duhamel and Gregg Smrz
         </div>
       </div>

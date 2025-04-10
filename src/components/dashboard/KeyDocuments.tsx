@@ -15,8 +15,8 @@ const KeyDocuments: React.FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Key Documents</CardTitle>
-        <CardDescription>Access your important documents</CardDescription>
+        <CardTitle className="text-base">Key Documents</CardTitle>
+        <CardDescription className="text-base">Access your important documents</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {hasBusinessPlanAccess && (
@@ -30,8 +30,8 @@ const KeyDocuments: React.FC = () => {
                 />
               </div>
               <div>
-                <div className="text-sm font-medium dark:text-white">WMC March 2025 Business Plan</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
+                <div className="text-base font-medium dark:text-white">WMC March 2025 Business Plan</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
               </div>
             </div>
             <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
@@ -52,8 +52,8 @@ const KeyDocuments: React.FC = () => {
               />
             </div>
             <div>
-              <div className="text-sm font-medium dark:text-white">WMC 2 Minute Sizzle Reel</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">Video • Vimeo</div>
+              <div className="text-base font-medium dark:text-white">WMC 2 Minute Sizzle Reel</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">Video • Vimeo</div>
             </div>
           </div>
           <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
@@ -73,8 +73,8 @@ const KeyDocuments: React.FC = () => {
               />
             </div>
             <div>
-              <div className="text-sm font-medium dark:text-white">WMC Intro AB 2025</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
+              <div className="text-base font-medium dark:text-white">WMC Intro AB 2025</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
             </div>
           </div>
           <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
@@ -95,8 +95,8 @@ const KeyDocuments: React.FC = () => {
                 />
               </div>
               <div>
-                <div className="text-sm font-medium dark:text-white">WMC NDA 2025 (Blank)</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">DOCX • Secure Storage</div>
+                <div className="text-base font-medium dark:text-white">WMC NDA 2025 (Blank)</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">DOCX • Secure Storage</div>
               </div>
             </div>
             <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>

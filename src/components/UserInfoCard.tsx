@@ -10,10 +10,10 @@ const UserInfoCard: React.FC = () => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Investor Information</CardTitle>
+          <CardTitle className="text-base">Investor Information</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-500">User information not available. Please log in again.</p>
+          <p className="text-gray-500 text-base">User information not available. Please log in again.</p>
         </CardContent>
       </Card>
     );
@@ -22,32 +22,32 @@ const UserInfoCard: React.FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Investor Information</CardTitle>
+        <CardTitle className="text-base">Investor Information</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Name</span>
-            <span className="font-medium">{user.name}</span>
+            <span className="font-medium text-base">{user.name}</span>
           </div>
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Status</span>
-            <span className="font-medium">{user.status}</span>
+            <span className="font-medium text-base">{user.status}</span>
           </div>
           <div className="flex flex-col">
             <span className="text-sm text-gray-500">Email</span>
-            <span className="font-medium">{user.email}</span>
+            <span className="font-medium text-base">{user.email}</span>
           </div>
           {user.phone && (
             <div className="flex flex-col">
               <span className="text-sm text-gray-500">Phone</span>
-              <span className="font-medium">{user.phone}</span>
+              <span className="font-medium text-base">{user.phone}</span>
             </div>
           )}
           {user.mailingstreet && (
             <div className="flex flex-col">
               <span className="text-sm text-gray-500">Address</span>
-              <span className="font-medium">{user.mailingstreet}</span>
+              <span className="font-medium text-base">{user.mailingstreet}</span>
             </div>
           )}
         </div>
