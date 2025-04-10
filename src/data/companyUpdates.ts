@@ -1,5 +1,12 @@
 
-import { CompanyUpdate } from './companyUpdates';
+// Define the CompanyUpdate interface first
+export interface CompanyUpdate {
+  title: string;
+  date: string;
+  description: string;
+  category: string;
+  url?: string;
+}
 
 export const companyUpdates: CompanyUpdate[] = [
   {
@@ -22,12 +29,3 @@ export const companyUpdates: CompanyUpdate[] = [
     category: "Technology"
   }
 ];
-
-// Update the CompanyUpdate interface to include optional URL
-export interface CompanyUpdate {
-  title: string;
-  date: string;
-  description: string;
-  category: string;
-  url?: string;
-}
