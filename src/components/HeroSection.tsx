@@ -23,15 +23,13 @@ const HeroSection: React.FC = () => {
       subtitle: "Where speed meets innovation",
       duration: 8000
     },
-    // Commented out third video
-    // {
-    //   id: 3,
-    //   videoSrc: "https://www.youtube.com/embed/YboT6kMWjoY",
-    //   videoTitle: "MIGUEL DUHAMEL",
-    //   title: "VEGAS VENOM",
-    //   subtitle: "5 Time Daytona 200 Champion",
-    //   duration: 8000
-    // },
+    {
+      id: 3,
+      videoSrc: "https://www.youtube.com/embed/ilJTemepdME",
+      videoTitle: "WMC TEAMS OWNERS",
+      title: "WMC TEAMS OWNERS",
+      subtitle: "The Owners",
+     },
     // Commented out fourth video
     // {
     //   id: 4,
