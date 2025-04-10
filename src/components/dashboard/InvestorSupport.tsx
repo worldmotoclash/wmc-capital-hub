@@ -25,7 +25,11 @@ const InvestorSupport: React.FC = () => {
               <div className="text-lg font-medium dark:text-white">Sarah Mitchell</div>
               <div className="text-base text-gray-500 dark:text-gray-400">Investor Relations Manager</div>
               <a 
-                href="mailto:sarah.mitchell@worldmotoclash.com" 
+                href="#" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsMessageDialogOpen(true);
+                }}
                 className="text-base text-blue-600 hover:underline dark:text-blue-400"
               >
                 sarah.mitchell@worldmotoclash.com
