@@ -83,11 +83,11 @@ const ContactSection: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="city" className="text-sm font-medium text-gray-700">City</label>
-                  <Input id="city" name="city" placeholder="City" maxLength={40} />
+                  <Input id="city" name="city" placeholder="City" maxLength={40} required/>
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="state" className="text-sm font-medium text-gray-700">State</label>
-                  <Input id="state" name="state" placeholder="State" maxLength={20} />
+                  <Input id="state" name="state" placeholder="State" maxLength={20} required/>
                 </div>
               </div>
               
@@ -99,16 +99,12 @@ const ContactSection: React.FC = () => {
                   className="w-full rounded-md border border-gray-200 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                 >
                   <option value="">--None--</option>
-                  <option value="Advertisement">Advertisement</option>
                   <option value="Employee Referral">Employee Referral</option>
                   <option value="External Referral">External Referral</option>
-                  <option value="In-Store">In-Store</option>
-                  <option value="On Site">On Site</option>
-                  <option value="Other">Other</option>
                   <option value="Social">Social</option>
-                  <option value="Trade Show">Trade Show</option>
                   <option value="Web">Web</option>
                   <option value="Word of mouth">Word of mouth</option>
+                  <option value="Other">Other</option>                  
                 </select>
               </div>
               
