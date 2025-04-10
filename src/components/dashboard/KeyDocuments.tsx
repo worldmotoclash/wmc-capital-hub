@@ -46,12 +46,12 @@ const KeyDocuments: React.FC = () => {
             <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
               <img 
                 src="/lovable-uploads/wmc-sizzle-thumbnail.png" 
-                alt="WMC 2 Minute Sizzle Reel" 
+                alt="WMC Motorsports Reimagined!" 
                 className="w-full h-full object-cover"
               />
             </div>
             <div>
-              <div className="text-lg font-medium dark:text-white">WMC 2 Minute Sizzle Reel</div>
+              <div className="text-lg font-medium dark:text-white">WMC Motorsports Reimagined!</div>
               <div className="text-base text-gray-500 dark:text-gray-400">Video • Vimeo</div>
             </div>
           </div>
