@@ -27,7 +27,7 @@ const DashboardOverview: React.FC = () => {
           ></iframe>
         </div>
         <div className="p-4 text-sm text-gray-600 text-center">
-          Listen to WMC Team Owners Colin Edwards, Miguel Duhamel and Gregg Smrtz
+          Listen to WMC Team Owners Colin Edwards, Miguel Duhamel and Gregg Smrz
         </div>
       </div>
       
