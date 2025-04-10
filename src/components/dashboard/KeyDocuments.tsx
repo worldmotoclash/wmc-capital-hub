@@ -8,7 +8,9 @@ import { useUser } from '@/contexts/UserContext';
 
 const KeyDocuments: React.FC = () => {
   const { user } = useUser();
-  const ndaSigned = user?.ndaSigned || false;
+  const isSecuredInvestor = user?.status?.toLowerCase().trim() === "secured investor";
+  const isQualifiedInvestor = user?.status?.toLowerCase().trim() === "qualified investor"; 
+  const hasBusinessPlanAccess = isSecuredInvestor || isQualifiedInvestor || user?.ndaSigned || false;
   
   return (
     <Card>
@@ -17,7 +19,7 @@ const KeyDocuments: React.FC = () => {
         <CardDescription>Access your important documents</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {ndaSigned && (
+        {hasBusinessPlanAccess && (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
@@ -82,7 +84,7 @@ const KeyDocuments: React.FC = () => {
           </Button>
         </div>
         
-        {!ndaSigned && (
+        {!hasBusinessPlanAccess && (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">

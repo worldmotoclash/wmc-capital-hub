@@ -19,15 +19,18 @@ const Dashboard: React.FC = () => {
   
   // Updated status checks to be more flexible
   const isSecuredInvestor = user?.status?.toLowerCase().trim() === "secured investor";
+  const isQualifiedInvestor = user?.status?.toLowerCase().trim() === "qualified investor";
   const isPotentialInvestor = user?.status?.toLowerCase().trim() === "potential investor";
+  const hasBusinessPlanAccess = isSecuredInvestor || isQualifiedInvestor;
   
   // Log the user status for debugging
   useEffect(() => {
     if (user?.status) {
       console.log("Current user status:", user.status);
-      console.log("isPotentialInvestor:", isPotentialInvestor);
+      console.log("isQualifiedInvestor:", isQualifiedInvestor);
+      console.log("hasBusinessPlanAccess:", hasBusinessPlanAccess);
     }
-  }, [user, isPotentialInvestor]);
+  }, [user, isQualifiedInvestor, hasBusinessPlanAccess]);
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -81,10 +84,10 @@ const Dashboard: React.FC = () => {
           <h1 className="text-3xl font-bold mb-2 dark:text-white">Investor Dashboard</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-8">
             Welcome back {user.name}, 
-            {isSecuredInvestor 
+            {hasBusinessPlanAccess 
               ? " you now have access to the " 
               : " here's your potential investor information."}
-            {isSecuredInvestor && (
+            {hasBusinessPlanAccess && (
               <a 
                 href="/documents" 
                 className="text-blue-600 hover:underline font-medium"
@@ -96,7 +99,7 @@ const Dashboard: React.FC = () => {
                 business plan
               </a>
             )}
-            {isSecuredInvestor && "."}
+            {hasBusinessPlanAccess && "."}
           </p>
         </motion.div>
         
@@ -112,7 +115,7 @@ const Dashboard: React.FC = () => {
             <TabsList className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="documents" onClick={navigateToDocuments}>Documents</TabsTrigger>
-              {isSecuredInvestor && <TabsTrigger value="financials">Financials</TabsTrigger>}
+              {hasBusinessPlanAccess && <TabsTrigger value="financials">Financials</TabsTrigger>}
               {/* Commented out Events tab for now */}
               {/* <TabsTrigger value="events">Events</TabsTrigger> */}
               <TabsTrigger value="updates" onClick={navigateToUpdates}>Updates</TabsTrigger>
@@ -130,7 +133,7 @@ const Dashboard: React.FC = () => {
               />
             </TabsContent>
             
-            {isSecuredInvestor && (
+            {hasBusinessPlanAccess && (
               <TabsContent value="financials">
                 <TabContent 
                   title="Financial Information" 
