@@ -36,6 +36,28 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
     setMessage('');
     setIsSubmitting(false);
   };
+
+  const submitInvestorTask = (contactId: string, subject: string, message: string) => {
+    // Create a hidden iframe to avoid CORS issues
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    // Create a URL with the query parameters
+    const encodedSubject = encodeURIComponent(subject || 'Investor Question');
+    const encodedMessage = encodeURIComponent(message);
+    const url = `https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php?ContactId=${contactId}&Question=${encodedSubject}&relatedtoId=0015e000006AFg7&Comments=${encodedMessage}`;
+
+    // Set iframe source to the URL
+    if (iframe.contentWindow) {
+      iframe.contentWindow.location.href = url;
+    }
+
+    // Remove iframe after a delay
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 2000);
+  };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,8 +70,11 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
     setIsSubmitting(true);
     
     try {
-      // Simulate sending a message
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Get the member ID from the user context
+      const memberId = user?.id || '0035e000003cugh'; // Default to the ID from XML if user not available
+      
+      // Submit the investor task
+      submitInvestorTask(memberId, subject, message);
       
       toast.success(`Message sent to ${recipientName}`, {
         description: "They will get back to you shortly.",
