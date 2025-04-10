@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Dialog, 
@@ -52,6 +51,7 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
   const submitInvestorTask = (contactId: string, subject: string, message: string): Promise<boolean> => {
     return new Promise((resolve, reject) => {
       console.log('Starting message submission to investor task endpoint');
+      console.log('Contact ID being used:', contactId); // Log the exact contact ID being used
       
       try {
         // Create a hidden iframe if not already created
@@ -87,16 +87,16 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
         form.method = 'POST';
         form.action = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php';
         
-        // Add the form fields
+        // Add the form fields - ensure exact naming convention
         const contactIdField = iframeDoc.createElement('input');
         contactIdField.type = 'hidden';
-        contactIdField.name = 'ContactId';
+        contactIdField.name = 'ContactId'; // Exact case matching
         contactIdField.value = contactId;
         form.appendChild(contactIdField);
         
         const subjectField = iframeDoc.createElement('input');
         subjectField.type = 'hidden';
-        subjectField.name = 'Question';
+        subjectField.name = 'Question'; // Ensure exact name
         subjectField.value = subject || 'Investor Question';
         form.appendChild(subjectField);
         
@@ -112,6 +112,14 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
         messageField.value = message;
         form.appendChild(messageField);
         
+        // Log the exact form values being submitted
+        console.log('Form submission data:', {
+          ContactId: contactId,
+          Question: subject || 'Investor Question',
+          relatedtoId: '0015e000006AFg7',
+          Comments: message.substring(0, 20) + (message.length > 20 ? '...' : '')
+        });
+        
         // Add a load event listener to handle the response
         iframe.onload = () => {
           console.log('Form submission completed');
@@ -125,13 +133,7 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
         
         // Add the form to the document and submit it
         iframeDoc.body.appendChild(form);
-        console.log('Submitting message form with data:', {
-          ContactId: contactId,
-          Question: subject || 'Investor Question',
-          relatedtoId: '0015e000006AFg7',
-          Comments: message.substring(0, 20) + '...' // Log first 20 chars for privacy
-        });
-        
+        console.log('Submitting form now...');
         form.submit();
         
         // Set a backup timeout in case onload doesn't fire
@@ -149,10 +151,11 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
     });
   };
   
-  // Alternative implementation using direct URL navigation
+  // Alternative implementation using direct URL navigation with improved parameter handling
   const submitViaUrlNavigation = (contactId: string, subject: string, message: string): Promise<boolean> => {
     return new Promise((resolve) => {
       console.log('Starting URL navigation submission method');
+      console.log('Contact ID being used for URL method:', contactId); // Log the exact contact ID
       
       try {
         // Create a hidden iframe or use existing one
@@ -164,12 +167,16 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
           console.log('Created hidden iframe for URL submission');
         }
         
-        // Create a URL with the query parameters
+        // Properly encode all parameters
+        const encodedContactId = encodeURIComponent(contactId);
         const encodedSubject = encodeURIComponent(subject || 'Investor Question');
         const encodedMessage = encodeURIComponent(message);
-        const url = `https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php?ContactId=${contactId}&Question=${encodedSubject}&relatedtoId=0015e000006AFg7&Comments=${encodedMessage}`;
+        const encodedRelatedTo = encodeURIComponent('0015e000006AFg7');
         
-        console.log('Navigating to URL (first 100 chars):', url.substring(0, 100) + '...');
+        // Create a URL with the query parameters using proper casing
+        const url = `https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php?ContactId=${encodedContactId}&Question=${encodedSubject}&relatedtoId=${encodedRelatedTo}&Comments=${encodedMessage}`;
+        
+        console.log('Full URL for submission:', url);
         
         // Set iframe source to the URL
         if (iframeRef.current.contentWindow) {
@@ -210,9 +217,9 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
     try {
       console.log('Message submission initiated');
       
-      // Get the member ID from the user context
+      // Get the member ID from the user context - ensure no manipulation
       const memberId = user?.id || '0035e000003cugh'; // Default to the ID from XML if user not available
-      console.log('Using member ID:', memberId);
+      console.log('Original member ID from context:', memberId);
       
       // Try form submission first
       let success = false;
