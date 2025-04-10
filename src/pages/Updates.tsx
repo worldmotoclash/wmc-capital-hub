@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +7,7 @@ import { ArrowLeft, Bell } from 'lucide-react';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
+import { companyUpdates } from '@/data/companyUpdates';
 
 const Updates: React.FC = () => {
   const navigate = useNavigate();
@@ -33,45 +33,6 @@ const Updates: React.FC = () => {
   if (!user) {
     return null; // Don't render anything while redirecting
   }
-
-  const updates = [
-    {
-      title: "New Partnership Announced",
-      date: "Mar 28, 2025",
-      description: "We're excited to announce a strategic partnership with Pacific Media Group, enhancing our content distribution capabilities across Asia-Pacific markets.",
-      category: "Partnership"
-    },
-    {
-      title: "Q1 Earnings Report Available",
-      date: "Mar 15, 2025",
-      description: "The Q1 2025 earnings report is now available. Review our financial performance and key metrics for the first quarter.",
-      category: "Financial"
-    },
-    {
-      title: "New Market Expansion",
-      date: "Feb 22, 2025",
-      description: "WMC is expanding into European markets with new content localization efforts and strategic partnerships.",
-      category: "Expansion"
-    },
-    {
-      title: "Leadership Team Addition",
-      date: "Feb 10, 2025",
-      description: "We welcome Sarah Johnson as our new Chief Marketing Officer, bringing over 15 years of experience in digital media marketing.",
-      category: "Team"
-    },
-    {
-      title: "Content Production Milestone",
-      date: "Jan 25, 2025",
-      description: "WMC has completed production on its 500th hour of original programming, a significant milestone in our content creation journey.",
-      category: "Production"
-    },
-    {
-      title: "Technology Infrastructure Upgrade",
-      date: "Jan 12, 2025",
-      description: "We've completed a major upgrade to our content delivery infrastructure, improving streaming quality and reducing latency.",
-      category: "Technology"
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -106,7 +67,7 @@ const Updates: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="space-y-6"
         >
-          {updates.map((update, index) => (
+          {companyUpdates.map((update, index) => (
             <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
