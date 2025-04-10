@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Dialog, 
@@ -30,16 +31,7 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
   const [message, setMessage] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submissionStatus, setSubmissionStatus] = React.useState<'idle' | 'pending' | 'success' | 'error'>('idle');
-  const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
-  
-  React.useEffect(() => {
-    // Cleanup iframe on component unmount
-    return () => {
-      if (iframeRef.current && iframeRef.current.parentNode) {
-        document.body.removeChild(iframeRef.current);
-      }
-    };
-  }, []);
+  const formRef = React.useRef<HTMLFormElement | null>(null);
   
   const handleReset = () => {
     setSubject('');
@@ -48,161 +40,6 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
     setSubmissionStatus('idle');
   };
 
-  const submitInvestorTask = (contactId: string, subject: string, message: string): Promise<boolean> => {
-    return new Promise((resolve, reject) => {
-      console.log('Starting message submission to investor task endpoint');
-      console.log('Contact ID being used:', contactId); // Log the exact contact ID being used
-      
-      try {
-        // Create a hidden iframe if not already created
-        if (!iframeRef.current) {
-          const iframe = document.createElement('iframe');
-          iframe.style.display = 'none';
-          document.body.appendChild(iframe);
-          iframeRef.current = iframe;
-          
-          console.log('Created hidden iframe for submission');
-        }
-        
-        // Wait for iframe to be ready
-        const iframe = iframeRef.current;
-        
-        if (!iframe.contentWindow) {
-          console.error('No iframe content window available');
-          reject(new Error('No iframe content window available'));
-          return;
-        }
-        
-        // Get the iframe document
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        
-        if (!iframeDoc) {
-          console.error('No iframe document available');
-          reject(new Error('No iframe document available'));
-          return;
-        }
-        
-        // Create a form element for submission
-        const form = iframeDoc.createElement('form');
-        form.method = 'POST';
-        form.action = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php';
-        
-        // Add the form fields - ensure exact naming convention
-        const contactIdField = iframeDoc.createElement('input');
-        contactIdField.type = 'hidden';
-        contactIdField.name = 'ContactId'; // Exact case matching
-        contactIdField.value = contactId;
-        form.appendChild(contactIdField);
-        
-        const subjectField = iframeDoc.createElement('input');
-        subjectField.type = 'hidden';
-        subjectField.name = 'Question'; // Ensure exact name
-        subjectField.value = subject || 'Investor Question';
-        form.appendChild(subjectField);
-        
-        const relatedToField = iframeDoc.createElement('input');
-        relatedToField.type = 'hidden';
-        relatedToField.name = 'relatedtoId';
-        relatedToField.value = '0015e000006AFg7';
-        form.appendChild(relatedToField);
-        
-        const messageField = iframeDoc.createElement('input');
-        messageField.type = 'hidden';
-        messageField.name = 'Comments';
-        messageField.value = message;
-        form.appendChild(messageField);
-        
-        // Log the exact form values being submitted
-        console.log('Form submission data:', {
-          ContactId: contactId,
-          Question: subject || 'Investor Question',
-          relatedtoId: '0015e000006AFg7',
-          Comments: message.substring(0, 20) + (message.length > 20 ? '...' : '')
-        });
-        
-        // Add a load event listener to handle the response
-        iframe.onload = () => {
-          console.log('Form submission completed');
-          resolve(true);
-        };
-        
-        iframe.onerror = (error) => {
-          console.error('Form submission failed:', error);
-          reject(error);
-        };
-        
-        // Add the form to the document and submit it
-        iframeDoc.body.appendChild(form);
-        console.log('Submitting form now...');
-        form.submit();
-        
-        // Set a backup timeout in case onload doesn't fire
-        setTimeout(() => {
-          if (submissionStatus !== 'success') {
-            console.log('Backup timeout resolving promise as successful');
-            resolve(true);
-          }
-        }, 5000);
-        
-      } catch (error) {
-        console.error('Error during form submission:', error);
-        reject(error);
-      }
-    });
-  };
-  
-  // Alternative implementation using direct URL navigation with improved parameter handling
-  const submitViaUrlNavigation = (contactId: string, subject: string, message: string): Promise<boolean> => {
-    return new Promise((resolve) => {
-      console.log('Starting URL navigation submission method');
-      console.log('Contact ID being used for URL method:', contactId); // Log the exact contact ID
-      
-      try {
-        // Create a hidden iframe or use existing one
-        if (!iframeRef.current) {
-          const iframe = document.createElement('iframe');
-          iframe.style.display = 'none';
-          document.body.appendChild(iframe);
-          iframeRef.current = iframe;
-          console.log('Created hidden iframe for URL submission');
-        }
-        
-        // Properly encode all parameters
-        const encodedContactId = encodeURIComponent(contactId);
-        const encodedSubject = encodeURIComponent(subject || 'Investor Question');
-        const encodedMessage = encodeURIComponent(message);
-        const encodedRelatedTo = encodeURIComponent('0015e000006AFg7');
-        
-        // Create a URL with the query parameters using proper casing
-        const url = `https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php?ContactId=${encodedContactId}&Question=${encodedSubject}&relatedtoId=${encodedRelatedTo}&Comments=${encodedMessage}`;
-        
-        console.log('Full URL for submission:', url);
-        
-        // Set iframe source to the URL
-        if (iframeRef.current.contentWindow) {
-          iframeRef.current.onload = () => {
-            console.log('URL navigation completed');
-            resolve(true);
-          };
-          
-          iframeRef.current.contentWindow.location.href = url;
-          
-          // Set a backup timeout in case onload doesn't fire
-          setTimeout(() => {
-            console.log('Backup timeout resolving URL navigation as successful');
-            resolve(true);
-          }, 3000);
-        } else {
-          console.error('No iframe content window available for URL navigation');
-          resolve(false);
-        }
-      } catch (error) {
-        console.error('Error during URL navigation:', error);
-        resolve(false);
-      }
-    });
-  };
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -217,24 +54,58 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
     try {
       console.log('Message submission initiated');
       
-      // Get the member ID from the user context - ensure no manipulation
-      const memberId = user?.id || '0035e000003cugh'; // Default to the ID from XML if user not available
-      console.log('Original member ID from context:', memberId);
+      // Get the member ID from the user context
+      const memberId = user?.id || '0035e000003cugh';
+      console.log('Using member ID:', memberId);
       
-      // Try form submission first
-      let success = false;
+      // Create a hidden iframe for submission
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
       
-      try {
-        console.log('Attempting form-based submission');
-        await submitInvestorTask(memberId, subject, message);
-        success = true;
-      } catch (formError) {
-        console.error('Form submission failed, trying URL navigation method', formError);
-        // Fall back to URL navigation method
-        success = await submitViaUrlNavigation(memberId, subject, message);
+      // Create a form in the iframe
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!iframeDoc) {
+        throw new Error('Cannot access iframe document');
       }
       
-      if (success) {
+      // Create a form element
+      const form = iframeDoc.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php';
+      
+      // Add form fields with EXACT parameter names
+      const fields = [
+        { name: 'ContactId', value: memberId },
+        { name: 'Question', value: subject || 'Investor Question' },
+        { name: 'relatedtoId', value: '0015e000006AFg7' },
+        { name: 'Comments', value: message }
+      ];
+      
+      // Log the exact values being submitted
+      console.log('Form submission data:', Object.fromEntries(fields.map(f => [f.name, f.value])));
+      
+      // Add fields to form
+      fields.forEach(field => {
+        const input = iframeDoc.createElement('input');
+        input.type = 'hidden';
+        input.name = field.name;
+        input.value = field.value;
+        form.appendChild(input);
+      });
+      
+      // Add form to iframe document
+      iframeDoc.body.appendChild(form);
+      
+      // Submit the form
+      console.log('Submitting form now...');
+      form.submit();
+      
+      // Handle success
+      setTimeout(() => {
+        // Clean up iframe
+        document.body.removeChild(iframe);
+        
         console.log('Message successfully submitted');
         setSubmissionStatus('success');
         toast.success(`Message sent to ${recipientName}`, {
@@ -244,15 +115,43 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
         // Close dialog after submission
         onOpenChange(false);
         handleReset();
-      } else {
-        throw new Error('Both submission methods failed');
-      }
+      }, 3000);
+      
     } catch (error) {
       console.error('Error sending message:', error);
       setSubmissionStatus('error');
       toast.error('Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+  
+  // Also implement a direct URL submission as a fallback
+  const submitViaDirectUrl = () => {
+    try {
+      const memberId = user?.id || '0035e000003cugh';
+      const encodedSubject = encodeURIComponent(subject || 'Investor Question');
+      const encodedMessage = encodeURIComponent(message);
+      
+      const url = `https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php?ContactId=${memberId}&Question=${encodedSubject}&relatedtoId=0015e000006AFg7&Comments=${encodedMessage}`;
+      
+      console.log('Direct URL submission:', url);
+      
+      // Open in hidden iframe
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = url;
+      document.body.appendChild(iframe);
+      
+      // Remove iframe after a delay
+      setTimeout(() => {
+        document.body.removeChild(iframe);
+      }, 3000);
+      
+      return true;
+    } catch (err) {
+      console.error('Error with direct URL submission:', err);
+      return false;
     }
   };
   
@@ -271,7 +170,7 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4" ref={formRef}>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label htmlFor="from-name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -349,6 +248,29 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
               type="submit" 
               disabled={isSubmitting || !message.trim()}
               className="bg-black text-white hover:bg-black/80"
+              onClick={(e) => {
+                if (isSubmitting) return;
+                
+                handleSubmit(e);
+                
+                // Also try direct URL submission as a fallback
+                setTimeout(() => {
+                  if (submissionStatus !== 'success') {
+                    console.log('Attempting fallback URL submission...');
+                    const success = submitViaDirectUrl();
+                    if (success) {
+                      setSubmissionStatus('success');
+                      toast.success(`Message sent to ${recipientName}`, {
+                        description: "They will get back to you shortly.",
+                      });
+                      
+                      // Close dialog after submission
+                      onOpenChange(false);
+                      handleReset();
+                    }
+                  }
+                }, 3000);
+              }}
             >
               {isSubmitting ? 'Sending...' : 'Send Message'}
             </Button>
