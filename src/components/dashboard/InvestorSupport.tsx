@@ -20,7 +20,12 @@ const InvestorSupport: React.FC = () => {
             <div>
               <div className="font-medium dark:text-white">Sarah Mitchell</div>
               <div className="text-sm text-gray-500 dark:text-gray-400">Investor Relations Manager</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">sarah.mitchell@worldmotoclash.com</div>
+              <a 
+                href="mailto:sarah.mitchell@worldmotoclash.com" 
+                className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+              >
+                sarah.mitchell@worldmotoclash.com
+              </a>
             </div>
           </div>
         </div>
