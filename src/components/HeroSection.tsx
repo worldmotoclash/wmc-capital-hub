@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -24,13 +23,14 @@ const HeroSection: React.FC = () => {
       subtitle: "Where speed meets innovation",
       duration: 8000
     },
-    {
-      id: 3,
-      videoSrc: "https://youtu.be/ilJTemepdME",
-      videoTitle: "WMC TEAMS OWNERS",
-      title: "WMC TEAMS OWNERS",
-      subtitle: "The Owners",
-     },
+    // Commented out video ID3
+    // {
+    //   id: 3,
+    //   videoSrc: "https://youtu.be/ilJTemepdME",
+    //   videoTitle: "WMC TEAMS OWNERS",
+    //   title: "WMC TEAMS OWNERS",
+    //   subtitle: "The Owners",
+    //  },
     // Commented out fourth video
     // {
     //   id: 4,
