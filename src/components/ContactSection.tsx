@@ -13,6 +13,10 @@ const ContactSection: React.FC = () => {
     console.log("Form submitted to Salesforce");
   };
 
+  const handleEmailClick = () => {
+    window.location.href = 'mailto:investors@worldmotoclash.com';
+  };
+
   return (
     <section id="contact" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50 z-0"></div>
