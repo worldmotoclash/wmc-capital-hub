@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -65,17 +66,17 @@ const KeyDocuments: React.FC = () => {
             <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
               <img 
                 src="/lovable-uploads/sponsor-primier-thumbnail.png" 
-                alt="Sponsorship Primer" 
+                alt="WMC Intro AB 2025" 
                 className="w-full h-full object-cover"
               />
             </div>
             <div>
-              <div className="text-sm font-medium dark:text-white">Sponsorship Primer (4.1.2025)</div>
+              <div className="text-sm font-medium dark:text-white">WMC Intro AB 2025</div>
               <div className="text-xs text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
             </div>
           </div>
           <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-            <a href="https://drive.google.com/file/d/1qTRq1r8IzM4kxtQA1rDhaWKN03JK6NNR/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+            <a href="https://drive.google.com/file/d/1qK-8zJAQWpzQTrpmYYckd3g4cwy2PyFh/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-4 h-4" />
             </a>
           </Button>
