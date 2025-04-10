@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
-import ContactForm from './ContactForm';
-import ContactInfo from './ContactInfo';
+import ContactForm from './contact/ContactForm';
+import ContactInfo from './contact/ContactInfo';
 
 const ContactSection: React.FC = () => {
   return (
