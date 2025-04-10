@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,8 +16,18 @@ import TabContent from '@/components/dashboard/TabContent';
 const Dashboard: React.FC = () => {
   const { user, setUser } = useUser();
   const navigate = useNavigate();
-  const isSecuredInvestor = user?.status === "Secured Investor";
-  const isPotentialInvestor = user?.status === "Potential Invest";
+  
+  // Updated status checks to be more flexible
+  const isSecuredInvestor = user?.status?.toLowerCase().trim() === "secured investor";
+  const isPotentialInvestor = user?.status?.toLowerCase().trim() === "potential investor";
+  
+  // Log the user status for debugging
+  useEffect(() => {
+    if (user?.status) {
+      console.log("Current user status:", user.status);
+      console.log("isPotentialInvestor:", isPotentialInvestor);
+    }
+  }, [user, isPotentialInvestor]);
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -75,6 +86,9 @@ const Dashboard: React.FC = () => {
               : " here's your potential investor information."}
           </p>
         </motion.div>
+        
+        {/* For debugging - temporarily display the actual user status */}
+        <div className="text-xs text-gray-500 mb-4">Current status: {user.status}</div>
         
         <motion.div
           initial={{ opacity: 0, y: 20 }}
