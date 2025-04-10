@@ -82,8 +82,21 @@ const Dashboard: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-400 mb-8">
             Welcome back {user.name}, 
             {isSecuredInvestor 
-              ? " access your exclusive investment information below." 
+              ? " you now have access to the " 
               : " here's your potential investor information."}
+            {isSecuredInvestor && (
+              <a 
+                href="/documents" 
+                className="text-blue-600 hover:underline font-medium"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateToDocuments();
+                }}
+              >
+                business plan
+              </a>
+            )}
+            {isSecuredInvestor && "."}
           </p>
         </motion.div>
         
