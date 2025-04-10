@@ -17,6 +17,29 @@ const KeyDocuments: React.FC = () => {
         <CardDescription>Access your important documents</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {ndaSigned && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/lovable-uploads/wmc-business-thumbnail.png" 
+                  alt="WMC March 2025 Business Plan" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <div className="text-sm font-medium dark:text-white">WMC March 2025 Business Plan</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
+              <a href="https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </Button>
+          </div>
+        )}
+        
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
@@ -59,28 +82,7 @@ const KeyDocuments: React.FC = () => {
           </Button>
         </div>
         
-        {ndaSigned ? (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
-                <img 
-                  src="/lovable-uploads/we-signed-an-nda.png" 
-                  alt="Signed NDA Document" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                <div className="text-sm font-medium dark:text-white">Signed NDA Document</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">DOCX • Secure Storage</div>
-              </div>
-            </div>
-            <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-              <a href="/lovable-uploads/wmc nda 2025 blank.docx" target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </Button>
-          </div>
-        ) : (
+        {!ndaSigned && (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
@@ -113,4 +115,3 @@ const KeyDocuments: React.FC = () => {
 };
 
 export default KeyDocuments;
-
