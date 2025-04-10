@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,7 @@ const HeroSection: React.FC = () => {
     },
     {
       id: 3,
-      videoSrc: "https://www.youtube.com/embed/ilJTemepdME",
+      videoSrc: "https://youtu.be/ilJTemepdME",
       videoTitle: "WMC TEAMS OWNERS",
       title: "WMC TEAMS OWNERS",
       subtitle: "The Owners",
