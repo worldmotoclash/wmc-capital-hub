@@ -58,7 +58,7 @@ const Documents: React.FC = () => {
     type: "DOCX",
     source: "Secure Storage",
     thumbnail: "/lovable-uploads/blank-nda.png", // Updated thumbnail
-    url: "/lovable-uploads/wmc nda 2025 blank.docx"
+    url: "/lovable-uploads/wmc-nda-2025-blank.docx" // Updated file path with hyphen
   };
   
   // Update the signed NDA document to use the new image
@@ -75,7 +75,7 @@ const Documents: React.FC = () => {
       type: "DOCX",
       source: "Secure Storage",
       thumbnail: "/lovable-uploads/we-signed-an-nda.png", // Updated thumbnail
-      url: "/lovable-uploads/wmc nda 2025 blank.docx"
+      url: "/lovable-uploads/wmc-nda-2025-blank.docx" // Updated file path with hyphen
     }
   ];
 

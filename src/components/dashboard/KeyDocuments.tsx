@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -99,7 +100,7 @@ const KeyDocuments: React.FC = () => {
               </div>
             </div>
             <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-              <a href="/lovable-uploads/wmc nda 2025 blank.docx" target="_blank" rel="noopener noreferrer">
+              <a href="/lovable-uploads/wmc-nda-2025-blank.docx" target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="w-4 h-4" />
               </a>
             </Button>
