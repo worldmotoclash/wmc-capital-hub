@@ -76,7 +76,7 @@ const HeroSection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
             >
-              Reimagining the <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600">Motorsport</span> Industry
+              Reimagining <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600">Motorsports</span> 
             </motion.h1>
             
             <motion.p 
