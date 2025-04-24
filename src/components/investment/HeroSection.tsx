@@ -1,14 +1,11 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { ExternalLink } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
-  const scrollToInvest = () => {
-    const element = document.getElementById('invest');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleLearnMore = () => {
+    window.open('/investment-opportunity', '_blank');
   };
 
   return (
@@ -51,17 +48,18 @@ const HeroSection: React.FC = () => {
             <Button 
               size="lg" 
               className="bg-red-600 hover:bg-red-700 text-white text-lg px-8"
-              onClick={scrollToInvest}
+              onClick={() => window.location.href = '#invest'}
             >
               Invest Now 👉
             </Button>
-            
+        
             <Button 
               variant="outline" 
               size="lg"
-              className="border-white text-white hover:bg-white/10 text-lg"
+              className="border-science-blue text-science-blue hover:bg-science-blue/10 text-lg"
+              onClick={handleLearnMore}
             >
-              Learn More
+              Learn More <ExternalLink className="ml-2 h-4 w-4" />
             </Button>
           </motion.div>
         </motion.div>
