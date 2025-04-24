@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Motorcycle, Users, Tv, Music } from 'lucide-react';
+import { Bike, Tv, Users, Music } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const OverviewSection: React.FC = () => {
   const features = [
     {
-      icon: <Motorcycle className="h-8 w-8 text-red-500" />,
+      icon: <Bike className="h-8 w-8 text-red-500" />,
       title: "Electrifying Races",
       description: "Head-to-head battles on custom superbikes"
     },
