@@ -1,11 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ExternalLink } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 const HeroSection: React.FC = () => {
   const handleLearnMore = () => {
-    window.open('/investment-opportunity', '_blank');
+    const element = document.getElementById('invest');
+    if (element) {
+      const offset = 80; // Account for navbar height
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: elementPosition - offset,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
@@ -52,17 +60,17 @@ const HeroSection: React.FC = () => {
             >
               Invest Now 👉
             </Button>
-        
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-science-blue text-science-blue hover:bg-science-blue/10 text-lg"
-              onClick={handleLearnMore}
-            >
-              Learn More <ExternalLink className="ml-2 h-4 w-4" />
-            </Button>
-          </motion.div>
+      
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 text-lg"
+            onClick={handleLearnMore}
+          >
+            Learn More <ChevronDown className="ml-2 h-4 w-4" />
+          </Button>
         </motion.div>
+        
       </div>
     </section>
   );
