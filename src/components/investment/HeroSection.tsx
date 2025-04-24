@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -61,16 +62,16 @@ const HeroSection: React.FC = () => {
               Invest Now 👉
             </Button>
       
-          <Button 
-            variant="outline" 
-            size="lg"
-            className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 text-lg"
-            onClick={handleLearnMore}
-          >
-            Learn More <ChevronDown className="ml-2 h-4 w-4" />
-          </Button>
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 text-lg"
+              onClick={handleLearnMore}
+            >
+              Learn More <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </motion.div>
         </motion.div>
-        
       </div>
     </section>
   );
