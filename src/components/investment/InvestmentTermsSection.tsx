@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Badge, DollarSign, Percent, Gift } from 'lucide-react';
@@ -16,9 +15,9 @@ const InvestmentTermsSection: React.FC = () => {
     {
       icon: <DollarSign className="h-6 w-6 text-green-600" />,
       title: "Minimum Investment",
-      value: "$250",
-      description: "Get started with as little as $250",
-      tooltip: "Lower entry point compared to traditional sports investments"
+      value: "$500",
+      description: "Get started with as little as $500",
+      tooltip: "Lower entry point for early supporters of World Moto Clash"
     },
     {
       icon: <Badge className="h-6 w-6 text-blue-600" />,
