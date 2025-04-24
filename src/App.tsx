@@ -20,6 +20,7 @@ import DashboardComparison from "./components/DashboardComparison";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
+import InvestmentOpportunity from "./pages/InvestmentOpportunity";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
                 <Route path="/documents" element={<Documents />} />
                 <Route path="/updates" element={<Updates />} />
                 <Route path="/dashboard-comparison" element={<DashboardComparison />} />
+                <Route path="/investment-opportunity" element={<InvestmentOpportunity />} />
                 <Route path="/thankyou" element={<ThankYou />} />
                 <Route path="/thankyouinvestor" element={<Navigate to="/thankyou" replace />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
