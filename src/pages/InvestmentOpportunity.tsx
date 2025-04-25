@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -13,6 +12,8 @@ import TractionSection from '@/components/investment/TractionSection';
 import InvestmentTermsSection from '@/components/investment/InvestmentTermsSection';
 import CtaSection from '@/components/investment/CtaSection';
 import FloatingCta from '@/components/investment/FloatingCta';
+
+import PerksSection from '@/components/investment/PerksSection';
 
 const InvestmentOpportunity: React.FC = () => {
   const { user, setUser } = useUser();
@@ -55,6 +56,7 @@ const InvestmentOpportunity: React.FC = () => {
         <MarketSection />
         <TractionSection />
         <InvestmentTermsSection />
+        <PerksSection />
         <CtaSection />
         <FloatingCta />
       </motion.main>
