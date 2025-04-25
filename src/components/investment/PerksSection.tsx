@@ -1,88 +1,153 @@
 
-import React from 'react';
-import { Gift, Star, Award, Bookmark, Ticket, Briefcase } from 'lucide-react';
+import React from "react";
+import { Zap, Award, Badge, Star, Diamond } from "lucide-react";
 
 const TIERS = [
   {
-    name: "Bronze",
-    minInvestment: "$500+",
-    color: "from-orange-200 to-orange-100 dark:from-orange-700 dark:to-orange-800",
-    icon: <Award className="h-7 w-7 text-amber-500" />,
+    type: "special",
+    name: "Venture Club",
+    icon: <Zap className="h-6 w-6 text-yellow-400" aria-hidden="true" />,
+    price: "",
+    subtitle: "",
     perks: [
-      { text: "Welcome letter & certificate", icon: <Bookmark className="h-5 w-5 text-amber-400" /> },
-      { text: "WMC digital badge & updates", icon: <Star className="h-5 w-5 text-amber-400" /> }
-    ]
+      "Venture Club Members earn 10% bonus shares on top of this and all eligible investments for an entire year.",
+      "Not a member? Sign up at checkout ($275/year)."
+    ],
+    highlight: true,
+    bg: "bg-yellow-100 dark:bg-yellow-900"
   },
   {
-    name: "Silver",
-    minInvestment: "$1,000+",
-    color: "from-silver to-gray-100 dark:from-gray-500 dark:to-gray-700",
-    icon: <Award className="h-7 w-7 text-silver" />,
+    name: "Tier 1",
+    icon: <Award className="h-6 w-6 text-cyan-400" aria-hidden="true" />,
+    price: "$600",
+    subtitle: "Investors who invest at least $600+ will receive the following:",
     perks: [
-      { text: "All Bronze Perks", icon: <Gift className="h-5 w-5 text-gray-400" /> },
-      { text: "Limited-edition WMC hat", icon: <Briefcase className="h-5 w-5 text-gray-400" /> }
-    ]
+      "Early Access to new Fanbase features on the platform.*"
+    ],
+    highlight: false,
+    bg: "bg-white/90 dark:bg-gray-800"
   },
   {
-    name: "Gold",
-    minInvestment: "$2,500+",
-    color: "from-yellow-200 to-amber-100 dark:from-yellow-700 dark:to-yellow-800",
-    icon: <Award className="h-7 w-7 text-yellow-500" />,
+    name: "Tier 2",
+    icon: <Badge className="h-6 w-6 text-sky-500" aria-hidden="true" />,
+    price: "$1,000",
+    subtitle: "Investors who invest at least $1,000+ will receive the following:",
     perks: [
-      { text: "All Silver Perks", icon: <Gift className="h-5 w-5 text-yellow-400" /> },
-      { text: "VIP investor-only event access", icon: <Ticket className="h-5 w-5 text-yellow-400" /> },
-      { text: "Early merch drops", icon: <Bookmark className="h-5 w-5 text-yellow-400" /> }
-    ]
+      "Early Access to new Fanbase features on the platform.*",
+      "10,000 loves to use on Fanbase.",
+      "A verified profile badge.",
+    ],
+    highlight: false,
+    bg: "bg-white/90 dark:bg-gray-800"
   },
   {
-    name: "Platinum",
-    minInvestment: "$5,000+",
-    color: "from-purple-200 to-purple-100 dark:from-purple-700 dark:to-purple-900",
-    icon: <Award className="h-7 w-7 text-purple-500" />,
+    name: "Tier 3",
+    icon: <Badge className="h-6 w-6 text-emerald-500" aria-hidden="true" />,
+    price: "$2,500",
+    subtitle: "Investors who invest at least $2,500+ will receive the following:",
     perks: [
-      { text: "All Gold Perks", icon: <Gift className="h-5 w-5 text-purple-500" /> },
-      { text: "Pit-lane walk & rider meet", icon: <Star className="h-5 w-5 text-purple-500" /> },
-      { text: "Founder's call & recognition", icon: <Briefcase className="h-5 w-5 text-purple-500" /> }
-    ]
+      "Early Access to new Fanbase features on the platform.*",
+      "15,000 loves to use on Fanbase.",
+      "A Fanbase T-Shirt.",
+      "A verified profile badge.",
+    ],
+    highlight: false,
+    bg: "bg-white/90 dark:bg-gray-800"
+  },
+  {
+    name: "Tier 4",
+    icon: <Star className="h-6 w-6 text-amber-400" aria-hidden="true" />,
+    price: "$5,000",
+    subtitle: "Investors who invest at least $5,000+ will receive the following:",
+    perks: [
+      "Early Access to new Fanbase features on the platform.*",
+      "20,000 loves to use on Fanbase.",
+      "Fanbase T-Shirt.",
+      "Early investor gold verified profile badge.",
+      "5% Bonus Shares."
+    ],
+    highlight: false,
+    bg: "bg-white/90 dark:bg-gray-800"
+  },
+  {
+    name: "Tier 5",
+    icon: <Diamond className="h-6 w-6 text-purple-400" aria-hidden="true" />,
+    price: "$10,000",
+    subtitle: "Investors who invest at least $10,000+ will receive the following:",
+    perks: [
+      "Early Access to new Fanbase features on the platform.*",
+      "30,000 loves to use on Fanbase.",
+      "Fanbase T-Shirt.",
+      "Early investor gold verified profile badge.",
+      "Access to a private dinner for Diamond level investors."
+    ],
+    highlight: false,
+    bg: "bg-white/90 dark:bg-gray-800"
   }
 ];
 
 const PerksSection: React.FC = () => (
   <section id="perks" className="py-20 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-950">
-    <div className="container mx-auto px-6">
+    <div className="container mx-auto px-4">
       <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 text-gray-900 dark:text-white">
         🎁 Investor Perks & Tiers
       </h2>
-      <p className="text-center text-lg text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-        Each tier unlocks new rewards as you increase your investment in World Moto Clash. All perks stack as you move up!
+      <p className="text-center text-lg text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto">
+        Unlock more rewards as your investment grows. All investment perks stack!
       </p>
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-        {TIERS.map((tier, i) => (
-          <div
-            key={tier.name}
-            className={`rounded-2xl p-6 shadow-lg bg-gradient-to-br ${tier.color} relative flex flex-col items-center border border-gray-200 dark:border-gray-700`}
-          >
-            <div className="absolute top-3 right-3">{tier.icon}</div>
-            <h3 className="text-xl font-bold mb-2 text-center text-gray-900 dark:text-white">{tier.name}</h3>
-            <p className="text-center text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">{tier.minInvestment}</p>
-            <ul className="space-y-3 mt-4 w-full">
-              {tier.perks.map((perk, idx) => (
-                <li key={idx} className="flex items-center gap-3 text-gray-700 dark:text-gray-100">
-                  {perk.icon}
-                  <span className="font-medium">{perk.text}</span>
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-6 max-w-7xl mx-auto">
+        {/* Venture Club highlight card */}
+        <div className="md:col-span-2 flex flex-col justify-center items-center p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-md min-h-[320px] relative overflow-hidden bg-yellow-50/80 dark:bg-yellow-900/20">
+          <div className="flex items-center gap-2 mb-2">
+            <span>{TIERS[0].icon}</span>
+            <span className="text-xl font-extrabold text-yellow-800 dark:text-yellow-200">Venture Club</span>
+          </div>
+          <p className="text-gray-800 dark:text-yellow-100 text-base text-center font-semibold mb-2">
+            {TIERS[0].perks[0]}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-yellow-200 text-center">
+            {TIERS[0].perks[1]}
+          </p>
+        </div>
+        {/* Tiers 1-5 */}
+        {TIERS.slice(1).map((tier, idx) => (
+          <div key={tier.name}
+               className="flex flex-col rounded-2xl border border-gray-200 dark:border-gray-800 shadow-md items-stretch p-6 bg-white/90 dark:bg-gray-800 min-h-[320px] relative">
+            <div className="flex items-center gap-2 mb-3">
+              {tier.icon}
+              <span className="text-2xl font-extrabold text-gray-800 dark:text-white">{tier.price}</span>
+            </div>
+            <div className="text-base font-bold text-brand-gradient mb-1">{tier.name}</div>
+            <div className="text-gray-700 dark:text-gray-200 font-semibold text-sm mb-2">{tier.subtitle}</div>
+            <ul className="flex flex-col gap-1 text-gray-600 dark:text-gray-300 text-[0.96rem] mb-4">
+              {tier.perks.map((perk, i) => (
+                <li key={i} className="flex items-center gap-2">
+                  <span className="inline-block w-2 h-2 bg-emerald-400 dark:bg-emerald-500 rounded-full"></span>
+                  <span>{perk}</span>
                 </li>
               ))}
             </ul>
+            <button
+              className="mt-auto border border-gray-300 dark:border-gray-600 bg-white/90 dark:bg-gray-800 font-semibold rounded-lg py-2 w-full text-gray-900 dark:text-gray-100 text-base transition hover:bg-gray-50 dark:hover:bg-gray-700"
+              tabIndex={0}
+              aria-label={`Select ${tier.name}`}
+            >
+              Select
+            </button>
           </div>
         ))}
       </div>
-      <div className="mt-12 text-center">
+      <div className="mt-10 text-center">
         <a href="#invest">
           <button className="bg-red-600 hover:bg-red-700 transition-colors text-white font-bold px-8 py-4 rounded-lg shadow-lg text-xl">
             Invest and Unlock Perks 👉
           </button>
         </a>
       </div>
+      {/* For demonstration purposes, use a footnote for asterisk */}
+      <p className="mt-4 text-xs text-gray-400 dark:text-gray-500 text-center">
+        *Fanbase feature access is subject to rollout schedule.
+      </p>
     </div>
   </section>
 );
