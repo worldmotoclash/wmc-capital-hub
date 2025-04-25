@@ -81,13 +81,6 @@ const FeaturesSection: React.FC = () => {
                 </motion.div>
               ))}
             </div>
-            
-            <div className="mt-8 p-4 bg-gray-100 border-l-4 border-red-500 rounded dark:bg-gray-700 dark:border-red-400">
-              <p className="text-gray-800 italic font-medium dark:text-gray-200">
-                "WMC is to racing what UFC was to combat sports in 2005."
-              </p>
-              <p className="text-gray-600 mt-2 dark:text-gray-400">— Steve Kompolt, Founder & Creator</p>
-            </div>
           </motion.div>
         </div>
       </div>
@@ -96,3 +89,4 @@ const FeaturesSection: React.FC = () => {
 };
 
 export default FeaturesSection;
+
