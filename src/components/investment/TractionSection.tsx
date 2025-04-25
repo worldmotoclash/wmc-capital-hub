@@ -8,7 +8,7 @@ const TractionSection: React.FC = () => {
   const achievements = [
     "Mobile/TV App MVP complete",
     "Salesforce-powered racer portal live",
-    "Top-tier mentors signed: Colin Edwards, Greg Smrz, Miguel Duhamel",
+    "Top-tier mentors signed: Colin Edwards, Gregg Smrz, Miguel Duhamel",
     "Media partnership talks underway",
     "Initial brand interest from Kawasaki"
   ];
