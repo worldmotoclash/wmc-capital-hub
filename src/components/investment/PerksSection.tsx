@@ -3,12 +3,11 @@ import React from "react";
 import {
   Badge,
   Star,
-  Shirt,
-  Hoodie,
   Users,
   Gift,
   Trophy,
   BookUser,
+  BadgeCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -47,7 +46,7 @@ const TIERS = [
   },
   {
     name: "Clash Elite",
-    icon: <Star className="h-7 w-7 text-amber-400" aria-hidden="true" />,
+    icon: <BadgeCheck className="h-7 w-7 text-amber-400" aria-hidden="true" />,
     investment: "$5,000+",
     equity: "0.00050%",
     perks: [
