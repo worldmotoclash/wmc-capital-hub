@@ -1,21 +1,8 @@
 
 import React from "react";
-import { Zap, Award, Badge, Star, Diamond } from "lucide-react";
+import { Award, Badge, Star, Diamond } from "lucide-react";
 
 const TIERS = [
-  {
-    type: "special",
-    name: "Venture Club",
-    icon: <Zap className="h-6 w-6 text-yellow-400" aria-hidden="true" />,
-    price: "",
-    subtitle: "",
-    perks: [
-      "Venture Club Members earn 10% bonus shares on top of this and all eligible investments for an entire year.",
-      "Not a member? Sign up at checkout ($275/year)."
-    ],
-    highlight: true,
-    bg: "bg-yellow-100 dark:bg-yellow-900"
-  },
   {
     name: "Tier 1",
     icon: <Award className="h-6 w-6 text-cyan-400" aria-hidden="true" />,
@@ -95,22 +82,9 @@ const PerksSection: React.FC = () => (
       <p className="text-center text-lg text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto">
         Unlock more rewards as your investment grows. All investment perks stack!
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-6 max-w-7xl mx-auto">
-        {/* Venture Club highlight card */}
-        <div className="md:col-span-2 flex flex-col justify-center items-center p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-md min-h-[320px] relative overflow-hidden bg-yellow-50/80 dark:bg-yellow-900/20">
-          <div className="flex items-center gap-2 mb-2">
-            <span>{TIERS[0].icon}</span>
-            <span className="text-xl font-extrabold text-yellow-800 dark:text-yellow-200">Venture Club</span>
-          </div>
-          <p className="text-gray-800 dark:text-yellow-100 text-base text-center font-semibold mb-2">
-            {TIERS[0].perks[0]}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-yellow-200 text-center">
-            {TIERS[0].perks[1]}
-          </p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6 max-w-7xl mx-auto">
         {/* Tiers 1-5 */}
-        {TIERS.slice(1).map((tier, idx) => (
+        {TIERS.map((tier, idx) => (
           <div key={tier.name}
                className="flex flex-col rounded-2xl border border-gray-200 dark:border-gray-800 shadow-md items-stretch p-6 bg-white/90 dark:bg-gray-800 min-h-[320px] relative">
             <div className="flex items-center gap-2 mb-3">
