@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Badge,
@@ -10,6 +9,7 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import InvestDialog from "./InvestDialog";
 
 const TIERS = [
   {
@@ -116,7 +116,7 @@ const PerksSection: React.FC = () => (
         The higher your investment, the more rewards you unlock. All perks stack as you progress up the tiers!
       </p>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-7xl mx-auto">
-        {TIERS.map((tier, idx) => (
+        {TIERS.map((tier) => (
           <div
             key={tier.name}
             className={`flex flex-col rounded-2xl border ${tier.border} shadow-md items-stretch p-6 min-h-[410px] relative
@@ -146,27 +146,34 @@ const PerksSection: React.FC = () => (
                 </li>
               ))}
             </ul>
-            <Button
-              size="sm"
-              className={`mt-auto font-semibold w-full ${
-                tier.highlight
-                  ? "bg-purple-700 hover:bg-purple-800 text-white"
-                  : "bg-white/80 hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-              }`}
-              tabIndex={0}
-              aria-label={`Select ${tier.name}`}
-            >
-              Select
-            </Button>
+            <InvestDialog
+              defaultTier={tier.name}
+              trigger={
+                <Button
+                  size="sm"
+                  className={`mt-auto font-semibold w-full ${
+                    tier.highlight
+                      ? "bg-purple-700 hover:bg-purple-800 text-white"
+                      : "bg-white/80 hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                  }`}
+                  tabIndex={0}
+                  aria-label={`Select ${tier.name}`}
+                >
+                  Select
+                </Button>
+              }
+            />
           </div>
         ))}
       </div>
       <div className="mt-12 text-center">
-        <a href="#invest">
-          <Button size="lg" className="bg-red-600 hover:bg-red-700 transition-colors text-white font-bold px-8 py-4 rounded-lg shadow-lg text-xl">
-            Invest Now 👉
-          </Button>
-        </a>
+        <InvestDialog
+          trigger={
+            <Button size="lg" className="bg-red-600 hover:bg-red-700 transition-colors text-white font-bold px-8 py-4 rounded-lg shadow-lg text-xl">
+              Invest Now 👉
+            </Button>
+          }
+        />
       </div>
     </div>
   </section>
