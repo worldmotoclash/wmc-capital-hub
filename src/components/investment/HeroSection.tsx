@@ -1,14 +1,17 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
+import { useInvestNowAction } from '@/hooks/useInvestNowAction';
+import TierSelectionDialog from './TierSelectionDialog';
 
 const HeroSection: React.FC = () => {
+  const { showTierDialog, setShowTierDialog, handleInvestNowClick } = useInvestNowAction();
+
   const handleLearnMore = () => {
     const element = document.getElementById('invest');
     if (element) {
-      const offset = 80; // Account for navbar height
+      const offset = 80;
       const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
       window.scrollTo({
         top: elementPosition - offset,
@@ -57,11 +60,11 @@ const HeroSection: React.FC = () => {
             <Button 
               size="lg" 
               className="bg-red-600 hover:bg-red-700 text-white text-lg px-8"
-              onClick={() => window.location.href = '#invest'}
+              onClick={handleInvestNowClick}
             >
               Invest Now 👉
             </Button>
-      
+  
             <Button 
               variant="outline" 
               size="lg"
@@ -73,6 +76,11 @@ const HeroSection: React.FC = () => {
           </motion.div>
         </motion.div>
       </div>
+
+      <TierSelectionDialog 
+        open={showTierDialog} 
+        onOpenChange={setShowTierDialog} 
+      />
     </section>
   );
 };

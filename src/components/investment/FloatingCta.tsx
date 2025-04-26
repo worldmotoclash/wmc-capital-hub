@@ -1,11 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
+import { useInvestNowAction } from '@/hooks/useInvestNowAction';
+import TierSelectionDialog from './TierSelectionDialog';
 
 const FloatingCta: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const { showTierDialog, setShowTierDialog, handleInvestNowClick } = useInvestNowAction();
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -57,12 +59,18 @@ const FloatingCta: React.FC = () => {
             <Button
               size="lg"
               className="bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg px-6"
+              onClick={handleInvestNowClick}
             >
               Invest Now
             </Button>
           </motion.div>
         </div>
       )}
+
+      <TierSelectionDialog 
+        open={showTierDialog} 
+        onOpenChange={setShowTierDialog} 
+      />
     </AnimatePresence>
   );
 };

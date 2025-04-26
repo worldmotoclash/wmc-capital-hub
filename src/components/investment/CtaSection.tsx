@@ -1,9 +1,12 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { useInvestNowAction } from '@/hooks/useInvestNowAction';
+import TierSelectionDialog from './TierSelectionDialog';
 
 const CtaSection: React.FC = () => {
+  const { showTierDialog, setShowTierDialog, handleInvestNowClick } = useInvestNowAction();
+
   return (
     <section className="py-24 bg-gray-900 text-white">
       <div className="container mx-auto px-6">
@@ -26,6 +29,7 @@ const CtaSection: React.FC = () => {
             <Button 
               size="lg" 
               className="bg-red-600 hover:bg-red-700 text-white text-xl px-10 py-6"
+              onClick={handleInvestNowClick}
             >
               Invest Now 👉
             </Button>
@@ -42,6 +46,11 @@ const CtaSection: React.FC = () => {
           </motion.div>
         </motion.div>
       </div>
+
+      <TierSelectionDialog 
+        open={showTierDialog} 
+        onOpenChange={setShowTierDialog} 
+      />
     </section>
   );
 };
