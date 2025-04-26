@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,6 @@ import {
   DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -21,11 +20,6 @@ interface InvestDialogProps {
   defaultTier?: string;
 }
 
-const SFDC_ENDPOINT =
-  "https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php";
-const HARDCODED_CONTACT_ID = "0035e000003cugh";
-const RELATED_TO_ID = "0015e000006AFg7";
-
 export const InvestDialog: React.FC<InvestDialogProps> = ({
   trigger,
   defaultTier,
@@ -35,11 +29,17 @@ export const InvestDialog: React.FC<InvestDialogProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const { user } = useUser();
+  const formRef = useRef<HTMLFormElement>(null);
 
   // Use the logged-in user's name, fallback to "Investor"
   const userName = user?.name || "Investor";
   const userEmail = user?.email || "";
   const subject = defaultTier ? `Investor Inquiry: ${defaultTier}` : "Investor Inquiry";
+
+  // Split name into first and last name
+  const nameParts = userName.split(' ');
+  const firstName = nameParts[0];
+  const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,33 +49,18 @@ export const InvestDialog: React.FC<InvestDialogProps> = ({
     }
     setSubmitting(true);
     try {
-      // POST request parameters (form-urlencoded)
-      const formData = new FormData();
-      formData.append("ContactId", HARDCODED_CONTACT_ID);
-      // Include user name and email in the question string
-      let questionStr = subject;
-      if (userName || userEmail) {
-        questionStr += ` [From: ${userName}${userEmail ? " - " + userEmail : ""}]`;
+      if (formRef.current) {
+        formRef.current.submit();
+        setShowThankYou(true);
+        // Clear input state for next open
+        setMessage("");
+
+        // Show the thank you response for 3 seconds, then close
+        setTimeout(() => {
+          setShowThankYou(false);
+          setOpen(false);
+        }, 3000);
       }
-      formData.append("Question", questionStr);
-      formData.append("relatedtoId", RELATED_TO_ID);
-      formData.append("Comments", message);
-
-      await fetch(SFDC_ENDPOINT, {
-        method: "POST",
-        body: formData,
-        mode: "no-cors",
-      });
-
-      setShowThankYou(true);
-      // Clear input state for next open
-      setMessage("");
-
-      // Show the thank you response for 3 seconds, then close
-      setTimeout(() => {
-        setShowThankYou(false);
-        setOpen(false);
-      }, 3000);
     } catch (err) {
       toast.error("Submission failed. Please try again.");
     } finally {
@@ -90,7 +75,20 @@ export const InvestDialog: React.FC<InvestDialogProps> = ({
       </DialogTrigger>
       <DialogContent>
         {!showThankYou ? (
-          <form onSubmit={handleSubmit}>
+          <form 
+            ref={formRef}
+            onSubmit={handleSubmit}
+            method="POST"
+            action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+            style={{ margin: 0 }}
+          >
+            <input type="hidden" name="oid" value="00D5e000000HEcP" />
+            <input type="hidden" name="first_name" value={firstName} />
+            <input type="hidden" name="last_name" value={lastName} />
+            <input type="hidden" name="email" value={userEmail} />
+            <input type="hidden" name="lead_source" value="Investor Portal" />
+            <input type="hidden" name="description" value={`Investment Tier: ${defaultTier || 'Not Specified'}\n\nMessage: ${message}`} />
+            
             <DialogHeader>
               <DialogTitle>
                 Invest in {defaultTier || "World Moto Clash"}
@@ -99,7 +97,6 @@ export const InvestDialog: React.FC<InvestDialogProps> = ({
                 Submit your interest and our team will connect with you soon.
               </DialogDescription>
             </DialogHeader>
-            {/* Greet the user instead of prompting their email */}
             <div className="my-4 space-y-3">
               <div className="text-base text-gray-700 dark:text-gray-200">
                 {user ? (
