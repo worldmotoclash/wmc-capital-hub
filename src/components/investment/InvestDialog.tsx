@@ -13,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { useUser } from "@/contexts/UserContext";
 
 interface InvestDialogProps {
@@ -21,130 +20,146 @@ interface InvestDialogProps {
   defaultTier?: string;
 }
 
-const SFDC_ENDPOINT =
-  "https://realintelligence.com/customers/expos/00D5e000000HEcP/submit-investor-task.php";
-const HARDCODED_CONTACT_ID = "0035e000003cugh";
-const RELATED_TO_ID = "0015e000006AFg7";
+// Salesforce Web-to-Lead endpoint & org info
+const SF_WEBTOLEAD = "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
+const SF_ORG_ID = "00D5e000000HEcP";
+const SF_RETURL = "http://worldmotoclash.com/thankyou";
 
-export const InvestDialog: React.FC<InvestDialogProps> = ({
+const InvestDialog: React.FC<InvestDialogProps> = ({
   trigger,
   defaultTier,
 }) => {
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [showThankYou, setShowThankYou] = useState(false);
   const { user } = useUser();
 
-  // Use the logged-in user's name, fallback to "Investor"
-  const userName = user?.name || "Investor";
-  const userEmail = user?.email || "";
-  const subject = defaultTier ? `Investor Inquiry: ${defaultTier}` : "Investor Inquiry";
+  // These state hooks are for fields not auto-filled from user
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!message.trim()) {
-      toast.error("Please enter your message.");
-      return;
-    }
-    setSubmitting(true);
-    try {
-      // POST request parameters (form-urlencoded)
-      const formData = new FormData();
-      formData.append("ContactId", HARDCODED_CONTACT_ID);
-      // Include user name and email in the question string
-      let questionStr = subject;
-      if (userName || userEmail) {
-        questionStr += ` [From: ${userName}${userEmail ? " - " + userEmail : ""}]`;
-      }
-      formData.append("Question", questionStr);
-      formData.append("relatedtoId", RELATED_TO_ID);
-      formData.append("Comments", message);
+  // We need to split full name if possible
+  let firstName = "";
+  let lastName = "";
+  if (user?.name) {
+    const parts = user.name.trim().split(" ");
+    firstName = parts[0] || "";
+    lastName = parts.slice(1).join(" ") || "";
+  }
 
-      await fetch(SFDC_ENDPOINT, {
-        method: "POST",
-        body: formData,
-        mode: "no-cors",
-      });
+  // Fallback: email from user or blank
+  const email = user?.email || "";
 
-      setShowThankYou(true);
-      // Clear input state for next open
-      setMessage("");
+  // Invest tier records which tier (e.g. Pit Pass, Legend, etc.)
+  const selectedTier = defaultTier || "";
 
-      // Show the thank you response for 3 seconds, then close
-      setTimeout(() => {
-        setShowThankYou(false);
-        setOpen(false);
-      }, 3000);
-    } catch (err) {
-      toast.error("Submission failed. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
+  // Form submit relies on classic web form POST; no JS needed.
+  // However, we use React here to close the dialog on open/close,
+  // but the form itself will handle the redirect.
   return (
-    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setShowThankYou(false); }}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        {!showThankYou ? (
-          <form onSubmit={handleSubmit}>
-            <DialogHeader>
-              <DialogTitle>
-                Invest in {defaultTier || "World Moto Clash"}
-              </DialogTitle>
-              <DialogDescription>
-                Submit your interest and our team will connect with you soon.
-              </DialogDescription>
-            </DialogHeader>
-            {/* Greet the user instead of prompting their email */}
-            <div className="my-4 space-y-3">
-              <div className="text-base text-gray-700 dark:text-gray-200">
-                {user ? (
-                  <>
-                    Hi <span className="font-semibold">{userName}</span>
-                    <span className="ml-1 text-xs font-mono text-gray-500">{userEmail}</span>
-                  </>
-                ) : (
-                  <>Hi, Investor!</>
-                )}
-              </div>
-              <Textarea
+        <DialogHeader>
+          <DialogTitle>
+            Invest in {selectedTier ? selectedTier : "World Moto Clash"}
+          </DialogTitle>
+          <DialogDescription>
+            Submit your interest. Our team will connect with you soon.
+          </DialogDescription>
+        </DialogHeader>
+
+        <form
+          action={SF_WEBTOLEAD}
+          method="POST"
+          className="space-y-6"
+        >
+          {/* Required org and redirect fields */}
+          <input type="hidden" name="oid" value={SF_ORG_ID} />
+          <input type="hidden" name="retURL" value={SF_RETURL} />
+
+          {/* Investor Tier as custom field */}
+          <input
+            type="hidden"
+            name="00N5e00000gt2r6"
+            value={selectedTier}
+            // Salesforce custom field (Investor Type) for Tier tracking
+          />
+
+          {/* Prefill/readonly if user is logged in, otherwise let user type */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label htmlFor="first_name" className="text-sm font-medium text-gray-700">
+                First Name
+              </label>
+              <Input
+                id="first_name"
+                name="first_name"
+                maxLength={40}
+                placeholder="First Name"
                 required
-                placeholder="Write a bit about your interest, or any questions you have"
-                minLength={4}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                disabled={submitting}
+                value={firstName}
+                readOnly={!!firstName}
+                autoFocus
+                tabIndex={0}
               />
             </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" type="button" disabled={submitting}>
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button
-                type="submit"
-                className="bg-red-600 text-white hover:bg-red-700"
-                disabled={submitting}
-              >
-                {submitting ? "Submitting..." : "Submit"}
-              </Button>
-            </DialogFooter>
-          </form>
-        ) : (
-          <div className="flex flex-col items-center py-8">
-            <div className="text-2xl font-semibold text-green-600 mb-2 text-center">
-              Thank you {userName} for your interest in {defaultTier || "World Moto Clash"}!
-            </div>
-            <div className="text-gray-600 dark:text-gray-300 text-center">
-              Our team will reach out soon to your email: <span className="font-mono font-semibold">{userEmail}</span>
+            <div className="space-y-2">
+              <label htmlFor="last_name" className="text-sm font-medium text-gray-700">
+                Last Name
+              </label>
+              <Input
+                id="last_name"
+                name="last_name"
+                maxLength={80}
+                placeholder="Last Name"
+                required
+                value={lastName}
+                readOnly={!!lastName}
+              />
             </div>
           </div>
-        )}
+          <div className="space-y-2">
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              maxLength={80}
+              placeholder="your@email.com"
+              required
+              value={email}
+              readOnly={!!email}
+            />
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="message" className="text-sm font-medium text-gray-700">
+              Message
+            </label>
+            <Textarea
+              id="message"
+              name="description"
+              minLength={4}
+              placeholder="Write a bit about your investment interest or any questions you have"
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              required
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              type="submit"
+              className="bg-red-600 text-white hover:bg-red-700"
+              tabIndex={0}
+            >
+              Submit
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
