@@ -23,7 +23,7 @@ const CtaSection: React.FC = () => {
             👊 Join the Clash
           </h2>
           
-          <p className="text-xl text-gray-300 mb-10">
+          <p className="text-xl text-gray-300 mb-6">
             Become an early investor in the most radical motorsport league since the invention of the superbike.
           </p>
           
