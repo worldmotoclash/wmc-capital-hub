@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,8 @@ import TierSelectionDialog from './TierSelectionDialog';
 
 const FloatingCta: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const { showTierDialog, setShowTierDialog, handleInvestNowClick } = useInvestNowAction();
+  const [showTierDialog, setShowTierDialog] = useState(false);
+  const { handleInvestNowClick } = useInvestNowAction();
 
   useEffect(() => {
     const toggleVisibility = () => {

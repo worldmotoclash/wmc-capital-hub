@@ -1,11 +1,13 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useInvestNowAction } from '@/hooks/useInvestNowAction';
 import TierSelectionDialog from './TierSelectionDialog';
 
 const CtaSection: React.FC = () => {
-  const { showTierDialog, setShowTierDialog, handleInvestNowClick } = useInvestNowAction();
+  const { handleInvestNowClick } = useInvestNowAction();
+  const [showTierDialog, setShowTierDialog] = useState(false);
 
   return (
     <section className="py-24 bg-gray-900 text-white">
