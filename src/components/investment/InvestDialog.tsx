@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import {
   Dialog,
@@ -54,12 +53,6 @@ export const InvestDialog: React.FC<InvestDialogProps> = ({
         setShowThankYou(true);
         // Clear input state for next open
         setMessage("");
-
-        // Show the thank you response for 3 seconds, then close
-        setTimeout(() => {
-          setShowThankYou(false);
-          setOpen(false);
-        }, 3000);
       }
     } catch (err) {
       toast.error("Submission failed. Please try again.");
@@ -140,6 +133,17 @@ export const InvestDialog: React.FC<InvestDialogProps> = ({
             <div className="text-gray-600 dark:text-gray-300 text-center">
               Our team will reach out soon to your email: <span className="font-mono font-semibold">{userEmail}</span>
             </div>
+            <DialogFooter className="mt-8">
+              <Button
+                onClick={() => {
+                  setShowThankYou(false);
+                  setOpen(false);
+                }}
+                className="bg-green-600 text-white hover:bg-green-700"
+              >
+                Close
+              </Button>
+            </DialogFooter>
           </div>
         )}
       </DialogContent>
