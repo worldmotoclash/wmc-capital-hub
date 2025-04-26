@@ -11,9 +11,13 @@ import { useUser } from '@/contexts/UserContext';
 
 const DashboardOverview: React.FC = () => {
   const { user } = useUser();
-  const isSecuredInvestor = user?.status?.toLowerCase().trim() === "secured investor";
-  const isQualifiedInvestor = user?.status?.toLowerCase().trim() === "qualified investor";
-  const hasBusinessPlanAccess = isSecuredInvestor || isQualifiedInvestor;
+  // Case-insensitive, trimmed logic for hiding chart
+  const status = user?.status?.toLowerCase().trim();
+  const isSecuredInvestor = status === "secured investor";
+  const isQualifiedInvestor = status === "qualified investor";
+  const isPotentialInvestor = status === "potential investor";
+  const showInvestmentPerformance =
+    isSecuredInvestor && !isQualifiedInvestor && !isPotentialInvestor;
 
   return (
     <div className="space-y-8">
@@ -52,7 +56,7 @@ const DashboardOverview: React.FC = () => {
         <RecentUpdates />
       </div>
       
-      {hasBusinessPlanAccess && (
+      {showInvestmentPerformance && (
         <div className="grid grid-cols-1 gap-6">
           <InvestmentPerformance />
         </div>
@@ -67,3 +71,4 @@ const DashboardOverview: React.FC = () => {
 };
 
 export default DashboardOverview;
+
