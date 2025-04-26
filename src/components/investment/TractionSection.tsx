@@ -61,8 +61,8 @@ const TractionSection: React.FC = () => {
             <div className="relative rounded-lg overflow-hidden shadow-xl">
               <AspectRatio ratio={16/9}>
                 <img 
-                  src="/lovable-uploads/road-america-drone.jpg" 
-                  alt="Road America Track" 
+                  src="/lovable-uploads/miguel-podium.jpg" 
+                  alt="Miguel Podium" 
                   className="w-full h-full object-cover"
                 />
               </AspectRatio>
