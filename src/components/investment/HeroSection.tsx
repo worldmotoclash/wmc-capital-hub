@@ -3,10 +3,9 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import { useInvestNowAction } from '@/hooks/useInvestNowAction';
-import TierSelectionDialog from './TierSelectionDialog';
 
 const HeroSection: React.FC = () => {
-  const { showTierDialog, setShowTierDialog, handleInvestNowClick } = useInvestNowAction();
+  const { handleInvestNowClick } = useInvestNowAction();
 
   const handleLearnMore = () => {
     const element = document.getElementById('invest');
@@ -64,7 +63,7 @@ const HeroSection: React.FC = () => {
             >
               Invest Now 👉
             </Button>
-  
+
             <Button 
               variant="outline" 
               size="lg"
@@ -76,11 +75,6 @@ const HeroSection: React.FC = () => {
           </motion.div>
         </motion.div>
       </div>
-
-      <TierSelectionDialog 
-        open={showTierDialog} 
-        onOpenChange={setShowTierDialog} 
-      />
     </section>
   );
 };
