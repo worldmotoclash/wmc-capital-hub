@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
+import { toast } from "sonner";
+import { Check } from "lucide-react";
 
 interface InvestDialogProps {
   trigger: React.ReactNode;
@@ -23,19 +25,19 @@ interface InvestDialogProps {
 // Salesforce Web-to-Lead endpoint & org info
 const SF_WEBTOLEAD = "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
 const SF_ORG_ID = "00D5e000000HEcP";
-const SF_RETURL = "http://worldmotoclash.com/thankyou";
 
 const InvestDialog: React.FC<InvestDialogProps> = ({
   trigger,
   defaultTier,
 }) => {
   const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const { user } = useUser();
 
-  // These state hooks are for fields not auto-filled from user
-  const [message, setMessage] = useState("");
-
-  // We need to split full name if possible
+  // Split full name if possible
   let firstName = "";
   let lastName = "";
   if (user?.name) {
@@ -44,15 +46,34 @@ const InvestDialog: React.FC<InvestDialogProps> = ({
     lastName = parts.slice(1).join(" ") || "";
   }
 
-  // Fallback: email from user or blank
+  // Auto-filled email from user context
   const email = user?.email || "";
-
-  // Invest tier records which tier (e.g. Pit Pass, Legend, etc.)
   const selectedTier = defaultTier || "";
 
-  // Form submit relies on classic web form POST; no JS needed.
-  // However, we use React here to close the dialog on open/close,
-  // but the form itself will handle the redirect.
+  const handleIframeLoad = () => {
+    // This triggers after form submission completes
+    if (isSubmitting) {
+      setIsSubmitting(false);
+      setOpen(false);
+      setMessage("");
+      
+      toast.success(
+        "Investment Interest Received!", 
+        {
+          description: "Thank you for your interest. Our team will contact you shortly.",
+          icon: <Check className="h-4 w-4" />,
+          duration: 5000,
+        }
+      );
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    formRef.current?.submit();
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -67,84 +88,53 @@ const InvestDialog: React.FC<InvestDialogProps> = ({
         </DialogHeader>
 
         <form
+          ref={formRef}
           action={SF_WEBTOLEAD}
           method="POST"
+          target="hidden_iframe"
           className="space-y-6"
+          onSubmit={handleSubmit}
         >
-          {/* Required org and redirect fields */}
+          {/* Hidden iframe for form submission */}
+          <iframe 
+            name="hidden_iframe"
+            id="hidden_iframe"
+            ref={iframeRef}
+            onLoad={handleIframeLoad}
+            style={{ display: 'none' }}
+            title="Hidden Form Frame"
+          />
+
+          {/* Required org field */}
           <input type="hidden" name="oid" value={SF_ORG_ID} />
-          <input type="hidden" name="retURL" value={SF_RETURL} />
 
           {/* Investor Tier as custom field */}
           <input
             type="hidden"
             name="00N5e00000gt2r6"
             value={selectedTier}
-            // Salesforce custom field (Investor Type) for Tier tracking
           />
 
-          {/* Prefill/readonly if user is logged in, otherwise let user type */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="first_name" className="text-sm font-medium text-gray-700">
-                First Name
-              </label>
-              <Input
-                id="first_name"
-                name="first_name"
-                maxLength={40}
-                placeholder="First Name"
-                required
-                value={firstName}
-                readOnly={!!firstName}
-                autoFocus
-                tabIndex={0}
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="last_name" className="text-sm font-medium text-gray-700">
-                Last Name
-              </label>
-              <Input
-                id="last_name"
-                name="last_name"
-                maxLength={80}
-                placeholder="Last Name"
-                required
-                value={lastName}
-                readOnly={!!lastName}
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              maxLength={80}
-              placeholder="your@email.com"
-              required
-              value={email}
-              readOnly={!!email}
-            />
-          </div>
+          {/* Hidden user information fields */}
+          <input type="hidden" name="first_name" value={firstName} />
+          <input type="hidden" name="last_name" value={lastName} />
+          <input type="hidden" name="email" value={email} />
+
+          {/* Optional message field */}
           <div className="space-y-2">
             <label htmlFor="message" className="text-sm font-medium text-gray-700">
-              Message
+              Additional Message (Optional)
             </label>
             <Textarea
               id="message"
               name="description"
-              minLength={4}
-              placeholder="Write a bit about your investment interest or any questions you have"
+              placeholder="Write any questions or additional information you'd like to share"
               value={message}
               onChange={e => setMessage(e.target.value)}
-              required
+              className="min-h-[100px]"
             />
           </div>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
@@ -154,9 +144,9 @@ const InvestDialog: React.FC<InvestDialogProps> = ({
             <Button
               type="submit"
               className="bg-red-600 text-white hover:bg-red-700"
-              tabIndex={0}
+              disabled={isSubmitting}
             >
-              Submit
+              {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </DialogFooter>
         </form>
