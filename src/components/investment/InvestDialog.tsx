@@ -17,11 +17,13 @@ import { useUser } from "@/contexts/UserContext";
 interface InvestDialogProps {
   trigger: React.ReactNode;
   defaultTier?: string;
+  onAfterSubmit?: () => void;  // Add this new prop
 }
 
 export const InvestDialog: React.FC<InvestDialogProps> = ({
   trigger,
   defaultTier,
+  onAfterSubmit,
 }) => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -53,6 +55,8 @@ export const InvestDialog: React.FC<InvestDialogProps> = ({
         setShowThankYou(true);
         // Clear input state for next open
         setMessage("");
+        // Call onAfterSubmit if provided
+        onAfterSubmit?.();
       }
     } catch (err) {
       toast.error("Submission failed. Please try again.");

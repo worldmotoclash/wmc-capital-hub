@@ -6,8 +6,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import InvestDialog from "./InvestDialog";
 import { BookUser, Gift } from "lucide-react";
 
@@ -55,11 +57,16 @@ const AvailableTiersDialog: React.FC<AvailableTiersDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
-        <DialogHeader>
+        <DialogHeader className="relative">
           <DialogTitle>Available Investment Tiers</DialogTitle>
           <DialogDescription>
             Select from our currently available premium investment tiers below
           </DialogDescription>
+          <DialogClose className="absolute right-0 top-0" asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <X className="h-4 w-4" />
+            </Button>
+          </DialogClose>
         </DialogHeader>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
@@ -95,6 +102,7 @@ const AvailableTiersDialog: React.FC<AvailableTiersDialogProps> = ({
               </ul>
               <InvestDialog
                 defaultTier={tier.name}
+                onAfterSubmit={() => onOpenChange(false)}
                 trigger={
                   <Button
                     size="sm"
