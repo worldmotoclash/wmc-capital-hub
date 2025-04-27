@@ -1,3 +1,4 @@
+
 import React, { useRef } from "react";
 import {
   Badge,
@@ -115,6 +116,7 @@ const PerksSection: React.FC = () => {
   const [showAvailableTiers, setShowAvailableTiers] = React.useState(false);
   const { user } = useUser();
   const unavailableFormRef = useRef<HTMLFormElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Split name into first and last name for the form
   const userName = user?.name || "Investor";
@@ -125,6 +127,8 @@ const PerksSection: React.FC = () => {
 
   const handleUnavailableTierSelection = (tierName: string) => {
     if (unavailableFormRef.current) {
+      // Set the form to target the hidden iframe
+      unavailableFormRef.current.target = "hidden-submit-frame";
       // Submit the form in the background
       unavailableFormRef.current.submit();
     }
@@ -137,6 +141,14 @@ const PerksSection: React.FC = () => {
       id="perks"
       className="py-20 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-950"
     >
+      {/* Hidden iframe for form submission */}
+      <iframe 
+        name="hidden-submit-frame"
+        ref={iframeRef}
+        style={{ display: 'none' }}
+        title="Hidden Submit Frame"
+      />
+
       {/* Hidden form for background submission */}
       <form
         ref={unavailableFormRef}
