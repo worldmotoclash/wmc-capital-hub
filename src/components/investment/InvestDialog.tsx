@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import {
   Dialog,
@@ -51,12 +52,24 @@ export const InvestDialog: React.FC<InvestDialogProps> = ({
     setSubmitting(true);
     try {
       if (formRef.current) {
+        // Create a hidden iframe for form submission to prevent page navigation
+        const iframe = document.createElement('iframe');
+        iframe.name = 'hidden_submit_frame';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        
+        // Set the form to target the hidden iframe
+        formRef.current.target = 'hidden_submit_frame';
         formRef.current.submit();
+        
+        // Remove iframe after submission
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+        }, 5000);
+        
         setShowThankYou(true);
         // Clear input state for next open
         setMessage("");
-        // Call onAfterSubmit if provided
-        onAfterSubmit?.();
       }
     } catch (err) {
       toast.error("Submission failed. Please try again.");
@@ -65,8 +78,26 @@ export const InvestDialog: React.FC<InvestDialogProps> = ({
     }
   };
 
+  const handleDialogClose = () => {
+    // Only call onAfterSubmit when the dialog is closed and we've shown the thank you message
+    if (showThankYou && onAfterSubmit) {
+      // Small delay to ensure proper execution order
+      setTimeout(() => {
+        onAfterSubmit();
+      }, 100);
+    }
+    setOpen(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setShowThankYou(false); }}>
+    <Dialog open={open} onOpenChange={(v) => { 
+      if (v === false) {
+        handleDialogClose();
+      } else {
+        setOpen(v);
+      }
+      if (!v) setShowThankYou(false); 
+    }}>
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
@@ -77,7 +108,6 @@ export const InvestDialog: React.FC<InvestDialogProps> = ({
             onSubmit={handleSubmit}
             method="POST"
             action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
-            style={{ margin: 0 }}
           >
             <input type="hidden" name="oid" value="00D5e000000HEcP" />
             <input type="hidden" name="first_name" value={firstName} />
