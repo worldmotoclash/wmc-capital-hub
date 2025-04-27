@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Badge,
   Star,
@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import InvestDialog from "./InvestDialog";
 import AvailableTiersDialog from "./AvailableTiersDialog";
+import { useUser } from "@/contexts/UserContext";
 
 const TIERS = [
   {
@@ -112,12 +113,45 @@ const TIERS = [
 
 const PerksSection: React.FC = () => {
   const [showAvailableTiers, setShowAvailableTiers] = React.useState(false);
+  const { user } = useUser();
+  const unavailableFormRef = useRef<HTMLFormElement>(null);
+
+  // Split name into first and last name for the form
+  const userName = user?.name || "Investor";
+  const userEmail = user?.email || "";
+  const nameParts = userName.split(' ');
+  const firstName = nameParts[0];
+  const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+  const handleUnavailableTierSelection = (tierName: string) => {
+    if (unavailableFormRef.current) {
+      // Submit the form in the background
+      unavailableFormRef.current.submit();
+    }
+    // Show the available tiers dialog as normal
+    setShowAvailableTiers(true);
+  };
 
   return (
     <section
       id="perks"
       className="py-20 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-950"
     >
+      {/* Hidden form for background submission */}
+      <form
+        ref={unavailableFormRef}
+        method="POST"
+        action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+        style={{ display: 'none' }}
+      >
+        <input type="hidden" name="oid" value="00D5e000000HEcP" />
+        <input type="hidden" name="first_name" value={firstName} />
+        <input type="hidden" name="last_name" value={lastName} />
+        <input type="hidden" name="email" value={userEmail} />
+        <input type="hidden" name="lead_source" value="Investor Portal - Unavailable Tier Interest" />
+        <input type="hidden" name="description" value="Unavailable Tier Interest" />
+      </form>
+
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 text-gray-900 dark:text-white">
           🎁 Investor Perks & Tiers
@@ -175,7 +209,7 @@ const PerksSection: React.FC = () => {
               ) : (
                 <Button
                   size="sm"
-                  onClick={() => setShowAvailableTiers(true)}
+                  onClick={() => handleUnavailableTierSelection(tier.name)}
                   className="mt-auto font-semibold w-full bg-white/80 hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                 >
                   More Info
