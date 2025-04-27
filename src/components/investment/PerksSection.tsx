@@ -126,7 +126,16 @@ const PerksSection: React.FC = () => {
   const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
 
   const handleUnavailableTierSelection = (tierName: string) => {
-    if (unavailableFormRef.current) {
+    // Find the tier details
+    const selectedTier = TIERS.find(tier => tier.name === tierName);
+    
+    if (unavailableFormRef.current && selectedTier) {
+      // Find the description input and update its value
+      const descriptionInput = unavailableFormRef.current.querySelector('input[name="description"]') as HTMLInputElement;
+      if (descriptionInput) {
+        descriptionInput.value = `Unavailable Tier Interest - ${selectedTier.name} (${selectedTier.investment})`;
+      }
+      
       // Set the form to target the hidden iframe
       unavailableFormRef.current.target = "hidden-submit-frame";
       // Submit the form in the background
@@ -161,7 +170,7 @@ const PerksSection: React.FC = () => {
         <input type="hidden" name="last_name" value={lastName} />
         <input type="hidden" name="email" value={userEmail} />
         <input type="hidden" name="lead_source" value="Investor Portal - Unavailable Tier Interest" />
-        <input type="hidden" name="description" value="Unavailable Tier Interest" />
+        <input type="hidden" name="description" value="" />
       </form>
 
       <div className="container mx-auto px-4">
