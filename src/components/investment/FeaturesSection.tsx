@@ -36,7 +36,7 @@ const FeaturesSection: React.FC = () => {
             <div className="relative rounded-lg overflow-hidden shadow-xl">
               <AspectRatio ratio={16/9}>
                 <iframe 
-                  src="https://drive.google.com/file/d/1hrzu8GBarliZ0fwUwokkdCS-y7LTKJyH/preview" 
+                  src="https://drive.google.com/file/d/1ZZAY4TGFgSNhD4amwi2DImIUfRfLkaWV/preview" 
                   title="WMC Showcase"
                   className="w-full h-full"
                   allowFullScreen
@@ -89,4 +89,3 @@ const FeaturesSection: React.FC = () => {
 };
 
 export default FeaturesSection;
-
