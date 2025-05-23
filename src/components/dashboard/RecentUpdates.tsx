@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { ExternalLink, FileText } from 'lucide-react';
 import { companyUpdates } from '@/data/companyUpdates';
 
 const RecentUpdates: React.FC = () => {
@@ -22,9 +23,45 @@ const RecentUpdates: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         {recentUpdates.map((update, index) => (
-          <div key={index}>
+          <div key={index} className="border-b pb-3 last:border-b-0 last:pb-0">
             <div className="text-lg font-medium">{update.title}</div>
-            <div className="text-base text-gray-500">{update.date}</div>
+            <div className="text-base text-gray-500 mb-2">{update.date}</div>
+            <div className="flex gap-2 mt-1">
+              {update.url && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  asChild
+                  className="h-8 text-xs text-blue-600"
+                >
+                  <a 
+                    href={update.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="mr-1 h-3 w-3" />
+                    Website
+                  </a>
+                </Button>
+              )}
+              {update.documentUrl && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  asChild
+                  className="h-8 text-xs text-emerald-600"
+                >
+                  <a 
+                    href={update.documentUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <FileText className="mr-1 h-3 w-3" />
+                    Document
+                  </a>
+                </Button>
+              )}
+            </div>
           </div>
         ))}
       </CardContent>

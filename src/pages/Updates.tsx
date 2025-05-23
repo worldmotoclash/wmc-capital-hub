@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Bell, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Bell, ExternalLink, FileText } from 'lucide-react';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
@@ -87,16 +87,42 @@ const Updates: React.FC = () => {
                       </div>
                     </div>
                     <p className="text-gray-600 mb-2">{update.description}</p>
-                    {update.url && (
-                      <a 
-                        href={update.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
-                      >
-                        Visit Website <ExternalLink className="ml-2 h-4 w-4" />
-                      </a>
-                    )}
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {update.url && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          asChild
+                          className="text-blue-600 hover:text-blue-800 transition-colors"
+                        >
+                          <a 
+                            href={update.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            Visit Website
+                          </a>
+                        </Button>
+                      )}
+                      {update.documentUrl && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          asChild
+                          className="text-emerald-600 hover:text-emerald-800 transition-colors"
+                        >
+                          <a 
+                            href={update.documentUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <FileText className="mr-2 h-4 w-4" />
+                            View Document
+                          </a>
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </CardContent>

@@ -5,4 +5,5 @@ export interface CompanyUpdate {
   description: string;
   category: string;
   url?: string;
+  documentUrl?: string; // New field for document links
 }
