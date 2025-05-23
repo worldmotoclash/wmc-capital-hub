@@ -7,14 +7,15 @@ export const companyUpdates: CompanyUpdate[] = [
     date: "Apr 10, 2025",
     description: "A new video featuring WMC Team Owners has been uploaded to the investor portal.",
     category: "Content Update",
-    documentUrl: "https://drive.google.com/file/d/1avVWECgu39UCQV5eQYCiYAh9Cu6pIK1z/preview"
+    documentUrl: "https://drive.google.com/file/d/1avVWECgu39UCQV5eQYCiYAh9Cu6pIK1z/preview",
+    documentType: "video" // Add this to identify it as a video
   },
   {
     title: "Elevation Onboarding Started",
     date: "Mar 28, 2025",
     description: "We have commenced the onboarding process for the Elevation project, marking a significant milestone in our strategic initiatives.",
-    category: "Partnership",
-    documentUrl: "https://docs.google.com/document/d/1l8iXnVwuCq9pCOf2K9q3QiPGOzYQO1UQ/preview"
+    category: "Partnership"
+    // Removed documentUrl as requested
   },
   {
     title: "Elevation Partnership Signed",
@@ -29,6 +30,7 @@ export const companyUpdates: CompanyUpdate[] = [
     date: "Feb 22, 2025",
     description: "We are excited to announce the launch of our new Investor Portal, providing enhanced access and insights for our investors.",
     category: "Technology",
-    documentUrl: "https://docs.google.com/document/d/1W0q_MnaW65iYEKRk3zqIgmBZkZakK-X5/preview"
+    url: "https://inves.worldmotoclash.com"
+    // Removed documentUrl and added url with the required link
   }
 ];

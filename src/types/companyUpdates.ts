@@ -5,5 +5,6 @@ export interface CompanyUpdate {
   description: string;
   category: string;
   url?: string;
-  documentUrl?: string; // New field for document links
+  documentUrl?: string;
+  documentType?: 'document' | 'video'; // Added to differentiate between document and video
 }

@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, FileText } from 'lucide-react';
+import { ExternalLink, FileText, Video } from 'lucide-react';
 import { companyUpdates } from '@/data/companyUpdates';
 
 const RecentUpdates: React.FC = () => {
@@ -56,8 +56,17 @@ const RecentUpdates: React.FC = () => {
                     target="_blank" 
                     rel="noopener noreferrer"
                   >
-                    <FileText className="mr-1 h-3 w-3" />
-                    Document
+                    {update.documentType === 'video' ? (
+                      <>
+                        <Video className="mr-1 h-3 w-3" />
+                        Video
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="mr-1 h-3 w-3" />
+                        Document
+                      </>
+                    )}
                   </a>
                 </Button>
               )}

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Bell, ExternalLink, FileText } from 'lucide-react';
+import { ArrowLeft, Bell, ExternalLink, FileText, Video } from 'lucide-react';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
@@ -117,8 +117,17 @@ const Updates: React.FC = () => {
                             target="_blank" 
                             rel="noopener noreferrer"
                           >
-                            <FileText className="mr-2 h-4 w-4" />
-                            View Document
+                            {update.documentType === 'video' ? (
+                              <>
+                                <Video className="mr-2 h-4 w-4" />
+                                View Video
+                              </>
+                            ) : (
+                              <>
+                                <FileText className="mr-2 h-4 w-4" />
+                                View Document
+                              </>
+                            )}
                           </a>
                         </Button>
                       )}
