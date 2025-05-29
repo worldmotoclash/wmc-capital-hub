@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Circle, List, Square } from 'lucide-react';
 
 const AboutSection: React.FC = () => {
   return (
@@ -30,11 +31,7 @@ const AboutSection: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
+              <Circle className="w-6 h-6 text-gray-600" />
             </div>
             <h3 className="text-xl font-semibold mb-3">Our Vision</h3>
             <p className="text-gray-600">
@@ -50,10 +47,7 @@ const AboutSection: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 3v18h18"/>
-                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
-              </svg>
+              <List className="w-6 h-6 text-gray-600" />
             </div>
             <h3 className="text-xl font-semibold mb-3">Market Opportunity</h3>
             <p className="text-gray-600">
@@ -69,15 +63,7 @@ const AboutSection: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 12h20"/>
-                <path d="M6 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
-                <path d="M12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
-                <path d="M18 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
-                <path d="M6 12v8"/>
-                <path d="M18 12v8"/>
-                <path d="M12 12v8"/>
-              </svg>
+              <Square className="w-6 h-6 text-gray-600" />
             </div>
             <h3 className="text-xl font-semibold mb-3">Business Model</h3>
             <p className="text-gray-600">
