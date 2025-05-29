@@ -1,20 +1,57 @@
-
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
 // Cache duration in milliseconds (24 hours)
 const IP_CACHE_DURATION = 24 * 60 * 60 * 1000;
 
-// Function to get the user's current IP address
+// Function to get the user's current IP address with multiple fallback services
 export const getCurrentIpAddress = async (): Promise<string> => {
-  try {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    return data.ip;
-  } catch (error) {
-    console.error('Error fetching IP address:', error);
-    return '';
+  const ipServices = [
+    'https://api.ipify.org?format=json',
+    'https://ipinfo.io/json',
+    'https://api.my-ip.io/ip.json',
+    'https://httpbin.org/ip'
+  ];
+
+  for (let i = 0; i < ipServices.length; i++) {
+    try {
+      console.log(`Attempting to get IP from service ${i + 1}: ${ipServices[i]}`);
+      const response = await fetch(ipServices[i]);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      let ip = '';
+      
+      // Handle different response formats
+      if (data.ip) {
+        ip = data.ip;
+      } else if (data.origin) {
+        ip = data.origin; // httpbin format
+      } else if (typeof data === 'string') {
+        ip = data;
+      }
+      
+      // Normalize IP (trim whitespace)
+      ip = ip.trim();
+      
+      console.log(`Successfully got IP from service ${i + 1}: "${ip}"`);
+      
+      if (ip && ip.length > 0) {
+        return ip;
+      }
+    } catch (error) {
+      console.error(`Error fetching IP from service ${i + 1} (${ipServices[i]}):`, error);
+      if (i === ipServices.length - 1) {
+        console.error('All IP services failed');
+        return '';
+      }
+    }
   }
+  
+  return '';
 };
 
 // Function to get location information from IP address with caching
@@ -311,14 +348,21 @@ export const authenticateUser = async (email: string, password: string, isGoogle
       if (isValidPassword) {
         // If the investor has an IP address set, validate it
         if (investor.ipaddress && investor.ipaddress.trim() !== '') {
-          console.log(`IP validation required. Stored IP: ${investor.ipaddress}`);
+          const storedIp = investor.ipaddress.trim(); // Normalize stored IP
+          console.log(`IP validation required. Stored IP (normalized): "${storedIp}"`);
           
           // Get the user's current IP address
           const currentIp = await getCurrentIpAddress();
-          console.log(`User's current IP: ${currentIp}`);
+          console.log(`User's current IP (normalized): "${currentIp}"`);
           
-          // If IPs don't match, send verification email and deny access
-          if (currentIp && currentIp !== investor.ipaddress) {
+          // Debug the comparison
+          console.log(`IP comparison: "${currentIp}" === "${storedIp}" = ${currentIp === storedIp}`);
+          console.log(`Current IP length: ${currentIp.length}, Stored IP length: ${storedIp.length}`);
+          
+          // If we couldn't get the current IP, log it but don't block access
+          if (!currentIp || currentIp.length === 0) {
+            console.warn('Could not determine current IP address - allowing access');
+          } else if (currentIp !== storedIp) {
             console.log('IP mismatch detected. Sending verification email.');
             
             // Get location information for the new IP
@@ -336,7 +380,11 @@ export const authenticateUser = async (email: string, password: string, isGoogle
             
             toast.error(`Access denied: Your IP address has changed. A verification email has been sent to confirm your identity. Location detected: ${locationData.city}, ${locationData.country}`);
             return null;
+          } else {
+            console.log('IP addresses match - access granted');
           }
+        } else {
+          console.log('No stored IP address for this user - skipping IP validation');
         }
         
         // Set ndaSigned based on investor status
