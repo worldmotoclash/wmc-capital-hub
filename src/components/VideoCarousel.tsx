@@ -109,9 +109,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
                 </AspectRatio>
               </div>
               
-              <div className="absolute inset-0 flex flex-col justify-end p-6 z-20">
-                <h3 className="text-white text-3xl font-bold">{video.title}</h3>
-                <p className="text-white text-lg opacity-80">{video.subtitle}</p>
+              <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6 z-20">
+                <h3 className="text-white text-xl md:text-2xl lg:text-3xl font-bold">{video.title}</h3>
+                <p className="text-white text-sm md:text-base lg:text-lg opacity-80">{video.subtitle}</p>
               </div>
             </div>
           </SwiperSlide>
@@ -121,18 +121,18 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
       {/* Navigation Arrows */}
       <button
         onClick={() => swiper?.slidePrev()}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-30 text-white hover:text-gray-200 transition-colors duration-300"
+        className="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 z-30 text-white hover:text-gray-200 transition-colors duration-300"
         aria-label="Previous slide"
       >
-        <ArrowLeft className="h-8 w-8" />
+        <ArrowLeft className="h-6 w-6 md:h-8 md:w-8" />
       </button>
 
       <button
         onClick={() => swiper?.slideNext()}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-30 text-white hover:text-gray-200 transition-colors duration-300"
+        className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 z-30 text-white hover:text-gray-200 transition-colors duration-300"
         aria-label="Next slide"
       >
-        <ArrowRight className="h-8 w-8" />
+        <ArrowRight className="h-6 w-6 md:h-8 md:w-8" />
       </button>
     </div>
   );
