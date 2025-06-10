@@ -68,17 +68,17 @@ const KeyDocuments: React.FC = () => {
             <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
               <img 
                 src="/lovable-uploads/sponsor-primier-thumbnail.png" 
-                alt="WMC Investor Intro Deck 2025" 
+                alt="Investor Executive Summary Deck" 
                 className="w-full h-full object-cover"
               />
             </div>
             <div>
-              <div className="text-lg font-medium dark:text-white">WMC Investor Intro Deck 2025</div>
+              <div className="text-lg font-medium dark:text-white">Investor Executive Summary Deck</div>
               <div className="text-base text-gray-500 dark:text-gray-400">PDF • Google Drive</div>
             </div>
           </div>
           <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-            <a href="https://drive.google.com/file/d/1qK-8zJAQWpzQTrpmYYckd3g4cwy2PyFh/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+            <a href="https://drive.google.com/file/d/1jrylnZVCZLt1aQxnRJt-FMPQZtfMTcNS/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-4 h-4" />
             </a>
           </Button>
