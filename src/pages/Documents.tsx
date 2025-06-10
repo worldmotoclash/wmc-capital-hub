@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -37,11 +38,11 @@ const Documents: React.FC = () => {
   // Define base documents that are always available
   const baseDocuments = [
     {
-      title: "WMC Investor Intro Deck 2025", // Updated title
+      title: "Investor Executive Summary Deck", // Updated title to match KeyDocuments
       type: "PDF",
       source: "Google Drive",
       thumbnail: "/lovable-uploads/sponsor-primier-thumbnail.png",
-      url: "https://drive.google.com/file/d/1qK-8zJAQWpzQTrpmYYckd3g4cwy2PyFh/view?usp=drive_link"
+      url: "https://drive.google.com/file/d/1jrylnZVCZLt1aQxnRJt-FMPQZtfMTcNS/view?usp=drive_link"
     },
     {
       title: "WMC 2 Minute Sizzle Reel",
