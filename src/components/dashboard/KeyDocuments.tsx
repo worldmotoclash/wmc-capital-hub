@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -53,11 +52,11 @@ const KeyDocuments: React.FC = () => {
             </div>
             <div>
               <div className="text-lg font-medium dark:text-white">WMC Motorsports Reimagined!</div>
-              <div className="text-base text-gray-500 dark:text-gray-400">Video • Vimeo</div>
+              <div className="text-base text-gray-500 dark:text-gray-400">Video • Google Drive</div>
             </div>
           </div>
           <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-            <a href="https://vimeo.com/1070513991?utm_source=email&utm_medium=vimeo-email&utm_campaign=44349" target="_blank" rel="noopener noreferrer">
+            <a href="https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview" target="_blank" rel="noopener noreferrer">
               <ExternalLink className="w-4 h-4" />
             </a>
           </Button>

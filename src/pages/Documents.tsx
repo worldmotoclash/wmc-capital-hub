@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -47,9 +46,9 @@ const Documents: React.FC = () => {
     {
       title: "WMC 2 Minute Sizzle Reel",
       type: "Video",
-      source: "Vimeo",
+      source: "Google Drive",
       thumbnail: "/lovable-uploads/wmc-sizzle-thumbnail.png",
-      url: "https://vimeo.com/1070513991?utm_source=email&utm_medium=vimeo-email&utm_campaign=44349"
+      url: "https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview"
     }
   ];
 
