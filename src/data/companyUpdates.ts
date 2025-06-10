@@ -7,7 +7,7 @@ export const companyUpdates: CompanyUpdate[] = [
     date: "Apr 10, 2025",
     description: "A new video featuring WMC Team Owners has been uploaded to the investor portal.",
     category: "Content Update",
-    documentUrl: "https://drive.google.com/file/d/1avVWECgu39UCQV5eQYCiYAh9Cu6pIK1z/preview",
+    documentUrl: "https://drive.google.com/file/d/139MfNgnY1G-cZ2GrK-omxtxUilLmZNtF/preview",
     documentType: "video" // Add this to identify it as a video
   },
   {
