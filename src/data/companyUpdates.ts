@@ -19,6 +19,14 @@ export const companyUpdates: CompanyUpdate[] = [
     documentType: "video"
   },
   {
+    title: "WMC Motorsports Reimagined!",
+    date: "Apr 2, 2025",
+    description: "Experience the future of motorsports with our comprehensive video showcasing WMC's innovative approach to racing entertainment.",
+    category: "Content Update",
+    documentUrl: "https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview",
+    documentType: "video"
+  },
+  {
     title: "Elevation Onboarding Started",
     date: "Mar 28, 2025",
     description: "We have commenced the onboarding process for the Elevation project, marking a significant milestone in our strategic initiatives.",
