@@ -36,11 +36,24 @@ const DashboardOverview: React.FC = () => {
       
       {/* Video spanning full width */}
       <div className="rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700">
-        <div className="aspect-video w-full">
+        <div className="aspect-video w-full relative">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat rounded-t-lg"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')`
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/60 flex items-center justify-center">
+              <div className="text-center text-white">
+                <h3 className="text-2xl md:text-3xl font-bold mb-2">WMC Motorsports Reimagined!</h3>
+                <p className="text-lg opacity-90">Click to play video</p>
+              </div>
+            </div>
+          </div>
           <iframe 
             src="https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview" 
             title="WMC Motorsports Reimagined!"
-            className="w-full h-full"
+            className="w-full h-full absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
             allowFullScreen
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           ></iframe>
