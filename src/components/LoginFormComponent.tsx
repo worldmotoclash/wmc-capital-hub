@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -24,7 +23,7 @@ const LoginFormComponent: React.FC = () => {
   
   const navigate = useNavigate();
   const { setUser } = useUser();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   
   // Auto-login functionality
   useEffect(() => {
@@ -37,10 +36,18 @@ const LoginFormComponent: React.FC = () => {
       setPassword(urlPassword);
       setAutoLoginAttempted(true);
       
-      // Attempt auto-login
-      attemptAutoLogin(urlEmail, urlPassword);
+      // Clear the URL parameters immediately for security
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('user');
+      newSearchParams.delete('pass');
+      setSearchParams(newSearchParams, { replace: true });
+      
+      // Attempt auto-login with a small delay to ensure state is set
+      setTimeout(() => {
+        attemptAutoLogin(urlEmail, urlPassword);
+      }, 100);
     }
-  }, [searchParams, autoLoginAttempted]);
+  }, [searchParams, autoLoginAttempted, setSearchParams]);
   
   const attemptAutoLogin = async (email: string, password: string) => {
     console.log('Attempting auto-login for:', email);
@@ -49,29 +56,29 @@ const LoginFormComponent: React.FC = () => {
     setLocationInfo(null);
     
     try {
-      // Try to get the user's location info for a better message if needed
-      const ip = await getCurrentIpAddress();
-      const location = await getIPLocation(ip);
-      
       const userData = await authenticateUser(email, password);
       
       if (userData) {
         setUser(userData);
-        toast.success('Auto-login successful');
-        navigate('/dashboard');
+        toast.success('Auto-login successful! Welcome back.');
+        // Use replace to avoid back button issues
+        navigate('/dashboard', { replace: true });
       } else {
-        // Check if this was likely an IP verification issue
-        if (email && password.length >= 6) {
+        // Try to get location info for better error message
+        try {
+          const ip = await getCurrentIpAddress();
+          const location = await getIPLocation(ip);
           setIpVerificationSent(true);
           setLocationInfo(location);
-          toast.warning('Auto-login failed - IP verification required');
-        } else {
-          toast.error('Auto-login failed - invalid credentials');
+          toast.warning('Auto-login failed - IP verification required. Please check your email.');
+        } catch (error) {
+          console.error('Failed to get location info:', error);
+          toast.error('Auto-login failed. Please enter your credentials manually.');
         }
       }
     } catch (error) {
       console.error('Auto-login error:', error);
-      toast.error('Auto-login failed. Please enter credentials manually.');
+      toast.error('Auto-login failed. Please enter your credentials manually.');
     } finally {
       setIsLoading(false);
     }
