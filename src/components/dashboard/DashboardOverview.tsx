@@ -38,15 +38,15 @@ const DashboardOverview: React.FC = () => {
       <div className="rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700">
         <div className="aspect-video w-full">
           <iframe 
-            src="https://drive.google.com/file/d/139MfNgnY1G-cZ2GrK-omxtxUilLmZNtF/preview" 
-            title="WMC Team Owners"
+            src="https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview" 
+            title="WMC Motorsports Reimagined!"
             className="w-full h-full"
             allowFullScreen
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           ></iframe>
         </div>
         <div className="p-4 text-base text-gray-600 text-center dark:text-gray-300">
-          Listen to WMC Team Owners Colin Edwards, Miguel Duhamel and Gregg Smrz
+          Experience the future of motorsports with WMC's innovative approach to racing entertainment
         </div>
       </div>
       
