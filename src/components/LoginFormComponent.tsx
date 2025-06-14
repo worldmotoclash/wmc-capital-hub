@@ -32,9 +32,14 @@ const LoginFormComponent: React.FC = () => {
     
     if (urlEmail && urlPassword && !autoLoginAttempted) {
       console.log('Auto-login credentials detected in URL');
+      console.log('Email from URL:', urlEmail);
+      console.log('Password length from URL:', urlPassword.length);
+      
+      setAutoLoginAttempted(true);
+      
+      // Set form state first
       setEmail(urlEmail);
       setPassword(urlPassword);
-      setAutoLoginAttempted(true);
       
       // Clear the URL parameters immediately for security
       const newSearchParams = new URLSearchParams(searchParams);
@@ -42,32 +47,36 @@ const LoginFormComponent: React.FC = () => {
       newSearchParams.delete('pass');
       setSearchParams(newSearchParams, { replace: true });
       
-      // Attempt auto-login with a small delay to ensure state is set
-      setTimeout(() => {
-        attemptAutoLogin(urlEmail, urlPassword);
-      }, 100);
+      // Attempt auto-login immediately - no setTimeout needed
+      attemptAutoLogin(urlEmail, urlPassword);
     }
   }, [searchParams, autoLoginAttempted, setSearchParams]);
   
   const attemptAutoLogin = async (email: string, password: string) => {
-    console.log('Attempting auto-login for:', email);
+    console.log('Starting auto-login attempt for:', email);
     setIsLoading(true);
     setIpVerificationSent(false);
     setLocationInfo(null);
     
     try {
+      console.log('Calling authenticateUser...');
       const userData = await authenticateUser(email, password);
+      console.log('Authentication result:', userData);
       
       if (userData) {
+        console.log('Auto-login successful, setting user and navigating...');
         setUser(userData);
         toast.success('Auto-login successful! Welcome back.');
         // Use replace to avoid back button issues
         navigate('/dashboard', { replace: true });
       } else {
+        console.log('Authentication returned null - likely IP verification issue');
         // Try to get location info for better error message
         try {
           const ip = await getCurrentIpAddress();
+          console.log('Current IP for verification:', ip);
           const location = await getIPLocation(ip);
+          console.log('Location info:', location);
           setIpVerificationSent(true);
           setLocationInfo(location);
           toast.warning('Auto-login failed - IP verification required. Please check your email.');
