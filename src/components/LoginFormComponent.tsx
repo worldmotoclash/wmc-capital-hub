@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { useUser } from '@/contexts/UserContext';
@@ -19,9 +20,62 @@ const LoginFormComponent: React.FC = () => {
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [ipVerificationSent, setIpVerificationSent] = useState(false);
   const [locationInfo, setLocationInfo] = useState<{country: string; city: string} | null>(null);
+  const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
   
   const navigate = useNavigate();
   const { setUser } = useUser();
+  const [searchParams] = useSearchParams();
+  
+  // Auto-login functionality
+  useEffect(() => {
+    const urlEmail = searchParams.get('user');
+    const urlPassword = searchParams.get('pass');
+    
+    if (urlEmail && urlPassword && !autoLoginAttempted) {
+      console.log('Auto-login credentials detected in URL');
+      setEmail(urlEmail);
+      setPassword(urlPassword);
+      setAutoLoginAttempted(true);
+      
+      // Attempt auto-login
+      attemptAutoLogin(urlEmail, urlPassword);
+    }
+  }, [searchParams, autoLoginAttempted]);
+  
+  const attemptAutoLogin = async (email: string, password: string) => {
+    console.log('Attempting auto-login for:', email);
+    setIsLoading(true);
+    setIpVerificationSent(false);
+    setLocationInfo(null);
+    
+    try {
+      // Try to get the user's location info for a better message if needed
+      const ip = await getCurrentIpAddress();
+      const location = await getIPLocation(ip);
+      
+      const userData = await authenticateUser(email, password);
+      
+      if (userData) {
+        setUser(userData);
+        toast.success('Auto-login successful');
+        navigate('/dashboard');
+      } else {
+        // Check if this was likely an IP verification issue
+        if (email && password.length >= 6) {
+          setIpVerificationSent(true);
+          setLocationInfo(location);
+          toast.warning('Auto-login failed - IP verification required');
+        } else {
+          toast.error('Auto-login failed - invalid credentials');
+        }
+      }
+    } catch (error) {
+      console.error('Auto-login error:', error);
+      toast.error('Auto-login failed. Please enter credentials manually.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
