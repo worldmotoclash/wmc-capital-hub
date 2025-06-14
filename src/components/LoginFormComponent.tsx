@@ -19,77 +19,100 @@ const LoginFormComponent: React.FC = () => {
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [ipVerificationSent, setIpVerificationSent] = useState(false);
   const [locationInfo, setLocationInfo] = useState<{country: string; city: string} | null>(null);
-  const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
+  const [autoLoginProcessed, setAutoLoginProcessed] = useState(false);
   
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Auto-login functionality
+  // Auto-login functionality - simplified and more reliable
   useEffect(() => {
+    // Only process auto-login once and if user is not already logged in
+    if (autoLoginProcessed || user) {
+      return;
+    }
+
     const urlEmail = searchParams.get('user');
     const urlPassword = searchParams.get('pass');
     
-    if (urlEmail && urlPassword && !autoLoginAttempted) {
-      console.log('Auto-login credentials detected in URL');
-      console.log('Email from URL:', urlEmail);
-      console.log('Password length from URL:', urlPassword.length);
+    console.log('Checking for auto-login parameters...');
+    console.log('URL Email:', urlEmail);
+    console.log('URL Password exists:', !!urlPassword);
+    console.log('URL Password length:', urlPassword ? urlPassword.length : 0);
+    console.log('Current search params:', window.location.search);
+    
+    if (urlEmail && urlPassword) {
+      console.log('Auto-login credentials found, processing...');
+      setAutoLoginProcessed(true);
       
-      setAutoLoginAttempted(true);
-      
-      // Set form state first
+      // Set form state
       setEmail(urlEmail);
       setPassword(urlPassword);
       
-      // Clear the URL parameters immediately for security
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('user');
-      newSearchParams.delete('pass');
-      setSearchParams(newSearchParams, { replace: true });
+      // Clear URL parameters immediately for security
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
       
-      // Attempt auto-login immediately - no setTimeout needed
-      attemptAutoLogin(urlEmail, urlPassword);
+      // Start auto-login process
+      performAutoLogin(urlEmail, urlPassword);
+    } else {
+      console.log('No auto-login credentials found in URL');
+      setAutoLoginProcessed(true);
     }
-  }, [searchParams, autoLoginAttempted, setSearchParams]);
+  }, []); // Empty dependency array to run only once
   
-  const attemptAutoLogin = async (email: string, password: string) => {
-    console.log('Starting auto-login attempt for:', email);
+  const performAutoLogin = async (email: string, password: string) => {
+    console.log('=== Starting Auto-Login Process ===');
+    console.log('Email:', email);
+    console.log('Password length:', password.length);
+    
     setIsLoading(true);
     setIpVerificationSent(false);
     setLocationInfo(null);
     
     try {
-      console.log('Calling authenticateUser...');
+      console.log('Calling authenticateUser function...');
       const userData = await authenticateUser(email, password);
       console.log('Authentication result:', userData);
       
       if (userData) {
-        console.log('Auto-login successful, setting user and navigating...');
+        console.log('=== Auto-login SUCCESS ===');
+        console.log('User data received:', userData);
+        
         setUser(userData);
         toast.success('Auto-login successful! Welcome back.');
-        // Use replace to avoid back button issues
+        
+        // Navigate to dashboard
+        console.log('Navigating to dashboard...');
         navigate('/dashboard', { replace: true });
       } else {
-        console.log('Authentication returned null - likely IP verification issue');
+        console.log('=== Auto-login FAILED - No user data returned ===');
+        
         // Try to get location info for better error message
         try {
           const ip = await getCurrentIpAddress();
           console.log('Current IP for verification:', ip);
-          const location = await getIPLocation(ip);
-          console.log('Location info:', location);
-          setIpVerificationSent(true);
-          setLocationInfo(location);
-          toast.warning('Auto-login failed - IP verification required. Please check your email.');
-        } catch (error) {
-          console.error('Failed to get location info:', error);
+          
+          if (ip) {
+            const location = await getIPLocation(ip);
+            console.log('Location info:', location);
+            setIpVerificationSent(true);
+            setLocationInfo(location);
+            toast.warning('Auto-login failed - IP verification required. Please check your email.');
+          } else {
+            toast.error('Auto-login failed. Please enter your credentials manually.');
+          }
+        } catch (locationError) {
+          console.error('Failed to get location info:', locationError);
           toast.error('Auto-login failed. Please enter your credentials manually.');
         }
       }
     } catch (error) {
-      console.error('Auto-login error:', error);
+      console.error('=== Auto-login ERROR ===', error);
       toast.error('Auto-login failed. Please enter your credentials manually.');
     } finally {
       setIsLoading(false);
+      console.log('=== Auto-login process completed ===');
     }
   };
   
