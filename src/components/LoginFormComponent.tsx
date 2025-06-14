@@ -23,96 +23,131 @@ const LoginFormComponent: React.FC = () => {
   
   const navigate = useNavigate();
   const { user, setUser } = useUser();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   
-  // Auto-login functionality - simplified and more reliable
+  // Auto-login functionality with enhanced logging
   useEffect(() => {
+    console.log('=== LoginFormComponent useEffect START ===');
+    console.log('Current pathname:', window.location.pathname);
+    console.log('Current search:', window.location.search);
+    console.log('User already logged in:', !!user);
+    console.log('Auto-login already processed:', autoLoginProcessed);
+    
     // Only process auto-login once and if user is not already logged in
     if (autoLoginProcessed || user) {
+      console.log('Skipping auto-login - already processed or user logged in');
       return;
     }
 
-    const urlEmail = searchParams.get('user');
-    const urlPassword = searchParams.get('pass');
+    // Get URL parameters directly from window.location for reliability
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlEmail = urlParams.get('user');
+    const urlPassword = urlParams.get('pass');
     
-    console.log('Checking for auto-login parameters...');
-    console.log('URL Email:', urlEmail);
-    console.log('URL Password exists:', !!urlPassword);
+    console.log('URL Email parameter:', urlEmail);
+    console.log('URL Password parameter exists:', !!urlPassword);
     console.log('URL Password length:', urlPassword ? urlPassword.length : 0);
-    console.log('Current search params:', window.location.search);
+    console.log('Full URL:', window.location.href);
     
     if (urlEmail && urlPassword) {
-      console.log('Auto-login credentials found, processing...');
+      console.log('=== AUTO-LOGIN CREDENTIALS DETECTED ===');
+      console.log('Email:', urlEmail);
+      console.log('Password length:', urlPassword.length);
+      
       setAutoLoginProcessed(true);
       
-      // Set form state
+      // Set form state for visual feedback
       setEmail(urlEmail);
       setPassword(urlPassword);
       
       // Clear URL parameters immediately for security
       const newUrl = window.location.pathname;
+      console.log('Clearing URL params, new URL will be:', newUrl);
       window.history.replaceState({}, '', newUrl);
       
       // Start auto-login process
+      console.log('Starting performAutoLogin...');
       performAutoLogin(urlEmail, urlPassword);
     } else {
       console.log('No auto-login credentials found in URL');
       setAutoLoginProcessed(true);
     }
+    
+    console.log('=== LoginFormComponent useEffect END ===');
   }, []); // Empty dependency array to run only once
   
   const performAutoLogin = async (email: string, password: string) => {
-    console.log('=== Starting Auto-Login Process ===');
+    console.log('=== performAutoLogin STARTED ===');
     console.log('Email:', email);
     console.log('Password length:', password.length);
+    console.log('Current user state:', user);
     
     setIsLoading(true);
     setIpVerificationSent(false);
     setLocationInfo(null);
     
     try {
-      console.log('Calling authenticateUser function...');
+      console.log('Calling authenticateUser...');
       const userData = await authenticateUser(email, password);
-      console.log('Authentication result:', userData);
+      console.log('authenticateUser returned:', userData);
       
       if (userData) {
-        console.log('=== Auto-login SUCCESS ===');
-        console.log('User data received:', userData);
+        console.log('=== AUTO-LOGIN SUCCESS ===');
+        console.log('Setting user data:', userData);
         
         setUser(userData);
-        toast.success('Auto-login successful! Welcome back.');
         
-        // Navigate to dashboard
+        console.log('Showing success toast...');
+        toast.success('Auto-login successful! Welcome back.', {
+          duration: 3000,
+          position: 'top-center'
+        });
+        
         console.log('Navigating to dashboard...');
         navigate('/dashboard', { replace: true });
+        
+        console.log('Auto-login process completed successfully');
       } else {
-        console.log('=== Auto-login FAILED - No user data returned ===');
+        console.log('=== AUTO-LOGIN FAILED - authenticateUser returned null ===');
         
         // Try to get location info for better error message
         try {
+          console.log('Getting IP for verification message...');
           const ip = await getCurrentIpAddress();
-          console.log('Current IP for verification:', ip);
+          console.log('Current IP:', ip);
           
           if (ip) {
             const location = await getIPLocation(ip);
-            console.log('Location info:', location);
+            console.log('Location data:', location);
             setIpVerificationSent(true);
             setLocationInfo(location);
-            toast.warning('Auto-login failed - IP verification required. Please check your email.');
+            toast.warning('Auto-login failed - IP verification required. Please check your email.', {
+              duration: 5000,
+              position: 'top-center'
+            });
           } else {
-            toast.error('Auto-login failed. Please enter your credentials manually.');
+            toast.error('Auto-login failed. Please enter your credentials manually.', {
+              duration: 5000,
+              position: 'top-center'
+            });
           }
         } catch (locationError) {
           console.error('Failed to get location info:', locationError);
-          toast.error('Auto-login failed. Please enter your credentials manually.');
+          toast.error('Auto-login failed. Please enter your credentials manually.', {
+            duration: 5000,
+            position: 'top-center'
+          });
         }
       }
     } catch (error) {
-      console.error('=== Auto-login ERROR ===', error);
-      toast.error('Auto-login failed. Please enter your credentials manually.');
+      console.error('=== AUTO-LOGIN ERROR ===', error);
+      toast.error('Auto-login failed. Please enter your credentials manually.', {
+        duration: 5000,
+        position: 'top-center'
+      });
     } finally {
       setIsLoading(false);
-      console.log('=== Auto-login process completed ===');
+      console.log('=== performAutoLogin COMPLETED ===');
     }
   };
   
@@ -199,6 +234,11 @@ const LoginFormComponent: React.FC = () => {
     }
   };
 
+  // Add a debug component to show current state
+  const isDebugMode = window.location.hostname === 'localhost' || window.location.hostname.includes('lovable');
+  
+  console.log('Rendering LoginFormComponent. User:', user, 'Loading:', isLoading, 'Auto-processed:', autoLoginProcessed);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -206,6 +246,15 @@ const LoginFormComponent: React.FC = () => {
       transition={{ duration: 0.6 }}
       className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
     >
+      {isDebugMode && (
+        <div className="mb-4 p-2 bg-gray-100 text-xs rounded">
+          <div>User: {user ? 'Logged in' : 'Not logged in'}</div>
+          <div>Auto-processed: {autoLoginProcessed ? 'Yes' : 'No'}</div>
+          <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
+          <div>Current path: {window.location.pathname}</div>
+        </div>
+      )}
+      
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-2">Investor Portal</h2>
         <p className="text-gray-600">
