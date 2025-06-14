@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Play } from 'lucide-react';
 import UserInfoCard from '@/components/UserInfoCard';
 import RecentUpdates from './RecentUpdates';
 import InvestmentPerformance from './InvestmentPerformance';
@@ -46,7 +47,8 @@ const DashboardOverview: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/60 flex items-center justify-center">
               <div className="text-center text-white">
                 <h3 className="text-2xl md:text-3xl font-bold mb-2">WMC Motorsports Reimagined!</h3>
-                <p className="text-lg opacity-90">Click to play video</p>
+                <p className="text-lg opacity-90 mb-3">Click to play video</p>
+                <Play className="w-12 h-12 mx-auto opacity-90" />
               </div>
             </div>
           </div>
