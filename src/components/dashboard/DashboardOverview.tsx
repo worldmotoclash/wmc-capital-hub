@@ -1,18 +1,14 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Play } from 'lucide-react';
 import UserInfoCard from '@/components/UserInfoCard';
 import RecentUpdates from './RecentUpdates';
 import InvestmentPerformance from './InvestmentPerformance';
 import KeyDocuments from './KeyDocuments';
 import InvestorSupport from './InvestorSupport';
 import { useUser } from '@/contexts/UserContext';
-import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
-import { PlayCircle } from 'lucide-react';
-
-const POSTER_IMAGE_URL = "/lovable-uploads/wmc-sizzle-thumbnail.png";
-const VIDEO_IFRAME_SRC = "https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview"; // autoplay removed
 
 const DashboardOverview: React.FC = () => {
   const { user } = useUser();
@@ -23,9 +19,6 @@ const DashboardOverview: React.FC = () => {
   const isPotentialInvestor = status === "potential investor";
   const showInvestmentPerformance =
     isSecuredInvestor && !isQualifiedInvestor && !isPotentialInvestor;
-
-  // Dialog state for playing video
-  const [open, setOpen] = useState(false);
 
   return (
     <div className="space-y-8">
@@ -42,46 +35,34 @@ const DashboardOverview: React.FC = () => {
         </div>
       </div>
       
-      {/* Video poster with play button */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <button
-            className="group rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700 aspect-video w-full relative focus:outline-none"
-            aria-label="Play video"
-            type="button"
+      {/* Video spanning full width */}
+      <div className="rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700">
+        <div className="aspect-video w-full relative">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat rounded-t-lg"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')`
+            }}
           >
-            {/* Poster image */}
-            <img
-              src={POSTER_IMAGE_URL}
-              alt="WMC Sizzle Reel"
-              className="w-full h-full object-cover"
-              draggable={false}
-            />
-            {/* Play button overlay */}
-            <span className="absolute inset-0 flex items-center justify-center z-10">
-              <PlayCircle className="h-20 w-20 text-white drop-shadow-xl transition-transform group-hover:scale-110 group-active:scale-95 opacity-90" />
-            </span>
-          </button>
-        </DialogTrigger>
-        <DialogContent
-          className="max-w-3xl p-0 bg-black aspect-video"
-          style={{ width: "90vw", maxWidth: "900px" }}
-        >
-          <div className="relative w-full aspect-video bg-black">
-            <iframe
-              src={VIDEO_IFRAME_SRC}
-              title="WMC Motorsports Reimagined!"
-              className="w-full h-full absolute inset-0 rounded-b-lg"
-              allowFullScreen
-              allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              loading="lazy"
-            ></iframe>
+            <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/60 flex items-center justify-center">
+              <div className="text-center text-white">
+                <h3 className="text-2xl md:text-3xl font-bold mb-2">WMC Motorsports Reimagined!</h3>
+                <p className="text-lg opacity-90 mb-3">Click to play video</p>
+                <Play className="w-12 h-12 mx-auto opacity-90" />
+              </div>
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
-
-      <div className="p-4 text-base text-gray-600 text-center dark:text-gray-300">
-        Experience the future of motorsports with WMC's innovative approach to racing entertainment
+          <iframe 
+            src="https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview" 
+            title="WMC Motorsports Reimagined!"
+            className="w-full h-full absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
+            allowFullScreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          ></iframe>
+        </div>
+        <div className="p-4 text-base text-gray-600 text-center dark:text-gray-300">
+          Experience the future of motorsports with WMC's innovative approach to racing entertainment
+        </div>
       </div>
       
       {/* Investor Information and Recent Updates */}
