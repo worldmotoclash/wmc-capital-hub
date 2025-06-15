@@ -1,10 +1,11 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { useUser } from '@/contexts/UserContext';
+import { trackDocumentClick } from '@/services/loginService';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -29,6 +30,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const { user } = useUser();
 
   useEffect(() => {
     setIsMounted(true);
@@ -66,14 +68,26 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
     setActiveIndex(swiper.realIndex);
   };
 
+  // Handler for clicking a video slide; calls tracking with current video
+  const handleVideoClick = (video: VideoData) => {
+    if (user?.id) {
+      trackDocumentClick(
+        user.id,
+        video.videoSrc,
+        'Video View',
+        video.title
+      );
+    }
+  };
+
   return (
     <div className="w-full h-full relative rounded-2xl overflow-hidden">
       <Swiper
         modules={[Autoplay, Navigation]}
         spaceBetween={0}
         slidesPerView={1}
-        autoplay={{ 
-          delay: 8000, 
+        autoplay={{
+          delay: 8000,
           disableOnInteraction: false,
           pauseOnMouseEnter: false
         }}
@@ -89,7 +103,16 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
       >
         {videos.map((video, index) => (
           <SwiperSlide key={video.id} className="h-full w-full">
-            <div className="relative h-full w-full">
+            <div
+              className="relative h-full w-full group cursor-pointer"
+              tabIndex={0}
+              aria-label={`Play ${video.title} Video`}
+              role="button"
+              onClick={() => handleVideoClick(video)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') handleVideoClick(video);
+              }}
+            >
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/50 z-10"></div>
               

@@ -327,6 +327,72 @@ export const trackLogin = async (contactId: string, action: string = 'Login') =>
   }
 };
 
+/**
+ * Track document or video views for analytics.
+ * @param contactId - The user's contact ID.
+ * @param documentUrl - The URL of the document or video clicked.
+ * @param actionType - "Video View" | "Document View" | other string.
+ * @param documentTitle - Optional. The title of the document or video.
+ */
+export const trackDocumentClick = async (
+  contactId: string,
+  documentUrl: string,
+  actionType: string,
+  documentTitle?: string
+): Promise<void> => {
+  try {
+    // Get current IP and geo
+    const currentIp = await getCurrentIpAddress();
+    const locationData = await getIPLocation(currentIp);
+
+    // Build tracking form fields (similar to login tracking)
+    const trackingIframe = document.createElement('iframe');
+    trackingIframe.style.display = 'none';
+    document.body.appendChild(trackingIframe);
+
+    await new Promise(resolve => {
+      trackingIframe.onload = resolve;
+      trackingIframe.src = 'about:blank';
+    });
+
+    const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
+    if (iframeDoc) {
+      const form = iframeDoc.createElement('form');
+      form.method = 'POST';
+      form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+      // Build fields for document/video tracking
+      const fields: Record<string, string> = {
+        'sObj': 'ri__Portal__c',
+        'string_ri__Contact__c': contactId,
+        'text_ri__Login_URL__c': documentUrl,
+        'text_ri__Action__c': actionType,
+        'text_ri__IP_Address__c': currentIp,
+        'text_ri__Login_Country__c': locationData.country,
+        'text_ri__Login_City__c': locationData.city,
+      };
+      if (documentTitle) fields['text_ri__Doc_Title__c'] = documentTitle;
+
+      Object.entries(fields).forEach(([name, value]) => {
+        const input = iframeDoc.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      });
+
+      iframeDoc.body.appendChild(form);
+      form.submit();
+
+      setTimeout(() => {
+        document.body.removeChild(trackingIframe);
+      }, 2500);
+    }
+  } catch (err) {
+    // Fails silently, logs for debug
+    console.error('Track doc/video click failed', err);
+  }
+};
+
 // Authenticate user
 export const authenticateUser = async (email: string, password: string, isGoogleAuth: boolean = false): Promise<User | null> => {
   try {

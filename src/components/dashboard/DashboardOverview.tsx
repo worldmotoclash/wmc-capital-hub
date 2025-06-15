@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Play } from 'lucide-react';
@@ -9,6 +9,7 @@ import InvestmentPerformance from './InvestmentPerformance';
 import KeyDocuments from './KeyDocuments';
 import InvestorSupport from './InvestorSupport';
 import { useUser } from '@/contexts/UserContext';
+import { trackDocumentClick } from '@/services/loginService';
 
 const DashboardOverview: React.FC = () => {
   const { user } = useUser();
@@ -19,6 +20,24 @@ const DashboardOverview: React.FC = () => {
   const isPotentialInvestor = status === "potential investor";
   const showInvestmentPerformance =
     isSecuredInvestor && !isQualifiedInvestor && !isPotentialInvestor;
+
+  // Track play overlay click for main dashboard video
+  const handleMainVideoPlay = useCallback(() => {
+    if (user?.id) {
+      trackDocumentClick(
+        user.id,
+        'https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview',
+        'Video View',
+        'WMC Motorsports Reimagined!'
+      );
+    }
+    // After tracking, open the video (iframe overlay will become visible)
+    const frame = document.getElementById('dashboard-main-video');
+    if (frame) {
+      frame.classList.remove('opacity-0');
+      frame.classList.add('opacity-100');
+    }
+  }, [user]);
 
   return (
     <div className="space-y-8">
@@ -39,9 +58,18 @@ const DashboardOverview: React.FC = () => {
       <div className="rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700">
         <div className="aspect-video w-full relative">
           <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat rounded-t-lg"
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat rounded-t-lg cursor-pointer"
             style={{
               backgroundImage: `url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')`
+            }}
+            onClick={handleMainVideoPlay}
+            tabIndex={0}
+            aria-label="Play WMC Motorsports Reimagined Video"
+            role="button"
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleMainVideoPlay();
+              }
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/60 flex items-center justify-center">
@@ -52,10 +80,11 @@ const DashboardOverview: React.FC = () => {
               </div>
             </div>
           </div>
-          <iframe 
-            src="https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview" 
+          <iframe
+            id="dashboard-main-video"
+            src="https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview"
             title="WMC Motorsports Reimagined!"
-            className="w-full h-full absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
+            className="w-full h-full absolute inset-0 opacity-0 transition-opacity duration-300"
             allowFullScreen
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           ></iframe>
