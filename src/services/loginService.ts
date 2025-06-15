@@ -252,79 +252,87 @@ export const sendVerificationEmail = async (contactId: string, ipInfo?: {ip: str
 };
 
 // Track login activity using an iframe to bypass CORS restrictions
-export const trackLogin = async (contactId: string, action: string = 'Login') => {
-  try {
-    console.log(`Tracking ${action} for contact ID:`, contactId);
-    
-    // Get the current IP address
-    const currentIp = await getCurrentIpAddress();
-    console.log(`Current IP address for tracking: ${currentIp}`);
-    
-    // Get location data
-    const locationData = await getIPLocation(currentIp);
-    console.log(`Location data: Country - ${locationData.country}, City - ${locationData.city}`);
-    
-    // Create a hidden iframe element
-    const trackingIframe = document.createElement('iframe');
-    trackingIframe.style.display = 'none';
-    document.body.appendChild(trackingIframe);
-    
-    // Create a form inside the iframe
-    const trackingEndpoint = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-    
-    // Wait for iframe to load
-    await new Promise(resolve => {
-      trackingIframe.onload = resolve;
-      trackingIframe.src = 'about:blank';
-    });
-    
-    // Get the iframe document
-    const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
-    
-    if (iframeDoc) {
-      // Create a form in the iframe
-      const form = iframeDoc.createElement('form');
-      form.method = 'POST';
-      form.action = trackingEndpoint;
-      
-      // Add form fields with updated field names
-      const fields = {
-        'sObj': 'ri__Portal__c',
-        'string_ri__Contact__c': contactId,
-        'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
-        'text_ri__Action__c': action,
-        'text_ri__IP_Address__c': currentIp, // Updated field name
-        'text_ri__Login_Country__c': locationData.country, // New field for country
-        'text_ri__Login_City__c': locationData.city // New field for city
+export const trackLogin = (contactId: string, action: string = 'Login'): Promise<void> => {
+  console.log(`[trackLogin] Start: Action: ${action} for contact ID: ${contactId}`);
+  
+  return new Promise(async (resolve) => {
+    try {
+      const trackingIframe = document.createElement('iframe');
+      trackingIframe.style.display = 'none';
+
+      let hasLoadedInitialBlank = false;
+      const timeoutDuration = 5000;
+
+      const cleanup = () => {
+        if (document.body.contains(trackingIframe)) {
+          document.body.removeChild(trackingIframe);
+        }
+        clearTimeout(fallbackTimeout);
+      };
+
+      const fallbackTimeout = setTimeout(() => {
+        console.warn(`[trackLogin] Timed out waiting for tracking response for: ${action}`);
+        cleanup();
+        resolve(); // Resolve anyway so the user can proceed
+      }, timeoutDuration);
+
+      trackingIframe.onload = async () => {
+        if (!hasLoadedInitialBlank) {
+          hasLoadedInitialBlank = true;
+          try {
+            const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
+            if (!iframeDoc) throw new Error('Could not access iframe document');
+
+            const currentIp = await getCurrentIpAddress();
+            const locationData = await getIPLocation(currentIp);
+
+            const form = iframeDoc.createElement('form');
+            form.method = 'POST';
+            form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+            
+            const fields: Record<string, string> = {
+              'sObj': 'ri__Portal__c',
+              'string_ri__Contact__c': contactId,
+              'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
+              'text_ri__Action__c': action,
+              'text_ri__IP_Address__c': currentIp,
+              'text_ri__Login_Country__c': locationData.country,
+              'text_ri__Login_City__c': locationData.city,
+            };
+
+            Object.entries(fields).forEach(([name, value]) => {
+              const input = iframeDoc.createElement('input');
+              input.type = 'hidden';
+              input.name = name;
+              input.value = value;
+              form.appendChild(input);
+            });
+
+            iframeDoc.body.appendChild(form);
+            console.log(`[trackLogin] Submitting form for: ${action}`);
+            form.submit();
+            // Now we wait for the second onload
+          } catch (err) {
+            console.error('[trackLogin] Error during form creation/submission:', err);
+            cleanup();
+            resolve(); // Resolve anyway, don't block login
+          }
+        } else {
+          // This is the second load, after the form submission
+          console.log(`[trackLogin] Tracking request acknowledged for: ${action}`);
+          cleanup();
+          resolve();
+        }
       };
       
-      // Add each field to the form
-      Object.entries(fields).forEach(([name, value]) => {
-        const input = iframeDoc.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = value as string;
-        form.appendChild(input);
-      });
-      
-      // Add form to iframe document and submit it
-      iframeDoc.body.appendChild(form);
-      console.log(`Submitting ${action} tracking form via iframe with IP: ${currentIp}, Country: ${locationData.country}, City: ${locationData.city}`);
-      form.submit();
-      
-      // Remove iframe after some time to allow the request to complete
-      setTimeout(() => {
-        document.body.removeChild(trackingIframe);
-        console.log(`${action} tracking iframe removed`);
-      }, 5000);
-    } else {
-      console.error('Could not access iframe document');
+      document.body.appendChild(trackingIframe);
+      trackingIframe.src = 'about:blank';
+
+    } catch (error) {
+      console.error('[trackLogin] Outer error:', error);
+      resolve(); // Resolve anyway, don't block login
     }
-  } catch (error) {
-    // We don't want to disrupt the user experience if tracking fails
-    console.error('Tracking error:', error);
-    console.log(`Attempted to track ${action}, but encountered an error`);
-  }
+  });
 };
 
 /**
@@ -334,69 +342,91 @@ export const trackLogin = async (contactId: string, action: string = 'Login') =>
  * @param actionType - "Video View" | "Document View" | "Website Visit".
  * @param documentTitle - Optional. The title of the document or video.
  */
-export const trackDocumentClick = async (
+export const trackDocumentClick = (
   contactId: string,
   documentUrl: string,
   actionType: string,
   documentTitle?: string
 ): Promise<void> => {
-  try {
-    console.log(`[trackDocumentClick] Start: Action: ${actionType}, Title: ${documentTitle || 'N/A'}`);
-    
-    // Get current IP and geo
-    const currentIp = await getCurrentIpAddress();
-    const locationData = await getIPLocation(currentIp);
+  console.log(`[trackDocumentClick] Start: Action: ${actionType}, Title: ${documentTitle || 'N/A'}, URL: ${documentUrl}`);
 
-    // Build tracking form fields (similar to login tracking)
+  return new Promise((resolve, reject) => {
     const trackingIframe = document.createElement('iframe');
     trackingIframe.style.display = 'none';
-    document.body.appendChild(trackingIframe);
 
-    await new Promise(resolve => {
-      trackingIframe.onload = resolve;
-      trackingIframe.src = 'about:blank';
-    });
+    let hasLoadedInitialBlank = false;
+    const timeoutDuration = 5000; // 5 seconds fallback
 
-    const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
-    if (iframeDoc) {
-      const form = iframeDoc.createElement('form');
-      form.method = 'POST';
-      form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-      // Build fields for document/video tracking
-      const fields: Record<string, string> = {
-        'sObj': 'ri__Portal__c',
-        'string_ri__Contact__c': contactId,
-        'text_ri__Login_URL__c': documentUrl,
-        'text_ri__Action__c': actionType,
-        'text_ri__IP_Address__c': currentIp,
-        'text_ri__Login_Country__c': locationData.country,
-        'text_ri__Login_City__c': locationData.city,
-      };
-      if (documentTitle) fields['text_ri__Doc_Title__c'] = documentTitle;
+    const cleanup = () => {
+      if (document.body.contains(trackingIframe)) {
+        document.body.removeChild(trackingIframe);
+        console.log(`[trackDocumentClick] Iframe cleaned up for: ${actionType}`);
+      }
+      clearTimeout(fallbackTimeout);
+    };
 
-      Object.entries(fields).forEach(([name, value]) => {
-        const input = iframeDoc.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = value;
-        form.appendChild(input);
-      });
+    const fallbackTimeout = setTimeout(() => {
+        console.warn(`[trackDocumentClick] Timed out waiting for tracking response for: ${actionType}`);
+        cleanup();
+        resolve(); // Resolve anyway so the user can proceed
+    }, timeoutDuration);
 
-      iframeDoc.body.appendChild(form);
-      console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
-      form.submit();
+    trackingIframe.onload = async () => {
+      if (!hasLoadedInitialBlank) {
+        // This is the first load (about:blank)
+        hasLoadedInitialBlank = true;
+        try {
+          const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
+          if (!iframeDoc) {
+            throw new Error('Could not access iframe document');
+          }
 
-      setTimeout(() => {
-        if (document.body.contains(trackingIframe)) {
-          document.body.removeChild(trackingIframe);
-          console.log(`[trackDocumentClick] Iframe removed for: ${actionType}`);
+          const currentIp = await getCurrentIpAddress();
+          const locationData = await getIPLocation(currentIp);
+
+          const form = iframeDoc.createElement('form');
+          form.method = 'POST';
+          form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+          
+          const fields: Record<string, string> = {
+            'sObj': 'ri__Portal__c',
+            'string_ri__Contact__c': contactId,
+            'text_ri__Login_URL__c': documentUrl,
+            'text_ri__Action__c': actionType,
+            'text_ri__IP_Address__c': currentIp,
+            'text_ri__Login_Country__c': locationData.country,
+            'text_ri__Login_City__c': locationData.city,
+          };
+          if (documentTitle) fields['text_ri__Doc_Title__c'] = documentTitle;
+
+          Object.entries(fields).forEach(([name, value]) => {
+            const input = iframeDoc.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+          });
+
+          iframeDoc.body.appendChild(form);
+          console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
+          form.submit();
+          // Now we wait for the second onload, which indicates the form submission has completed.
+        } catch (err) {
+          console.error('[trackDocumentClick] Error during form creation/submission:', err);
+          cleanup();
+          reject(err);
         }
-      }, 3000);
-    }
-  } catch (err) {
-    // Fails silently, logs for debug
-    console.error('[trackDocumentClick] Failed:', err);
-  }
+      } else {
+        // This is the second load, after the form submission
+        console.log(`[trackDocumentClick] Tracking request acknowledged for: ${actionType}`);
+        cleanup();
+        resolve();
+      }
+    };
+    
+    document.body.appendChild(trackingIframe);
+    trackingIframe.src = 'about:blank';
+  });
 };
 
 // Authenticate user
