@@ -255,73 +255,74 @@ export const sendVerificationEmail = async (contactId: string, ipInfo?: {ip: str
 export const trackLogin = (contactId: string, action: string = 'Login'): Promise<void> => {
   console.log(`[trackLogin] Start: Action: ${action} for contact ID: ${contactId}`);
   
-  return new Promise(async (resolve) => {
+  return new Promise((resolve) => {
     try {
       const trackingIframe = document.createElement('iframe');
       trackingIframe.style.display = 'none';
 
-      let hasLoadedInitialBlank = false;
-      const timeoutDuration = 5000;
+      const timeoutDuration = 3000; // Fallback for the initial load
 
-      const cleanup = () => {
+      const cleanupAndResolve = () => {
         if (document.body.contains(trackingIframe)) {
           document.body.removeChild(trackingIframe);
         }
         clearTimeout(fallbackTimeout);
+        resolve();
       };
 
       const fallbackTimeout = setTimeout(() => {
-        console.warn(`[trackLogin] Timed out waiting for tracking response for: ${action}`);
-        cleanup();
-        resolve(); // Resolve anyway so the user can proceed
+        console.warn(`[trackLogin] Timed out waiting for iframe to load for: ${action}`);
+        cleanupAndResolve();
       }, timeoutDuration);
 
       trackingIframe.onload = async () => {
-        if (!hasLoadedInitialBlank) {
-          hasLoadedInitialBlank = true;
-          try {
-            const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
-            if (!iframeDoc) throw new Error('Could not access iframe document');
+        // This should only run once for 'about:blank'
+        // We remove the listener to prevent it from firing again
+        trackingIframe.onload = null; 
+        
+        try {
+          const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
+          if (!iframeDoc) throw new Error('Could not access iframe document');
 
-            const currentIp = await getCurrentIpAddress();
-            const locationData = await getIPLocation(currentIp);
+          const currentIp = await getCurrentIpAddress();
+          const locationData = await getIPLocation(currentIp);
 
-            const form = iframeDoc.createElement('form');
-            form.method = 'POST';
-            form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+          const form = iframeDoc.createElement('form');
+          form.method = 'POST';
+          form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
             
-            const fields: Record<string, string> = {
-              'sObj': 'ri__Portal__c',
-              'string_ri__Contact__c': contactId,
-              'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
-              'text_ri__Action__c': action,
-              'text_ri__IP_Address__c': currentIp,
-              'text_ri__Login_Country__c': locationData.country,
-              'text_ri__Login_City__c': locationData.city,
-            };
+          const fields: Record<string, string> = {
+            'sObj': 'ri__Portal__c',
+            'string_ri__Contact__c': contactId,
+            'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
+            'text_ri__Action__c': action,
+            'text_ri__IP_Address__c': currentIp,
+            'text_ri__Login_Country__c': locationData.country,
+            'text_ri__Login_City__c': locationData.city,
+          };
 
-            Object.entries(fields).forEach(([name, value]) => {
-              const input = iframeDoc.createElement('input');
-              input.type = 'hidden';
-              input.name = name;
-              input.value = value;
-              form.appendChild(input);
-            });
+          Object.entries(fields).forEach(([name, value]) => {
+            const input = iframeDoc.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+          });
 
-            iframeDoc.body.appendChild(form);
-            console.log(`[trackLogin] Submitting form for: ${action}`);
-            form.submit();
-            // Now we wait for the second onload
-          } catch (err) {
-            console.error('[trackLogin] Error during form creation/submission:', err);
-            cleanup();
-            resolve(); // Resolve anyway, don't block login
-          }
-        } else {
-          // This is the second load, after the form submission
-          console.log(`[trackLogin] Tracking request acknowledged for: ${action}`);
-          cleanup();
-          resolve();
+          iframeDoc.body.appendChild(form);
+          console.log(`[trackLogin] Submitting form for: ${action}`);
+          form.submit();
+          
+          // The request is fired. We can now resolve.
+          // A tiny delay might help ensure the request is sent before the page unloads.
+          setTimeout(() => {
+            console.log(`[trackLogin] Request sent for: ${action}. Resolving promise.`);
+            cleanupAndResolve();
+          }, 100); // 100ms delay
+
+        } catch (err) {
+          console.error('[trackLogin] Error during form creation/submission:', err);
+          cleanupAndResolve(); // Resolve anyway, don't block
         }
       };
       
@@ -350,31 +351,29 @@ export const trackDocumentClick = (
 ): Promise<void> => {
   console.log(`[trackDocumentClick] Start: Action: ${actionType}, Title: ${documentTitle || 'N/A'}, URL: ${documentUrl}`);
 
-  return new Promise((resolve, reject) => {
-    const trackingIframe = document.createElement('iframe');
-    trackingIframe.style.display = 'none';
+  return new Promise((resolve) => {
+    try {
+      const trackingIframe = document.createElement('iframe');
+      trackingIframe.style.display = 'none';
 
-    let hasLoadedInitialBlank = false;
-    const timeoutDuration = 5000; // 5 seconds fallback
+      const timeoutDuration = 3000; // 3 seconds fallback for initial load
 
-    const cleanup = () => {
-      if (document.body.contains(trackingIframe)) {
-        document.body.removeChild(trackingIframe);
-        console.log(`[trackDocumentClick] Iframe cleaned up for: ${actionType}`);
-      }
-      clearTimeout(fallbackTimeout);
-    };
+      const cleanupAndResolve = () => {
+        if (document.body.contains(trackingIframe)) {
+          document.body.removeChild(trackingIframe);
+        }
+        clearTimeout(fallbackTimeout);
+        resolve();
+      };
 
-    const fallbackTimeout = setTimeout(() => {
-        console.warn(`[trackDocumentClick] Timed out waiting for tracking response for: ${actionType}`);
-        cleanup();
-        resolve(); // Resolve anyway so the user can proceed
-    }, timeoutDuration);
+      const fallbackTimeout = setTimeout(() => {
+          console.warn(`[trackDocumentClick] Timed out waiting for iframe to load for: ${actionType}`);
+          cleanupAndResolve();
+      }, timeoutDuration);
 
-    trackingIframe.onload = async () => {
-      if (!hasLoadedInitialBlank) {
-        // This is the first load (about:blank)
-        hasLoadedInitialBlank = true;
+      trackingIframe.onload = async () => {
+        // This should only run once for 'about:blank'
+        trackingIframe.onload = null;
         try {
           const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
           if (!iframeDoc) {
@@ -410,22 +409,25 @@ export const trackDocumentClick = (
           iframeDoc.body.appendChild(form);
           console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
           form.submit();
-          // Now we wait for the second onload, which indicates the form submission has completed.
+          
+          // Request is fired, resolve after a small delay.
+          setTimeout(() => {
+            console.log(`[trackDocumentClick] Request sent for: ${actionType}. Resolving promise.`);
+            cleanupAndResolve();
+          }, 100);
+
         } catch (err) {
           console.error('[trackDocumentClick] Error during form creation/submission:', err);
-          cleanup();
-          reject(err);
+          cleanupAndResolve(); // Don't block the user
         }
-      } else {
-        // This is the second load, after the form submission
-        console.log(`[trackDocumentClick] Tracking request acknowledged for: ${actionType}`);
-        cleanup();
+      };
+      
+      document.body.appendChild(trackingIframe);
+      trackingIframe.src = 'about:blank';
+    } catch(error) {
+        console.error(`[trackDocumentClick] Outer error for ${actionType}:`, error);
         resolve();
-      }
-    };
-    
-    document.body.appendChild(trackingIframe);
-    trackingIframe.src = 'about:blank';
+    }
   });
 };
 
