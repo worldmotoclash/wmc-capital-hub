@@ -234,8 +234,6 @@ const LoginFormComponent: React.FC = () => {
     }
   };
 
-  // Add a debug component to show current state
-  const isDebugMode = window.location.hostname === 'localhost' || window.location.hostname.includes('lovable');
   
   console.log('Rendering LoginFormComponent. User:', user, 'Loading:', isLoading, 'Auto-processed:', autoLoginProcessed);
 
@@ -246,14 +244,7 @@ const LoginFormComponent: React.FC = () => {
       transition={{ duration: 0.6 }}
       className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
     >
-      {isDebugMode && (
-        <div className="mb-4 p-2 bg-gray-100 text-xs rounded">
-          <div>User: {user ? 'Logged in' : 'Not logged in'}</div>
-          <div>Auto-processed: {autoLoginProcessed ? 'Yes' : 'No'}</div>
-          <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
-          <div>Current path: {window.location.pathname}</div>
-        </div>
-      )}
+      
       
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-2">Investor Portal</h2>
