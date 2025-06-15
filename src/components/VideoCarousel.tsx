@@ -69,9 +69,9 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
   };
 
   // Handler for clicking a video slide; calls tracking with current video
-  const handleVideoClick = (video: VideoData) => {
+  const handleVideoClick = async (video: VideoData) => {
     if (user?.id) {
-      trackDocumentClick(
+      await trackDocumentClick(
         user.id,
         video.videoSrc,
         'Video View',

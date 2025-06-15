@@ -22,9 +22,9 @@ const DashboardOverview: React.FC = () => {
     isSecuredInvestor && !isQualifiedInvestor && !isPotentialInvestor;
 
   // Track play overlay click for main dashboard video
-  const handleMainVideoPlay = useCallback(() => {
+  const handleMainVideoPlay = useCallback(async () => {
     if (user?.id) {
-      trackDocumentClick(
+      await trackDocumentClick(
         user.id,
         'https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview',
         'Video View',

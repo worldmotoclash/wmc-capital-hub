@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -79,17 +78,16 @@ const Documents: React.FC = () => {
     : [...baseDocuments, blankNdaDocument];
 
   // Centralized click tracking
-  const handleTrackedClick = (
-    url: string,
-    type: string,
-    title: string
-  ) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (user?.id) {
-      const action = type === "Video" ? "Video View" : "Document View";
-      trackDocumentClick(user.id, url, action, title);
-    }
-    // fall through to default navigation
-  };
+  const handleTrackedClick =
+    (url: string, type: string, title: string) =>
+    async (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      if (user?.id) {
+        const action = type === 'Video' ? 'Video View' : 'Document View';
+        await trackDocumentClick(user.id, url, action, title);
+      }
+      window.open(url, '_blank', 'noopener,noreferrer');
+    };
 
   return (
     <div className="min-h-screen bg-gray-50">

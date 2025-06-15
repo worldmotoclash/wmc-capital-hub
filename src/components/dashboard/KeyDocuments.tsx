@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -14,16 +13,15 @@ const KeyDocuments: React.FC = () => {
   const hasBusinessPlanAccess = isSecuredInvestor || isQualifiedInvestor || user?.ndaSigned || false;
 
   // Helper to track and open in new tab
-  const handleTrackedClick = (
-    url: string,
-    actionType: string,
-    documentTitle: string
-  ) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (user?.id) {
-      trackDocumentClick(user.id, url, actionType, documentTitle);
-    }
-    // let default proceed to open in new tab
-  };
+  const handleTrackedClick =
+    (url: string, actionType: string, documentTitle: string) =>
+    async (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      if (user?.id) {
+        await trackDocumentClick(user.id, url, actionType, documentTitle);
+      }
+      window.open(url, '_blank', 'noopener,noreferrer');
+    };
 
   return (
     <Card>

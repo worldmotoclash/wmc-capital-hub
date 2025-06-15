@@ -331,7 +331,7 @@ export const trackLogin = async (contactId: string, action: string = 'Login') =>
  * Track document or video views for analytics.
  * @param contactId - The user's contact ID.
  * @param documentUrl - The URL of the document or video clicked.
- * @param actionType - "Video View" | "Document View" | other string.
+ * @param actionType - "Video View" | "Document View" | "Website Visit".
  * @param documentTitle - Optional. The title of the document or video.
  */
 export const trackDocumentClick = async (
@@ -341,6 +341,8 @@ export const trackDocumentClick = async (
   documentTitle?: string
 ): Promise<void> => {
   try {
+    console.log(`[trackDocumentClick] Start: Action: ${actionType}, Title: ${documentTitle || 'N/A'}`);
+    
     // Get current IP and geo
     const currentIp = await getCurrentIpAddress();
     const locationData = await getIPLocation(currentIp);
@@ -381,15 +383,19 @@ export const trackDocumentClick = async (
       });
 
       iframeDoc.body.appendChild(form);
+      console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
       form.submit();
 
       setTimeout(() => {
-        document.body.removeChild(trackingIframe);
-      }, 2500);
+        if (document.body.contains(trackingIframe)) {
+          document.body.removeChild(trackingIframe);
+          console.log(`[trackDocumentClick] Iframe removed for: ${actionType}`);
+        }
+      }, 3000);
     }
   } catch (err) {
     // Fails silently, logs for debug
-    console.error('Track doc/video click failed', err);
+    console.error('[trackDocumentClick] Failed:', err);
   }
 };
 

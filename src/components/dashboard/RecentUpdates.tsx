@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -18,20 +17,19 @@ const RecentUpdates: React.FC = () => {
   };
 
   // Centralized click tracking
-  const handleTrackedClick = (
-    url: string,
-    type: string,
-    title: string
-  ) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (user?.id) {
-      let action: string;
-      if (type === 'video') action = "Video View";
-      else if (type === 'website') action = "Website Visit";
-      else action = "Document View";
-      trackDocumentClick(user.id, url, action, title);
-    }
-    // let default anchor open in new tab
-  };
+  const handleTrackedClick =
+    (url: string, type: string, title: string) =>
+    async (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      if (user?.id) {
+        let action: string;
+        if (type === 'video') action = 'Video View';
+        else if (type === 'website') action = 'Website Visit';
+        else action = 'Document View';
+        await trackDocumentClick(user.id, url, action, title);
+      }
+      window.open(url, '_blank', 'noopener,noreferrer');
+    };
 
   return (
     <Card>
