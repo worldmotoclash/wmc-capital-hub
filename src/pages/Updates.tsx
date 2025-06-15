@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +8,7 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { companyUpdates } from '@/data/companyUpdates';
+import { trackDocumentClick } from '@/services/loginService';
 
 const Updates: React.FC = () => {
   const navigate = useNavigate();
@@ -34,8 +34,24 @@ const Updates: React.FC = () => {
     navigate('/');
   };
 
+  // Centralized click tracking for updates section
+  const handleTrackedClick = (
+    url: string,
+    type: string,
+    title: string
+  ) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (user?.id) {
+      let action: string;
+      if (type === 'video') action = "Video View";
+      else if (type === 'website') action = "Website Visit";
+      else action = "Document View";
+      trackDocumentClick(user.id, url, action, title);
+    }
+    // let default anchor open in new tab
+  };
+
   if (!user) {
-    return null; // Don't render anything while redirecting
+    return null;
   }
 
   return (
@@ -71,7 +87,7 @@ const Updates: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="space-y-6"
         >
-          {allUpdates.map((update, index) => (
+          {companyUpdates.map((update, index) => (
             <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
@@ -97,8 +113,9 @@ const Updates: React.FC = () => {
                         >
                           <a 
                             href={update.url} 
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
+                            onClick={handleTrackedClick(update.url, "website", update.title)}
                           >
                             <ExternalLink className="mr-2 h-4 w-4" />
                             Visit Website
@@ -112,10 +129,11 @@ const Updates: React.FC = () => {
                           asChild
                           className="text-emerald-600 hover:text-emerald-800 transition-colors"
                         >
-                          <a 
-                            href={update.documentUrl} 
-                            target="_blank" 
+                          <a
+                            href={update.documentUrl}
+                            target="_blank"
                             rel="noopener noreferrer"
+                            onClick={handleTrackedClick(update.documentUrl, update.documentType || "document", update.title)}
                           >
                             {update.documentType === 'video' ? (
                               <>

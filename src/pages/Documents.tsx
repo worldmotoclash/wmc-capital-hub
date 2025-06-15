@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +8,7 @@ import { ArrowLeft, ExternalLink } from 'lucide-react';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
+import { trackDocumentClick } from '@/services/loginService';
 
 const Documents: React.FC = () => {
   const navigate = useNavigate();
@@ -16,8 +18,6 @@ const Documents: React.FC = () => {
   React.useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
-    
-    // Redirect if no user is logged in
     if (!user) {
       toast.error('Please log in to access documents');
       navigate('/login');
@@ -31,13 +31,13 @@ const Documents: React.FC = () => {
   };
 
   if (!user) {
-    return null; // Don't render anything while redirecting
+    return null;
   }
 
   // Define base documents that are always available
   const baseDocuments = [
     {
-      title: "Investor Executive Summary Deck", // Updated title to match KeyDocuments
+      title: "Investor Executive Summary Deck",
       type: "PDF",
       source: "Google Drive",
       thumbnail: "/lovable-uploads/sponsor-primier-thumbnail.png",
@@ -51,17 +51,13 @@ const Documents: React.FC = () => {
       url: "https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview"
     }
   ];
-
-  // Update the blankNdaDocument with the new image path
   const blankNdaDocument = {
     title: "WMC NDA 2025 (Blank)",
     type: "DOCX",
     source: "Secure Storage",
-    thumbnail: "/lovable-uploads/blank-nda.png", // Updated thumbnail
-    url: "/lovable-uploads/wmc-nda-2025-blank.docx" // Updated file path with hyphen
+    thumbnail: "/lovable-uploads/blank-nda.png",
+    url: "/lovable-uploads/wmc-nda-2025-blank.docx"
   };
-  
-  // Update the signed NDA document to use the new image
   const ndaDocuments = [
     {
       title: "WMC March 2025 Business Plan",
@@ -74,20 +70,30 @@ const Documents: React.FC = () => {
       title: "Signed NDA Document",
       type: "DOCX",
       source: "Secure Storage",
-      thumbnail: "/lovable-uploads/we-signed-an-nda.png", // Updated thumbnail
-      url: "/lovable-uploads/wmc-nda-2025-blank.docx" // Updated file path with hyphen
+      thumbnail: "/lovable-uploads/we-signed-an-nda.png",
+      url: "/lovable-uploads/wmc-nda-2025-blank.docx"
     }
   ];
-
-  // Combine documents based on NDA status
   const documents = ndaSigned 
     ? [...ndaDocuments, ...baseDocuments] 
     : [...baseDocuments, blankNdaDocument];
 
+  // Centralized click tracking
+  const handleTrackedClick = (
+    url: string,
+    type: string,
+    title: string
+  ) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (user?.id) {
+      const action = type === "Video" ? "Video View" : "Document View";
+      trackDocumentClick(user.id, url, action, title);
+    }
+    // fall through to default navigation
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <DashboardHeader handleSignOut={handleSignOut} />
-      
       <main className="container mx-auto px-6 py-12">
         <div className="mb-8 flex items-center gap-4">
           <Button 
@@ -99,7 +105,6 @@ const Documents: React.FC = () => {
             Back to Dashboard
           </Button>
         </div>
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -110,7 +115,6 @@ const Documents: React.FC = () => {
             Access all your important investment documents
           </p>
         </motion.div>
-        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -134,7 +138,12 @@ const Documents: React.FC = () => {
                       <p className="text-sm text-gray-500">{doc.type} • {doc.source}</p>
                     </div>
                     <Button variant="ghost" size="sm" className="text-gray-500" asChild>
-                      <a href={doc.url} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={handleTrackedClick(doc.url, doc.type, doc.title)}
+                      >
                         <ExternalLink className="w-4 h-4" />
                       </a>
                     </Button>

@@ -5,14 +5,32 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from '@/components/ui/button';
 import { ExternalLink, FileText, Video } from 'lucide-react';
 import { companyUpdates } from '@/data/companyUpdates';
+import { useUser } from '@/contexts/UserContext';
+import { trackDocumentClick } from '@/services/loginService';
 
 const RecentUpdates: React.FC = () => {
   const navigate = useNavigate();
-  // Get only the 3 most recent updates
+  const { user } = useUser();
   const recentUpdates = companyUpdates.slice(0, 3);
 
   const handleViewAll = () => {
     navigate('/updates');
+  };
+
+  // Centralized click tracking
+  const handleTrackedClick = (
+    url: string,
+    type: string,
+    title: string
+  ) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (user?.id) {
+      let action: string;
+      if (type === 'video') action = "Video View";
+      else if (type === 'website') action = "Website Visit";
+      else action = "Document View";
+      trackDocumentClick(user.id, url, action, title);
+    }
+    // let default anchor open in new tab
   };
 
   return (
@@ -35,9 +53,10 @@ const RecentUpdates: React.FC = () => {
                   className="h-8 text-xs text-blue-600"
                 >
                   <a 
-                    href={update.url} 
-                    target="_blank" 
+                    href={update.url}
+                    target="_blank"
                     rel="noopener noreferrer"
+                    onClick={handleTrackedClick(update.url, "website", update.title)}
                   >
                     <ExternalLink className="mr-1 h-3 w-3" />
                     Website
@@ -51,10 +70,11 @@ const RecentUpdates: React.FC = () => {
                   asChild
                   className="h-8 text-xs text-emerald-600"
                 >
-                  <a 
-                    href={update.documentUrl} 
-                    target="_blank" 
+                  <a
+                    href={update.documentUrl}
+                    target="_blank"
                     rel="noopener noreferrer"
+                    onClick={handleTrackedClick(update.documentUrl, update.documentType || "document", update.title)}
                   >
                     {update.documentType === 'video' ? (
                       <>

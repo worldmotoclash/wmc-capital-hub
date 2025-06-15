@@ -1,16 +1,30 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
+import { trackDocumentClick } from '@/services/loginService';
 
 const KeyDocuments: React.FC = () => {
   const { user } = useUser();
-  const isSecuredInvestor = user?.status?.toLowerCase().trim() === "secured Investor";
+  const isSecuredInvestor = user?.status?.toLowerCase().trim() === "secured investor";
   const isQualifiedInvestor = user?.status?.toLowerCase().trim() === "qualified investor"; 
   const hasBusinessPlanAccess = isSecuredInvestor || isQualifiedInvestor || user?.ndaSigned || false;
-  
+
+  // Helper to track and open in new tab
+  const handleTrackedClick = (
+    url: string,
+    actionType: string,
+    documentTitle: string
+  ) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (user?.id) {
+      trackDocumentClick(user.id, url, actionType, documentTitle);
+    }
+    // let default proceed to open in new tab
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -34,13 +48,22 @@ const KeyDocuments: React.FC = () => {
               </div>
             </div>
             <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-              <a href="https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleTrackedClick(
+                  "https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing",
+                  "Document View",
+                  "WMC March 2025 Business Plan"
+                )}
+              >
                 <ExternalLink className="w-4 h-4" />
               </a>
             </Button>
           </div>
         )}
-        
+
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
@@ -56,12 +79,21 @@ const KeyDocuments: React.FC = () => {
             </div>
           </div>
           <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-            <a href="https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleTrackedClick(
+                "https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview",
+                "Video View",
+                "WMC Motorsports Reimagined!"
+              )}
+            >
               <ExternalLink className="w-4 h-4" />
             </a>
           </Button>
         </div>
-        
+
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center overflow-hidden">
@@ -77,12 +109,21 @@ const KeyDocuments: React.FC = () => {
             </div>
           </div>
           <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-            <a href="https://drive.google.com/file/d/1jrylnZVCZLt1aQxnRJt-FMPQZtfMTcNS/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://drive.google.com/file/d/1jrylnZVCZLt1aQxnRJt-FMPQZtfMTcNS/view?usp=drive_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleTrackedClick(
+                "https://drive.google.com/file/d/1jrylnZVCZLt1aQxnRJt-FMPQZtfMTcNS/view?usp=drive_link",
+                "Document View",
+                "Investor Executive Summary Deck"
+              )}
+            >
               <ExternalLink className="w-4 h-4" />
             </a>
           </Button>
         </div>
-        
+
         {!hasBusinessPlanAccess && (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -99,7 +140,16 @@ const KeyDocuments: React.FC = () => {
               </div>
             </div>
             <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
-              <a href="/lovable-uploads/wmc-nda-2025-blank.docx" target="_blank" rel="noopener noreferrer">
+              <a
+                href="/lovable-uploads/wmc-nda-2025-blank.docx"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleTrackedClick(
+                  "/lovable-uploads/wmc-nda-2025-blank.docx",
+                  "Document View",
+                  "WMC NDA 2025 (Blank)"
+                )}
+              >
                 <ExternalLink className="w-4 h-4" />
               </a>
             </Button>
