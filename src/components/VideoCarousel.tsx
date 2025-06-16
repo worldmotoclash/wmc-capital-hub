@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -88,7 +89,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
         await trackDocumentClick(
           user.id,
           video.videoSrc,
-          'Video View',
+          'Video Clicked',
           video.title
         );
       }
