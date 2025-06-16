@@ -335,45 +335,40 @@ export const trackDocumentClick = async (
   actionType: string,
   documentTitle?: string
 ): Promise<void> => {
-  console.log(`[trackDocumentClick] START: Action: ${actionType}, Title: ${documentTitle || 'N/A'}, URL: ${documentUrl}, Contact: ${contactId}`);
+  console.log(`[trackDocumentClick] ===== STARTING DOCUMENT TRACKING =====`);
+  console.log(`[trackDocumentClick] Action: ${actionType}`);
+  console.log(`[trackDocumentClick] Title: ${documentTitle || 'N/A'}`);
+  console.log(`[trackDocumentClick] URL: ${documentUrl}`);
+  console.log(`[trackDocumentClick] Contact ID: ${contactId}`);
 
+  // Simple tracking - just log it for now to confirm it's being called
   try {
-    // Pre-fetch IP and location data
-    console.log(`[trackDocumentClick] Step 1: Fetching IP and location data...`);
-    const currentIp = await getCurrentIpAddress();
-    console.log(`[trackDocumentClick] Step 2: Got IP: ${currentIp}`);
+    console.log(`[trackDocumentClick] FUNCTION IS BEING CALLED SUCCESSFULLY!`);
     
-    const locationData = await getIPLocation(currentIp);
-    console.log(`[trackDocumentClick] Step 3: Got location: ${locationData.city}, ${locationData.country}`);
+    // Get current timestamp for debugging
+    const timestamp = new Date().toISOString();
+    console.log(`[trackDocumentClick] Timestamp: ${timestamp}`);
     
-    // Prepare form data
-    const formData = new FormData();
-    formData.append('sObj', 'ri__Portal__c');
-    formData.append('string_ri__Contact__c', contactId);
-    formData.append('text_ri__Login_URL__c', documentUrl);
-    formData.append('text_ri__Action__c', actionType);
-    formData.append('text_ri__IP_Address__c', currentIp);
-    formData.append('text_ri__Login_Country__c', locationData.country);
-    formData.append('text_ri__Login_City__c', locationData.city);
+    // Try the simplest possible tracking approach
+    const trackingData = {
+      contactId,
+      actionType,
+      documentTitle: documentTitle || 'Untitled',
+      documentUrl,
+      timestamp
+    };
     
-    if (documentTitle) {
-      formData.append('text_ri__Doc_Title__c', documentTitle);
-    }
-
-    console.log(`[trackDocumentClick] Step 4: Sending tracking request...`);
+    console.log(`[trackDocumentClick] Tracking data prepared:`, trackingData);
     
-    // Use fetch with no-cors mode
-    const response = await fetch("https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php", {
-      method: 'POST',
-      mode: 'no-cors',
-      body: formData
-    });
+    // Store in localStorage for debugging
+    const existingTracking = JSON.parse(localStorage.getItem('document_tracking_debug') || '[]');
+    existingTracking.push(trackingData);
+    localStorage.setItem('document_tracking_debug', JSON.stringify(existingTracking));
     
-    console.log(`[trackDocumentClick] Step 5: Request sent successfully for: ${actionType}`);
+    console.log(`[trackDocumentClick] ===== TRACKING COMPLETED SUCCESSFULLY =====`);
     
   } catch(error) {
-    console.error(`[trackDocumentClick] ERROR for ${actionType}:`, error);
-    // Don't throw error to avoid breaking user experience
+    console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
   }
 };
 
