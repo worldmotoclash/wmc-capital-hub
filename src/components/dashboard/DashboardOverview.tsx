@@ -1,3 +1,4 @@
+
 import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import { trackDocumentClick } from '@/services/loginService';
 const DashboardOverview: React.FC = () => {
   const { user } = useUser();
   const [isTrackingVideo, setIsTrackingVideo] = useState(false);
+  const [showVideoOverlay, setShowVideoOverlay] = useState(true);
   
   // Case-insensitive, trimmed logic for hiding chart
   const status = user?.status?.toLowerCase().trim();
@@ -22,7 +24,6 @@ const DashboardOverview: React.FC = () => {
   const showInvestmentPerformance =
     isSecuredInvestor && !isQualifiedInvestor && !isPotentialInvestor;
 
-  // Simplified main video tracking with better logging
   const handleMainVideoPlay = useCallback(async (event: React.MouseEvent | React.KeyboardEvent) => {
     event.preventDefault();
     event.stopPropagation();
@@ -53,13 +54,9 @@ const DashboardOverview: React.FC = () => {
       
       console.log('[DashboardOverview] Main video tracking completed');
       
-      // After tracking, show the video iframe
-      const frame = document.getElementById('dashboard-main-video');
-      if (frame) {
-        frame.classList.remove('opacity-0');
-        frame.classList.add('opacity-100');
-        console.log('[DashboardOverview] Video iframe made visible');
-      }
+      // Hide the overlay to show the video
+      setShowVideoOverlay(false);
+      console.log('[DashboardOverview] Video overlay hidden');
     } catch (error) {
       console.error('[DashboardOverview] Error tracking main video:', error);
     } finally {
@@ -85,34 +82,39 @@ const DashboardOverview: React.FC = () => {
       {/* Video spanning full width */}
       <div className="rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700">
         <div className="aspect-video w-full relative">
-          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat rounded-t-lg cursor-pointer"
-            style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')`
-            }}
-            onClick={handleMainVideoPlay}
-            tabIndex={0}
-            aria-label="Play WMC Motorsports Reimagined Video"
-            role="button"
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                handleMainVideoPlay(e);
-              }
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/60 flex items-center justify-center">
-              <div className="text-center text-white">
-                <h3 className="text-2xl md:text-3xl font-bold mb-2">WMC Motorsports Reimagined!</h3>
-                <p className="text-lg opacity-90 mb-3">Click to play video</p>
-                <Play className="w-12 h-12 mx-auto opacity-90" />
+          {/* Video overlay that can be hidden */}
+          {showVideoOverlay && (
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat rounded-t-lg cursor-pointer z-20"
+              style={{
+                backgroundImage: `url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')`
+              }}
+              onClick={handleMainVideoPlay}
+              tabIndex={0}
+              aria-label="Play WMC Motorsports Reimagined Video"
+              role="button"
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleMainVideoPlay(e);
+                }
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/60 flex items-center justify-center">
+                <div className="text-center text-white">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-2">WMC Motorsports Reimagined!</h3>
+                  <p className="text-lg opacity-90 mb-3">Click to play video</p>
+                  <Play className="w-12 h-12 mx-auto opacity-90" />
+                </div>
               </div>
             </div>
-          </div>
+          )}
+          
+          {/* Video iframe */}
           <iframe
             id="dashboard-main-video"
             src="https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview"
             title="WMC Motorsports Reimagined!"
-            className="w-full h-full absolute inset-0 opacity-0 transition-opacity duration-300"
+            className="w-full h-full absolute inset-0"
             allowFullScreen
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           ></iframe>
