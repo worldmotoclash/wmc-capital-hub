@@ -339,6 +339,7 @@ export const trackDocumentClick = async (
 
   try {
     // Pre-fetch IP and location data before creating iframe
+    console.log(`[trackDocumentClick] Fetching IP and location data...`);
     const currentIp = await getCurrentIpAddress();
     const locationData = await getIPLocation(currentIp);
     
@@ -347,8 +348,12 @@ export const trackDocumentClick = async (
     // Create iframe for tracking
     const trackingIframe = document.createElement('iframe');
     trackingIframe.style.display = 'none';
+    document.body.appendChild(trackingIframe);
 
+    // Wait for iframe to be ready
     trackingIframe.onload = () => {
+      console.log(`[trackDocumentClick] Iframe loaded, creating form...`);
+      
       try {
         const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
         if (!iframeDoc) {
@@ -369,7 +374,10 @@ export const trackDocumentClick = async (
           'text_ri__Login_Country__c': locationData.country,
           'text_ri__Login_City__c': locationData.city,
         };
-        if (documentTitle) fields['text_ri__Doc_Title__c'] = documentTitle;
+        
+        if (documentTitle) {
+          fields['text_ri__Doc_Title__c'] = documentTitle;
+        }
 
         Object.entries(fields).forEach(([name, value]) => {
           const input = iframeDoc.createElement('input');
@@ -388,7 +396,7 @@ export const trackDocumentClick = async (
       }
     };
     
-    document.body.appendChild(trackingIframe);
+    // Set iframe src to trigger onload
     trackingIframe.src = 'about:blank';
     
     // Remove iframe after sufficient time for request to complete
