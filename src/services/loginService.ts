@@ -209,7 +209,7 @@ export const sendVerificationEmail = async (contactId: string, ipInfo?: {ip: str
   }
 };
 
-// Track login activity using iframe method (same as working test page)
+// Track login activity using direct form submission
 export const trackLogin = async (contactId: string, action: string = 'Login'): Promise<void> => {
   console.log(`[trackLogin] ===== TRACKING START =====`);
   console.log(`[trackLogin] Action: ${action} for contact ID: ${contactId}`);
@@ -221,83 +221,58 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
     
     console.log(`[trackLogin] IP data fetched: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
     
-    // Create iframe for tracking (same as test page implementation)
-    const trackingIframe = document.createElement('iframe');
-    trackingIframe.style.display = 'none';
-    
-    console.log(`[trackLogin] Created iframe element`);
-    
-    trackingIframe.onload = () => {
-      try {
-        console.log(`[trackLogin] Iframe loaded, creating form...`);
-        
-        const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
-        if (!iframeDoc) {
-          console.log(`[trackLogin] ERROR: Could not access iframe document`);
-          return;
-        }
-
-        const form = iframeDoc.createElement('form');
-        form.method = 'POST';
-        form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-          
-        const fields: Record<string, string> = {
-          'sObj': 'ri__Portal__c',
-          'string_ri__Contact__c': contactId,
-          'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
-          'text_ri__Action__c': action,
-          'text_ri__IP_Address__c': currentIp,
-          'text_ri__Login_Country__c': locationData.country,
-          'text_ri__Login_City__c': locationData.city,
-        };
-
-        console.log(`[trackLogin] Creating form fields...`);
-        Object.entries(fields).forEach(([name, value]) => {
-          const input = iframeDoc.createElement('input');
-          input.type = 'hidden';
-          input.name = name;
-          input.value = value;
-          form.appendChild(input);
-          console.log(`[trackLogin] Added field: ${name} = ${value}`);
-        });
-
-        iframeDoc.body.appendChild(form);
-        console.log(`[trackLogin] Submitting form for: ${action}`);
-        form.submit();
-        
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown iframe error';
-        console.log(`[trackLogin] Error during form creation/submission: ${errorMessage}`);
-      }
+    // Create a hidden form for direct submission
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+    form.target = '_blank';
+    form.style.display = 'none';
+      
+    const fields: Record<string, string> = {
+      'sObj': 'ri__Portal__c',
+      'string_ri__Contact__c': contactId,
+      'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
+      'text_ri__Action__c': action,
+      'text_ri__IP_Address__c': currentIp,
+      'text_ri__Login_Country__c': locationData.country,
+      'text_ri__Login_City__c': locationData.city,
     };
+
+    console.log(`[trackLogin] Creating form fields...`);
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+      console.log(`[trackLogin] Added field: ${name} = ${value}`);
+    });
+
+    document.body.appendChild(form);
+    console.log(`[trackLogin] Submitting form for: ${action}`);
+    form.submit();
     
-    console.log(`[trackLogin] Adding iframe to document`);
-    document.body.appendChild(trackingIframe);
-    trackingIframe.src = 'about:blank';
-    
-    console.log(`[trackLogin] Iframe src set to about:blank`);
-    
-    // Remove iframe after sufficient time for request to complete
+    // Remove form after submission
     setTimeout(() => {
-      if (document.body.contains(trackingIframe)) {
-        document.body.removeChild(trackingIframe);
+      if (document.body.contains(form)) {
+        document.body.removeChild(form);
         console.log(`[trackLogin] ===== TRACKING COMPLETED =====`);
       }
-    }, 5000);
+    }, 1000);
     
   } catch (error) {
     console.error('[trackLogin] ===== ERROR OCCURRED =====', error);
   }
 };
 
-// Document tracking using iframe method (same as working test page)
+// Document tracking using direct form submission
 export const trackDocumentClick = async (
   contactId: string,
   documentUrl: string,
   actionType: string,
   documentTitle?: string
 ): Promise<void> => {
-  console.log(`[trackDocumentClick] ===== IFRAME TRACKING START =====`);
+  console.log(`[trackDocumentClick] ===== DIRECT FORM TRACKING START =====`);
   console.log(`[trackDocumentClick] Action: ${actionType}`);
   console.log(`[trackDocumentClick] Title: ${documentTitle || 'N/A'}`);
   console.log(`[trackDocumentClick] URL: ${documentUrl}`);
@@ -310,74 +285,49 @@ export const trackDocumentClick = async (
     
     console.log(`[trackDocumentClick] Got IP: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
     
-    // Create iframe for tracking (exact same method as test page)
-    const trackingIframe = document.createElement('iframe');
-    trackingIframe.style.display = 'none';
-    
-    console.log(`[trackDocumentClick] Created iframe element`);
-    
-    trackingIframe.onload = () => {
-      try {
-        console.log(`[trackDocumentClick] Iframe loaded, creating form...`);
-        
-        const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
-        if (!iframeDoc) {
-          console.log(`[trackDocumentClick] ERROR: Could not access iframe document`);
-          return;
-        }
-
-        const form = iframeDoc.createElement('form');
-        form.method = 'POST';
-        form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-          
-        const fields: Record<string, string> = {
-          'sObj': 'ri__Portal__c',
-          'string_ri__Contact__c': contactId,
-          'text_ri__Login_URL__c': documentUrl,
-          'text_ri__Action__c': actionType,
-          'text_ri__IP_Address__c': currentIp,
-          'text_ri__Login_Country__c': locationData.country,
-          'text_ri__Login_City__c': locationData.city,
-        };
-
-        // Add document title if provided
-        if (documentTitle) {
-          fields['text_ri__Document_Title__c'] = documentTitle;
-        }
-
-        console.log(`[trackDocumentClick] Creating form fields...`);
-        Object.entries(fields).forEach(([name, value]) => {
-          const input = iframeDoc.createElement('input');
-          input.type = 'hidden';
-          input.name = name;
-          input.value = value;
-          form.appendChild(input);
-          console.log(`[trackDocumentClick] Added field: ${name} = ${value}`);
-        });
-
-        iframeDoc.body.appendChild(form);
-        console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
-        form.submit();
-        
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown iframe error';
-        console.log(`[trackDocumentClick] Error during form creation/submission: ${errorMessage}`);
-      }
+    // Create a hidden form for direct submission
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+    form.target = '_blank';
+    form.style.display = 'none';
+      
+    const fields: Record<string, string> = {
+      'sObj': 'ri__Portal__c',
+      'string_ri__Contact__c': contactId,
+      'text_ri__Login_URL__c': documentUrl,
+      'text_ri__Action__c': actionType,
+      'text_ri__IP_Address__c': currentIp,
+      'text_ri__Login_Country__c': locationData.country,
+      'text_ri__Login_City__c': locationData.city,
     };
+
+    // Add document title if provided
+    if (documentTitle) {
+      fields['text_ri__Document_Title__c'] = documentTitle;
+    }
+
+    console.log(`[trackDocumentClick] Creating form fields...`);
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+      console.log(`[trackDocumentClick] Added field: ${name} = ${value}`);
+    });
+
+    document.body.appendChild(form);
+    console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
+    form.submit();
     
-    console.log(`[trackDocumentClick] Adding iframe to document`);
-    document.body.appendChild(trackingIframe);
-    trackingIframe.src = 'about:blank';
-    
-    console.log(`[trackDocumentClick] Iframe src set to about:blank`);
-    
-    // Remove iframe after sufficient time for request to complete
+    // Remove form after submission
     setTimeout(() => {
-      if (document.body.contains(trackingIframe)) {
-        document.body.removeChild(trackingIframe);
+      if (document.body.contains(form)) {
+        document.body.removeChild(form);
         console.log(`[trackDocumentClick] ===== TRACKING REQUEST COMPLETED =====`);
       }
-    }, 5000);
+    }, 1000);
     
   } catch(error) {
     console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
