@@ -1,4 +1,3 @@
-
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -274,9 +273,9 @@ export const trackDocumentClick = async (
       'text_ri__Login_City__c': locationData.city,
     });
 
-    // Add document title if provided
+    // Add document title if provided - using Document_Title__c
     if (documentTitle) {
-      params.append('text_ri__Document_Title__c', documentTitle);
+      params.append('text_Document_Title__c', documentTitle);
     }
 
     console.log(`[trackDocumentClick] Sending request with params:`, Object.fromEntries(params));
