@@ -329,7 +329,7 @@ const trackingInProgress = new Set<string>();
  * Track document or video views for analytics using iframe form submission.
  * @param contactId - The user's contact ID.
  * @param documentUrl - The URL of the document or video clicked.
- * @param actionType - "Video View" | "Document View" | "Website Visit".
+ * @param actionType - "Video Clicked" | "Document Clicked" | "Website Visit".
  * @param documentTitle - Optional. The title of the document or video.
  */
 export const trackDocumentClick = async (

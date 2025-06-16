@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +10,7 @@ const TestTracking: React.FC = () => {
     sObj: 'ri__Portal__c',
     string_ri__Contact__c: '0035e000003cugh',
     text_ri__Login_URL__c: 'https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview',
-    text_ri__Action__c: 'Video View',
+    text_ri__Action__c: 'Video Clicked',
     text_ri__IP_Address__c: '47.208.228.21',
     text_ri__Login_Country__c: 'United States',
     text_ri__Login_City__c: 'Meadow Vista',
@@ -148,42 +147,13 @@ const TestTracking: React.FC = () => {
     }
   };
 
-  const testAlternativeEndpoints = async () => {
-    setIsSubmitting(true);
-    setResponse('');
-    setLogs([]);
-    
-    const endpoints = [
-      'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php',
-      'https://api.realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php',
-      'https://realintelligence.com/api/w2x-engine.php'
-    ];
-    
-    for (const endpoint of endpoints) {
-      try {
-        addLog(`Testing endpoint: ${endpoint}`);
-        
-        const form = new FormData();
-        Object.entries(formData).forEach(([key, value]) => {
-          form.append(key, value);
-        });
+  const quickActionTests = [
+    { label: 'Test Video Clicked', action: 'Video Clicked' },
+    { label: 'Test Document Clicked', action: 'Document Clicked' }
+  ];
 
-        const result = await fetch(endpoint, {
-          method: 'POST',
-          body: form,
-          mode: 'no-cors'
-        });
-
-        addLog(`${endpoint} - Status: ${result.status || 'Unknown'}, Type: ${result.type}`);
-        
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        addLog(`${endpoint} - Error: ${errorMessage}`);
-      }
-    }
-    
-    setResponse('Endpoint testing complete - check logs above');
-    setIsSubmitting(false);
+  const testQuickAction = (action: string) => {
+    setFormData(prev => ({ ...prev, text_ri__Action__c: action }));
   };
 
   return (
@@ -291,41 +261,48 @@ const TestTracking: React.FC = () => {
                   >
                     Test Iframe Method
                   </Button>
-                  <Button 
-                    type="button" 
-                    variant="secondary" 
-                    onClick={testAlternativeEndpoints}
-                    disabled={isSubmitting}
-                  >
-                    Test Multiple Endpoints
-                  </Button>
                 </div>
               </form>
+
+              <div className="mt-6 pt-6 border-t">
+                <Label className="font-semibold mb-3 block">Quick Action Tests</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {quickActionTests.map((test) => (
+                    <Button
+                      key={test.action}
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => testQuickAction(test.action)}
+                    >
+                      {test.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </CardContent>
           </Card>
           
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Current Endpoint</CardTitle>
+                <CardTitle>Solution Found! ✅</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <Label className="font-semibold">URL:</Label>
-                    <p className="text-sm break-all bg-gray-100 p-2 rounded font-mono">
-                      https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php
-                    </p>
+                    <Label className="font-semibold text-green-600">✅ Correct Action Values:</Label>
+                    <ul className="text-sm mt-2 space-y-1">
+                      <li>• <code>Video Clicked</code></li>
+                      <li>• <code>Document Clicked</code></li>
+                    </ul>
                   </div>
                   
                   <div>
-                    <Label className="font-semibold">Method:</Label>
-                    <p className="text-sm">POST</p>
-                  </div>
-                  
-                  <div>
-                    <Label className="font-semibold">Content-Type:</Label>
-                    <p className="text-sm">multipart/form-data</p>
+                    <Label className="font-semibold text-red-600">❌ Invalid Action Values:</Label>
+                    <ul className="text-sm mt-2 space-y-1">
+                      <li>• <code>Video View</code></li>
+                      <li>• <code>Document View</code></li>
+                    </ul>
                   </div>
                   
                   {response && (
@@ -357,16 +334,14 @@ const TestTracking: React.FC = () => {
         
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Instructions & Debugging</CardTitle>
+            <CardTitle>Next Steps</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="list-disc list-inside space-y-2 text-sm">
-              <li><strong>Test Direct Fetch:</strong> Uses fetch() with no-cors mode (same as production)</li>
-              <li><strong>Test Iframe Method:</strong> Creates hidden iframe and submits form (same as production)</li>
-              <li><strong>Test Multiple Endpoints:</strong> Tries different possible endpoint URLs</li>
-              <li><strong>Check Network Tab:</strong> Look for the actual HTTP requests in browser dev tools</li>
-              <li><strong>Watch Debug Logs:</strong> Real-time logging shows exactly what's happening</li>
-              <li><strong>Note:</strong> no-cors mode means you won't see response data, but the request should still go through</li>
+              <li><strong>✅ Problem Identified:</strong> SFDC endpoint was rejecting invalid Action values</li>
+              <li><strong>✅ Solution Found:</strong> Use "Video Clicked" and "Document Clicked"</li>
+              <li><strong>🔄 Next:</strong> Update loginService.ts trackDocumentClick function</li>
+              <li><strong>🔄 Next:</strong> Update all components to use correct Action values</li>
             </ul>
           </CardContent>
         </Card>

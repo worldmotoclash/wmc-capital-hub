@@ -52,7 +52,7 @@ const KeyDocuments: React.FC = () => {
                 rel="noopener noreferrer"
                 onClick={handleTrackedClick(
                   "https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing",
-                  "Document View",
+                  "Document Clicked",
                   "WMC March 2025 Business Plan"
                 )}
               >
@@ -83,7 +83,7 @@ const KeyDocuments: React.FC = () => {
               rel="noopener noreferrer"
               onClick={handleTrackedClick(
                 "https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview",
-                "Video View",
+                "Video Clicked",
                 "WMC Motorsports Reimagined!"
               )}
             >
@@ -113,7 +113,7 @@ const KeyDocuments: React.FC = () => {
               rel="noopener noreferrer"
               onClick={handleTrackedClick(
                 "https://drive.google.com/file/d/1jrylnZVCZLt1aQxnRJt-FMPQZtfMTcNS/view?usp=drive_link",
-                "Document View",
+                "Document Clicked",
                 "Investor Executive Summary Deck"
               )}
             >
@@ -144,7 +144,7 @@ const KeyDocuments: React.FC = () => {
                 rel="noopener noreferrer"
                 onClick={handleTrackedClick(
                   "/lovable-uploads/wmc-nda-2025-blank.docx",
-                  "Document View",
+                  "Document Clicked",
                   "WMC NDA 2025 (Blank)"
                 )}
               >

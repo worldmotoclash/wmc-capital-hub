@@ -83,7 +83,7 @@ const Documents: React.FC = () => {
     async (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
       if (user?.id) {
-        const action = type === 'Video' ? 'Video View' : 'Document View';
+        const action = type === 'Video' ? 'Video Clicked' : 'Document Clicked';
         await trackDocumentClick(user.id, url, action, title);
       }
       window.open(url, '_blank', 'noopener,noreferrer');

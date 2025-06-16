@@ -9,7 +9,7 @@ import { getCurrentIpAddress, getIPLocation } from '@/services/loginService';
 const TestLoginTracking: React.FC = () => {
   const [formData, setFormData] = useState({
     contactId: '0035e000003cugh',
-    action: 'Login',
+    action: 'Video Clicked',
     loginUrl: 'https://invest.worldmotoclash.com'
   });
 
@@ -170,6 +170,24 @@ const TestLoginTracking: React.FC = () => {
     }
   };
 
+  const quickActionTests = [
+    { label: 'Test Video Clicked', action: 'Video Clicked' },
+    { label: 'Test Document Clicked', action: 'Document Clicked' },
+    { label: 'Test Login', action: 'Login' },
+    { label: 'Test Logout', action: 'Logout' }
+  ];
+
+  const testQuickAction = async (action: string) => {
+    setFormData(prev => ({ ...prev, action }));
+    // Small delay to let state update
+    setTimeout(() => {
+      const form = document.getElementById('tracking-form') as HTMLFormElement;
+      if (form) {
+        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+      }
+    }, 100);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
@@ -181,7 +199,7 @@ const TestLoginTracking: React.FC = () => {
               <CardTitle>Test Login Tracking Parameters</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleLoginTracking} className="space-y-4">
+              <form id="tracking-form" onSubmit={handleLoginTracking} className="space-y-4">
                 <div>
                   <Label htmlFor="contactId">Contact ID</Label>
                   <Input
@@ -199,7 +217,7 @@ const TestLoginTracking: React.FC = () => {
                     name="action"
                     value={formData.action}
                     onChange={handleInputChange}
-                    placeholder="Login, Logout, etc."
+                    placeholder="Video Clicked, Document Clicked, Login, etc."
                   />
                 </div>
                 
@@ -227,31 +245,49 @@ const TestLoginTracking: React.FC = () => {
                   </Button>
                 </div>
               </form>
+
+              <div className="mt-6 pt-6 border-t">
+                <Label className="font-semibold mb-3 block">Quick Action Tests</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {quickActionTests.map((test) => (
+                    <Button
+                      key={test.action}
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => testQuickAction(test.action)}
+                      disabled={isSubmitting}
+                    >
+                      {test.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </CardContent>
           </Card>
           
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Endpoint Information</CardTitle>
+                <CardTitle>Valid Action Values</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <Label className="font-semibold">URL:</Label>
-                    <p className="text-sm break-all bg-gray-100 p-2 rounded font-mono">
-                      https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php
-                    </p>
+                    <Label className="font-semibold text-green-600">✅ Working Values:</Label>
+                    <ul className="text-sm mt-2 space-y-1">
+                      <li>• <code>Video Clicked</code></li>
+                      <li>• <code>Document Clicked</code></li>
+                      <li>• <code>Login</code></li>
+                      <li>• <code>Logout</code></li>
+                    </ul>
                   </div>
                   
                   <div>
-                    <Label className="font-semibold">Method:</Label>
-                    <p className="text-sm">POST</p>
-                  </div>
-                  
-                  <div>
-                    <Label className="font-semibold">Object:</Label>
-                    <p className="text-sm">ri__Portal__c</p>
+                    <Label className="font-semibold text-red-600">❌ Invalid Values:</Label>
+                    <ul className="text-sm mt-2 space-y-1">
+                      <li>• <code>Video View</code></li>
+                      <li>• <code>Document View</code></li>
+                    </ul>
                   </div>
                   
                   {response && (
@@ -283,18 +319,20 @@ const TestLoginTracking: React.FC = () => {
         
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Comparison Notes</CardTitle>
+            <CardTitle>Solution Found! 🎉</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="list-disc list-inside space-y-2 text-sm">
-              <li><strong>This uses the EXACT same code</strong> as the working trackLogin function</li>
-              <li><strong>Same endpoint:</strong> w2x-engine.php</li>
-              <li><strong>Same object:</strong> ri__Portal__c</li>
-              <li><strong>Same approach:</strong> iframe with form submission</li>
-              <li><strong>Same timing:</strong> 5 second cleanup delay</li>
-              <li><strong>Check Network Tab:</strong> Compare this request with the video tracking request</li>
-              <li><strong>Key difference to check:</strong> Are the field names and values exactly the same?</li>
-            </ul>
+            <div className="space-y-4">
+              <p className="text-green-600 font-medium">
+                ✅ The issue was invalid Action values in the SFDC endpoint!
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-sm">
+                <li><strong>Root Cause:</strong> Salesforce was rejecting requests with "Video View" and "Document View"</li>
+                <li><strong>Solution:</strong> Use "Video Clicked" and "Document Clicked" instead</li>
+                <li><strong>Test Status:</strong> The iframe method should now work correctly</li>
+                <li><strong>Next Step:</strong> Update the main loginService.ts to use correct Action values</li>
+              </ul>
+            </div>
           </CardContent>
         </Card>
       </div>

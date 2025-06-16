@@ -39,7 +39,7 @@ const DashboardOverview: React.FC = () => {
         await trackDocumentClick(
           user.id,
           'https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview',
-          'Video View',
+          'Video Clicked',
           'WMC Motorsports Reimagined!'
         );
       }
