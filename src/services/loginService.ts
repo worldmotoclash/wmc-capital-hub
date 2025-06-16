@@ -1,3 +1,4 @@
+
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -302,9 +303,9 @@ export const trackDocumentClick = async (
       'text_ri__Login_City__c': locationData.city,
     };
 
-    // Add document title if provided - using the correct field name
+    // Add document title if provided - using the original field name
     if (documentTitle) {
-      fields['Document_Title__c'] = documentTitle;
+      fields['text_ri__Document_Title__c'] = documentTitle;
     }
 
     console.log(`[trackDocumentClick] Creating form fields...`);
