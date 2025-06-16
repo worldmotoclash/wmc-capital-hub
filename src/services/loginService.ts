@@ -211,7 +211,8 @@ export const sendVerificationEmail = async (contactId: string, ipInfo?: {ip: str
 
 // Track login activity using iframe method (same as working test page)
 export const trackLogin = async (contactId: string, action: string = 'Login'): Promise<void> => {
-  console.log(`[trackLogin] Start: Action: ${action} for contact ID: ${contactId}`);
+  console.log(`[trackLogin] ===== TRACKING START =====`);
+  console.log(`[trackLogin] Action: ${action} for contact ID: ${contactId}`);
   
   try {
     // Pre-fetch IP and location data
@@ -223,6 +224,8 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
     // Create iframe for tracking (same as test page implementation)
     const trackingIframe = document.createElement('iframe');
     trackingIframe.style.display = 'none';
+    
+    console.log(`[trackLogin] Created iframe element`);
     
     trackingIframe.onload = () => {
       try {
@@ -268,21 +271,22 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
       }
     };
     
+    console.log(`[trackLogin] Adding iframe to document`);
     document.body.appendChild(trackingIframe);
     trackingIframe.src = 'about:blank';
     
-    console.log(`[trackLogin] Iframe created and added to document`);
+    console.log(`[trackLogin] Iframe src set to about:blank`);
     
     // Remove iframe after sufficient time for request to complete
     setTimeout(() => {
       if (document.body.contains(trackingIframe)) {
         document.body.removeChild(trackingIframe);
-        console.log(`[trackLogin] Request completed and iframe removed for: ${action}`);
+        console.log(`[trackLogin] ===== TRACKING COMPLETED =====`);
       }
     }, 5000);
     
   } catch (error) {
-    console.error('[trackLogin] Error:', error);
+    console.error('[trackLogin] ===== ERROR OCCURRED =====', error);
   }
 };
 
@@ -309,6 +313,8 @@ export const trackDocumentClick = async (
     // Create iframe for tracking (exact same method as test page)
     const trackingIframe = document.createElement('iframe');
     trackingIframe.style.display = 'none';
+    
+    console.log(`[trackDocumentClick] Created iframe element`);
     
     trackingIframe.onload = () => {
       try {
@@ -359,10 +365,11 @@ export const trackDocumentClick = async (
       }
     };
     
+    console.log(`[trackDocumentClick] Adding iframe to document`);
     document.body.appendChild(trackingIframe);
     trackingIframe.src = 'about:blank';
     
-    console.log(`[trackDocumentClick] Iframe created and added to document`);
+    console.log(`[trackDocumentClick] Iframe src set to about:blank`);
     
     // Remove iframe after sufficient time for request to complete
     setTimeout(() => {
