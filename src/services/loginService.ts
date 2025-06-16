@@ -323,7 +323,7 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
 };
 
 /**
- * Track document or video views for analytics.
+ * Track document or video views for analytics using a simple form submission.
  * @param contactId - The user's contact ID.
  * @param documentUrl - The URL of the document or video clicked.
  * @param actionType - "Video View" | "Document View" | "Website Visit".
@@ -349,64 +349,47 @@ export const trackDocumentClick = async (
     
     console.log(`[trackDocumentClick] Step 2: Got IP: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
     
-    // Create iframe for tracking (same approach as trackLogin)
-    const trackingIframe = document.createElement('iframe');
-    trackingIframe.style.display = 'none';
+    // Create a hidden form and submit it directly
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+    form.target = '_blank'; // Open in new tab to avoid CORS issues
+    form.style.display = 'none';
     
-    trackingIframe.onload = () => {
-      try {
-        const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
-        if (!iframeDoc) {
-          console.error('[trackDocumentClick] Could not access iframe document');
-          return;
-        }
-
-        const form = iframeDoc.createElement('form');
-        form.method = 'POST';
-        form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-          
-        const fields: Record<string, string> = {
-          'sObj': 'ri__Portal__c',
-          'string_ri__Contact__c': contactId,
-          'text_ri__Login_URL__c': documentUrl,
-          'text_ri__Action__c': actionType,
-          'text_ri__IP_Address__c': currentIp,
-          'text_ri__Login_Country__c': locationData.country,
-          'text_ri__Login_City__c': locationData.city,
-        };
-
-        // Add document title if provided
-        if (documentTitle) {
-          fields['text_ri__Doc_Title__c'] = documentTitle;
-        }
-
-        Object.entries(fields).forEach(([name, value]) => {
-          const input = iframeDoc.createElement('input');
-          input.type = 'hidden';
-          input.name = name;
-          input.value = value;
-          form.appendChild(input);
-        });
-
-        iframeDoc.body.appendChild(form);
-        console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
-        form.submit();
-        
-      } catch (err) {
-        console.error('[trackDocumentClick] Error during form creation/submission:', err);
-      }
+    const fields: Record<string, string> = {
+      'sObj': 'ri__Portal__c',
+      'string_ri__Contact__c': contactId,
+      'text_ri__Login_URL__c': documentUrl,
+      'text_ri__Action__c': actionType,
+      'text_ri__IP_Address__c': currentIp,
+      'text_ri__Login_Country__c': locationData.country,
+      'text_ri__Login_City__c': locationData.city,
     };
+
+    // Add document title if provided
+    if (documentTitle) {
+      fields['text_ri__Doc_Title__c'] = documentTitle;
+    }
+
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
+    form.submit();
     
-    document.body.appendChild(trackingIframe);
-    trackingIframe.src = 'about:blank';
-    
-    // Remove iframe after sufficient time for request to complete
+    // Remove form after submission
     setTimeout(() => {
-      if (document.body.contains(trackingIframe)) {
-        document.body.removeChild(trackingIframe);
-        console.log(`[trackDocumentClick] Request completed and iframe removed for: ${actionType}`);
+      if (document.body.contains(form)) {
+        document.body.removeChild(form);
+        console.log(`[trackDocumentClick] Form removed for: ${actionType}`);
       }
-    }, 5000); // 5 seconds to ensure request completes
+    }, 1000);
     
     console.log(`[trackDocumentClick] ===== TRACKING COMPLETED SUCCESSFULLY =====`);
     
