@@ -349,84 +349,31 @@ export const trackDocumentClick = async (
     
     console.log(`[trackDocumentClick] Step 2: Got IP: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
     
-    // Create a hidden iframe for the submission target
-    console.log(`[trackDocumentClick] Step 3: Creating hidden iframe...`);
-    const hiddenIframe = document.createElement('iframe');
-    hiddenIframe.name = 'tracking-frame-' + Date.now();
-    hiddenIframe.style.display = 'none';
-    hiddenIframe.style.position = 'absolute';
-    hiddenIframe.style.top = '-9999px';
-    hiddenIframe.style.left = '-9999px';
-    hiddenIframe.style.width = '1px';
-    hiddenIframe.style.height = '1px';
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('sObj', 'ri__Portal__c');
+    formData.append('string_ri__Contact__c', contactId);
+    formData.append('text_ri__Login_URL__c', documentUrl);
+    formData.append('text_ri__Action__c', actionType);
+    formData.append('text_ri__IP_Address__c', currentIp);
+    formData.append('text_ri__Login_Country__c', locationData.country);
+    formData.append('text_ri__Login_City__c', locationData.city);
     
-    document.body.appendChild(hiddenIframe);
-    console.log(`[trackDocumentClick] Step 3.1: Hidden iframe created and added to document`);
-    
-    // Create form in the main document
-    console.log(`[trackDocumentClick] Step 4: Creating form in main document...`);
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-    form.target = hiddenIframe.name; // Target the hidden iframe
-    form.enctype = 'multipart/form-data';
-    form.style.display = 'none';
-    
-    console.log(`[trackDocumentClick] Step 4.1: Form created with action: ${form.action}, target: ${form.target}`);
-    
-    // Prepare form fields
-    const fields: Record<string, string> = {
-      'sObj': 'ri__Portal__c',
-      'string_ri__Contact__c': contactId,
-      'text_ri__Login_URL__c': documentUrl,
-      'text_ri__Action__c': actionType,
-      'text_ri__IP_Address__c': currentIp,
-      'text_ri__Login_Country__c': locationData.country,
-      'text_ri__Login_City__c': locationData.city,
-    };
-
-    // Add document title if provided
     if (documentTitle) {
-      fields['text_ri__Doc_Title__c'] = documentTitle;
+      formData.append('text_ri__Doc_Title__c', documentTitle);
     }
 
-    console.log(`[trackDocumentClick] Step 4.2: Form fields prepared:`, fields);
-
-    // Add fields to form
-    Object.entries(fields).forEach(([name, value]) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-      console.log(`[trackDocumentClick] Added field: ${name} = ${value}`);
+    console.log(`[trackDocumentClick] Step 3: Sending tracking data...`);
+    
+    // Send the tracking request
+    const response = await fetch("https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php", {
+      method: 'POST',
+      body: formData,
+      mode: 'no-cors' // This allows the request to be sent even if CORS is blocked
     });
-
-    // Add form to document and submit
-    document.body.appendChild(form);
-    console.log(`[trackDocumentClick] Step 5: Form appended to document body, submitting...`);
     
-    form.submit();
-    console.log(`[trackDocumentClick] Step 5.1: Form submitted successfully`);
-    
-    // Clean up after submission
-    setTimeout(() => {
-      console.log(`[trackDocumentClick] Step 6: Cleanup timeout reached`);
-      
-      if (document.body.contains(form)) {
-        document.body.removeChild(form);
-        console.log(`[trackDocumentClick] Step 6.1: Form removed from document`);
-      }
-      
-      if (document.body.contains(hiddenIframe)) {
-        document.body.removeChild(hiddenIframe);
-        console.log(`[trackDocumentClick] Step 6.2: Hidden iframe removed from document`);
-      }
-      
-      console.log(`[trackDocumentClick] ===== TRACKING COMPLETED SUCCESSFULLY =====`);
-    }, 3000); // Reduced timeout since we don't need to wait for iframe loading
-    
-    console.log(`[trackDocumentClick] ===== TRACKING INITIATED =====`);
+    console.log(`[trackDocumentClick] Step 4: Request sent, response status: ${response.status || 'no-cors mode'}`);
+    console.log(`[trackDocumentClick] ===== TRACKING COMPLETED SUCCESSFULLY =====`);
     
   } catch(error) {
     console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
