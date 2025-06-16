@@ -302,9 +302,9 @@ export const trackDocumentClick = async (
       'text_ri__Login_City__c': locationData.city,
     };
 
-    // Add document title if provided
+    // Add document title if provided - using the correct field name
     if (documentTitle) {
-      fields['text_ri__Document_Title__c'] = documentTitle;
+      fields['Document_Title__c'] = documentTitle;
     }
 
     console.log(`[trackDocumentClick] Creating form fields...`);
