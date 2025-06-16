@@ -22,6 +22,7 @@ import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import InvestmentOpportunity from "./pages/InvestmentOpportunity";
 import TestTracking from "./pages/TestTracking";
+import TestLoginTracking from "./pages/TestLoginTracking";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
                 <Route path="/dashboard-comparison" element={<DashboardComparison />} />
                 <Route path="/investment-opportunity" element={<InvestmentOpportunity />} />
                 <Route path="/test-tracking" element={<TestTracking />} />
+                <Route path="/test-login-tracking" element={<TestLoginTracking />} />
                 <Route path="/thankyou" element={<ThankYou />} />
                 <Route path="/thankyouinvestor" element={<Navigate to="/thankyou" replace />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
