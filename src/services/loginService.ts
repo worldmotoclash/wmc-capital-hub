@@ -349,30 +349,65 @@ export const trackDocumentClick = async (
     
     console.log(`[trackDocumentClick] Step 2: Got IP: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
     
-    // Prepare form data
-    const formData = new FormData();
-    formData.append('sObj', 'ri__Portal__c');
-    formData.append('string_ri__Contact__c', contactId);
-    formData.append('text_ri__Login_URL__c', documentUrl);
-    formData.append('text_ri__Action__c', actionType);
-    formData.append('text_ri__IP_Address__c', currentIp);
-    formData.append('text_ri__Login_Country__c', locationData.country);
-    formData.append('text_ri__Login_City__c', locationData.city);
+    // Create iframe for tracking (same approach as trackLogin)
+    const trackingIframe = document.createElement('iframe');
+    trackingIframe.style.display = 'none';
     
-    if (documentTitle) {
-      formData.append('text_ri__Doc_Title__c', documentTitle);
-    }
+    trackingIframe.onload = () => {
+      try {
+        const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
+        if (!iframeDoc) {
+          console.error('[trackDocumentClick] Could not access iframe document');
+          return;
+        }
 
-    console.log(`[trackDocumentClick] Step 3: Sending tracking data...`);
+        const form = iframeDoc.createElement('form');
+        form.method = 'POST';
+        form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+          
+        const fields: Record<string, string> = {
+          'sObj': 'ri__Portal__c',
+          'string_ri__Contact__c': contactId,
+          'text_ri__Login_URL__c': documentUrl,
+          'text_ri__Action__c': actionType,
+          'text_ri__IP_Address__c': currentIp,
+          'text_ri__Login_Country__c': locationData.country,
+          'text_ri__Login_City__c': locationData.city,
+        };
+
+        // Add document title if provided
+        if (documentTitle) {
+          fields['text_ri__Doc_Title__c'] = documentTitle;
+        }
+
+        Object.entries(fields).forEach(([name, value]) => {
+          const input = iframeDoc.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        });
+
+        iframeDoc.body.appendChild(form);
+        console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
+        form.submit();
+        
+      } catch (err) {
+        console.error('[trackDocumentClick] Error during form creation/submission:', err);
+      }
+    };
     
-    // Send the tracking request
-    const response = await fetch("https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php", {
-      method: 'POST',
-      body: formData,
-      mode: 'no-cors' // This allows the request to be sent even if CORS is blocked
-    });
+    document.body.appendChild(trackingIframe);
+    trackingIframe.src = 'about:blank';
     
-    console.log(`[trackDocumentClick] Step 4: Request sent, response status: ${response.status || 'no-cors mode'}`);
+    // Remove iframe after sufficient time for request to complete
+    setTimeout(() => {
+      if (document.body.contains(trackingIframe)) {
+        document.body.removeChild(trackingIframe);
+        console.log(`[trackDocumentClick] Request completed and iframe removed for: ${actionType}`);
+      }
+    }, 5000); // 5 seconds to ensure request completes
+    
     console.log(`[trackDocumentClick] ===== TRACKING COMPLETED SUCCESSFULLY =====`);
     
   } catch(error) {
