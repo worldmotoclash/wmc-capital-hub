@@ -338,7 +338,7 @@ export const trackDocumentClick = async (
   console.log(`[trackDocumentClick] START: Action: ${actionType}, Title: ${documentTitle || 'N/A'}, URL: ${documentUrl}, Contact: ${contactId}`);
 
   try {
-    // Pre-fetch IP and location data before creating iframe
+    // Pre-fetch IP and location data
     console.log(`[trackDocumentClick] Step 1: Fetching IP and location data...`);
     const currentIp = await getCurrentIpAddress();
     console.log(`[trackDocumentClick] Step 2: Got IP: ${currentIp}`);
@@ -346,94 +346,33 @@ export const trackDocumentClick = async (
     const locationData = await getIPLocation(currentIp);
     console.log(`[trackDocumentClick] Step 3: Got location: ${locationData.city}, ${locationData.country}`);
     
-    // Create iframe for tracking
-    console.log(`[trackDocumentClick] Step 4: Creating iframe...`);
-    const trackingIframe = document.createElement('iframe');
-    trackingIframe.style.display = 'none';
-    trackingIframe.style.width = '0px';
-    trackingIframe.style.height = '0px';
-    trackingIframe.setAttribute('sandbox', 'allow-forms allow-same-origin allow-scripts');
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('sObj', 'ri__Portal__c');
+    formData.append('string_ri__Contact__c', contactId);
+    formData.append('text_ri__Login_URL__c', documentUrl);
+    formData.append('text_ri__Action__c', actionType);
+    formData.append('text_ri__IP_Address__c', currentIp);
+    formData.append('text_ri__Login_Country__c', locationData.country);
+    formData.append('text_ri__Login_City__c', locationData.city);
     
-    // Add iframe to document first
-    document.body.appendChild(trackingIframe);
-    console.log(`[trackDocumentClick] Step 5: Iframe added to DOM`);
+    if (documentTitle) {
+      formData.append('text_ri__Doc_Title__c', documentTitle);
+    }
 
-    // Set up onload handler before setting src
-    trackingIframe.onload = () => {
-      console.log(`[trackDocumentClick] Step 6: Iframe loaded, accessing document...`);
-      
-      try {
-        // Wait a moment for iframe to be fully ready
-        setTimeout(() => {
-          const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
-          
-          if (!iframeDoc) {
-            console.error('[trackDocumentClick] ERROR: Could not access iframe document');
-            return;
-          }
-
-          console.log(`[trackDocumentClick] Step 7: Creating form...`);
-          const form = iframeDoc.createElement('form');
-          form.method = 'POST';
-          form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-          form.enctype = 'application/x-www-form-urlencoded';
-          
-          const fields: Record<string, string> = {
-            'sObj': 'ri__Portal__c',
-            'string_ri__Contact__c': contactId,
-            'text_ri__Login_URL__c': documentUrl,
-            'text_ri__Action__c': actionType,
-            'text_ri__IP_Address__c': currentIp,
-            'text_ri__Login_Country__c': locationData.country,
-            'text_ri__Login_City__c': locationData.city,
-          };
-          
-          if (documentTitle) {
-            fields['text_ri__Doc_Title__c'] = documentTitle;
-          }
-
-          console.log(`[trackDocumentClick] Step 8: Adding form fields:`, fields);
-
-          Object.entries(fields).forEach(([name, value]) => {
-            const input = iframeDoc.createElement('input');
-            input.type = 'hidden';
-            input.name = name;
-            input.value = value;
-            form.appendChild(input);
-          });
-
-          iframeDoc.body.appendChild(form);
-          console.log(`[trackDocumentClick] Step 9: Form created and added to iframe, submitting...`);
-          
-          form.submit();
-          console.log(`[trackDocumentClick] Step 10: Form submitted successfully`);
-          
-        }, 100); // Small delay to ensure iframe is ready
-        
-      } catch (err) {
-        console.error('[trackDocumentClick] ERROR during form creation/submission:', err);
-      }
-    };
+    console.log(`[trackDocumentClick] Step 4: Sending tracking request...`);
     
-    // Set iframe error handler
-    trackingIframe.onerror = (error) => {
-      console.error('[trackDocumentClick] ERROR: Iframe error:', error);
-    };
+    // Use fetch with no-cors mode
+    const response = await fetch("https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php", {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
+    });
     
-    // Set iframe src to trigger onload
-    console.log(`[trackDocumentClick] Step 5.5: Setting iframe src to about:blank`);
-    trackingIframe.src = 'about:blank';
-    
-    // Remove iframe after sufficient time for request to complete
-    setTimeout(() => {
-      if (document.body.contains(trackingIframe)) {
-        document.body.removeChild(trackingIframe);
-        console.log(`[trackDocumentClick] Step 11: COMPLETED - Iframe removed for: ${actionType}`);
-      }
-    }, 8000); // Increased to 8 seconds to ensure completion
+    console.log(`[trackDocumentClick] Step 5: Request sent successfully for: ${actionType}`);
     
   } catch(error) {
-    console.error(`[trackDocumentClick] FATAL ERROR for ${actionType}:`, error);
+    console.error(`[trackDocumentClick] ERROR for ${actionType}:`, error);
     // Don't throw error to avoid breaking user experience
   }
 };
