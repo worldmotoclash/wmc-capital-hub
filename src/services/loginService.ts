@@ -241,14 +241,14 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
   }
 };
 
-// Simple tracking without debounce or complex iframe manipulation
+// Track document clicks using iframe method (same as test page)
 export const trackDocumentClick = async (
   contactId: string,
   documentUrl: string,
   actionType: string,
   documentTitle?: string
 ): Promise<void> => {
-  console.log(`[trackDocumentClick] ===== SIMPLE TRACKING START =====`);
+  console.log(`[trackDocumentClick] ===== IFRAME METHOD START =====`);
   console.log(`[trackDocumentClick] Action: ${actionType}`);
   console.log(`[trackDocumentClick] Title: ${documentTitle || 'N/A'}`);
   console.log(`[trackDocumentClick] URL: ${documentUrl}`);
@@ -261,28 +261,72 @@ export const trackDocumentClick = async (
     
     console.log(`[trackDocumentClick] Got IP: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
     
-    // Use simple image request for tracking
-    const img = new Image();
-    const params = new URLSearchParams({
-      'sObj': 'ri__Portal__c',
-      'string_ri__Contact__c': contactId,
-      'text_ri__Login_URL__c': documentUrl,
-      'text_ri__Action__c': actionType,
-      'text_ri__IP_Address__c': currentIp,
-      'text_ri__Login_Country__c': locationData.country,
-      'text_ri__Login_City__c': locationData.city,
-    });
-
-    // Add document title if provided - using Document_Title__c
-    if (documentTitle) {
-      params.append('text_Document_Title__c', documentTitle);
-    }
-
-    console.log(`[trackDocumentClick] Sending request with params:`, Object.fromEntries(params));
-
-    img.src = `https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php?${params.toString()}`;
+    // Use iframe method (same as working test)
+    const trackingIframe = document.createElement('iframe');
+    trackingIframe.style.display = 'none';
     
-    console.log(`[trackDocumentClick] ===== TRACKING REQUEST SENT =====`);
+    trackingIframe.onload = () => {
+      try {
+        console.log(`[trackDocumentClick] Iframe loaded, creating form...`);
+        
+        const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
+        if (!iframeDoc) {
+          console.log(`[trackDocumentClick] ERROR: Could not access iframe document`);
+          return;
+        }
+
+        console.log(`[trackDocumentClick] Creating form fields...`);
+        
+        const form = iframeDoc.createElement('form');
+        form.method = 'POST';
+        form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+          
+        const fields: Record<string, string> = {
+          'sObj': 'ri__Portal__c',
+          'string_ri__Contact__c': contactId,
+          'text_ri__Login_URL__c': documentUrl,
+          'text_ri__Action__c': actionType,
+          'text_ri__IP_Address__c': currentIp,
+          'text_ri__Login_Country__c': locationData.country,
+          'text_ri__Login_City__c': locationData.city,
+        };
+
+        // Add document title if provided
+        if (documentTitle) {
+          fields['text_Document_Title__c'] = documentTitle;
+        }
+
+        Object.entries(fields).forEach(([name, value]) => {
+          const input = iframeDoc.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+          console.log(`[trackDocumentClick] Added field: ${name} = ${value}`);
+        });
+
+        iframeDoc.body.appendChild(form);
+        console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
+        form.submit();
+        
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown iframe error';
+        console.log(`[trackDocumentClick] Error during form creation/submission: ${errorMessage}`);
+      }
+    };
+    
+    document.body.appendChild(trackingIframe);
+    trackingIframe.src = 'about:blank';
+    
+    console.log(`[trackDocumentClick] Iframe created and added to document`);
+    
+    // Remove iframe after sufficient time for request to complete
+    setTimeout(() => {
+      if (document.body.contains(trackingIframe)) {
+        document.body.removeChild(trackingIframe);
+        console.log(`[trackDocumentClick] ===== IFRAME REMOVED =====`);
+      }
+    }, 5000);
     
   } catch(error) {
     console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
