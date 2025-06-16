@@ -20,6 +20,12 @@ const TestTracking: React.FC = () => {
 
   const [response, setResponse] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
+
+  const addLog = (message: string) => {
+    setLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
+    console.log(message);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -33,29 +39,36 @@ const TestTracking: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setResponse('');
+    setLogs([]);
 
     try {
-      // Create form data
+      addLog('Starting direct fetch request...');
+      
+      // Create form data exactly like the working code
       const form = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
         form.append(key, value);
+        addLog(`Added form field: ${key} = ${value}`);
       });
 
-      console.log('Submitting form data:', Object.fromEntries(form));
+      addLog('Form data prepared, sending request...');
 
-      // Submit to the endpoint
+      // Try the exact endpoint from loginService
       const result = await fetch('https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php', {
         method: 'POST',
         body: form,
-        mode: 'no-cors' // This might be needed due to CORS
+        mode: 'no-cors' // This is what the working code uses
       });
 
-      console.log('Response:', result);
-      setResponse(`Form submitted successfully. Status: ${result.status || 'Unknown (no-cors mode)'}`);
+      addLog(`Response received. Status: ${result.status || 'Unknown (no-cors mode)'}`);
+      addLog(`Response type: ${result.type}`);
+      
+      setResponse(`Request sent successfully. Status: ${result.status || 'Unknown (no-cors mode)'}, Type: ${result.type}`);
       
     } catch (error) {
-      console.error('Error submitting form:', error);
-      setResponse(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      addLog(`Error occurred: ${errorMessage}`);
+      setResponse(`Error: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -64,21 +77,28 @@ const TestTracking: React.FC = () => {
   const handleIframeSubmit = () => {
     setIsSubmitting(true);
     setResponse('');
+    setLogs([]);
 
     try {
-      // Create iframe (same approach as the app)
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
+      addLog('Creating iframe for submission...');
       
-      iframe.onload = () => {
+      // Use the EXACT same approach as loginService.ts
+      const trackingIframe = document.createElement('iframe');
+      trackingIframe.style.display = 'none';
+      
+      trackingIframe.onload = () => {
+        addLog('Iframe loaded, attempting to create form...');
+        
         try {
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+          const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
           if (!iframeDoc) {
-            setResponse('Error: Could not access iframe document');
-            setIsSubmitting(false);
+            addLog('ERROR: Could not access iframe document (CORS issue)');
+            setResponse('Error: Could not access iframe document (CORS restriction)');
             return;
           }
 
+          addLog('Iframe document accessible, creating form...');
+          
           const form = iframeDoc.createElement('form');
           form.method = 'POST';
           form.action = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php';
@@ -89,41 +109,86 @@ const TestTracking: React.FC = () => {
             input.name = name;
             input.value = value;
             form.appendChild(input);
+            addLog(`Added hidden input: ${name} = ${value}`);
           });
 
           iframeDoc.body.appendChild(form);
-          console.log('Submitting via iframe with data:', formData);
-          form.submit();
+          addLog('Form created and added to iframe body');
+          addLog('Submitting form...');
           
-          setResponse('Form submitted via iframe successfully');
+          form.submit();
+          setResponse('Form submitted via iframe - check network tab for request');
           
         } catch (err) {
-          console.error('Iframe error:', err);
-          setResponse(`Iframe error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+          const errorMessage = err instanceof Error ? err.message : 'Unknown iframe error';
+          addLog(`Iframe error: ${errorMessage}`);
+          setResponse(`Iframe error: ${errorMessage}`);
         }
       };
       
-      document.body.appendChild(iframe);
-      iframe.src = 'about:blank';
+      document.body.appendChild(trackingIframe);
+      trackingIframe.src = 'about:blank';
       
-      // Remove iframe after 5 seconds
+      addLog('Iframe added to document with about:blank source');
+      
+      // Remove iframe after 10 seconds to allow debugging
       setTimeout(() => {
-        if (document.body.contains(iframe)) {
-          document.body.removeChild(iframe);
+        if (document.body.contains(trackingIframe)) {
+          document.body.removeChild(trackingIframe);
+          addLog('Iframe removed from document');
         }
         setIsSubmitting(false);
-      }, 5000);
+      }, 10000);
       
     } catch (error) {
-      console.error('Error creating iframe:', error);
-      setResponse(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      addLog(`Error creating iframe: ${errorMessage}`);
+      setResponse(`Error: ${errorMessage}`);
       setIsSubmitting(false);
     }
   };
 
+  const testAlternativeEndpoints = async () => {
+    setIsSubmitting(true);
+    setResponse('');
+    setLogs([]);
+    
+    const endpoints = [
+      'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php',
+      'https://api.realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php',
+      'https://realintelligence.com/api/w2x-engine.php'
+    ];
+    
+    for (const endpoint of endpoints) {
+      try {
+        addLog(`Testing endpoint: ${endpoint}`);
+        
+        const form = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+          form.append(key, value);
+        });
+
+        const result = await fetch(endpoint, {
+          method: 'POST',
+          body: form,
+          mode: 'no-cors'
+        });
+
+        addLog(`${endpoint} - Status: ${result.status || 'Unknown'}, Type: ${result.type}`);
+        
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        addLog(`${endpoint} - Error: ${errorMessage}`);
+      }
+    }
+    
+    setResponse('Endpoint testing complete - check logs above');
+    setIsSubmitting(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">Video Tracking Endpoint Test</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -214,9 +279,9 @@ const TestTracking: React.FC = () => {
                   />
                 </div>
                 
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'Submitting...' : 'Submit Direct'}
+                    {isSubmitting ? 'Testing...' : 'Test Direct Fetch'}
                   </Button>
                   <Button 
                     type="button" 
@@ -224,58 +289,84 @@ const TestTracking: React.FC = () => {
                     onClick={handleIframeSubmit}
                     disabled={isSubmitting}
                   >
-                    Submit via Iframe
+                    Test Iframe Method
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="secondary" 
+                    onClick={testAlternativeEndpoints}
+                    disabled={isSubmitting}
+                  >
+                    Test Multiple Endpoints
                   </Button>
                 </div>
               </form>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader>
-              <CardTitle>Endpoint Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <Label className="font-semibold">Endpoint URL:</Label>
-                  <p className="text-sm break-all bg-gray-100 p-2 rounded">
-                    https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php
-                  </p>
-                </div>
-                
-                <div>
-                  <Label className="font-semibold">Method:</Label>
-                  <p className="text-sm">POST</p>
-                </div>
-                
-                <div>
-                  <Label className="font-semibold">Content-Type:</Label>
-                  <p className="text-sm">multipart/form-data</p>
-                </div>
-                
-                {response && (
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Current Endpoint</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
                   <div>
-                    <Label className="font-semibold">Response:</Label>
-                    <p className="text-sm bg-gray-100 p-2 rounded mt-1">{response}</p>
+                    <Label className="font-semibold">URL:</Label>
+                    <p className="text-sm break-all bg-gray-100 p-2 rounded font-mono">
+                      https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php
+                    </p>
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                  
+                  <div>
+                    <Label className="font-semibold">Method:</Label>
+                    <p className="text-sm">POST</p>
+                  </div>
+                  
+                  <div>
+                    <Label className="font-semibold">Content-Type:</Label>
+                    <p className="text-sm">multipart/form-data</p>
+                  </div>
+                  
+                  {response && (
+                    <div>
+                      <Label className="font-semibold">Response:</Label>
+                      <p className="text-sm bg-gray-100 p-2 rounded mt-1">{response}</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {logs.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Debug Logs</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-black text-green-400 p-3 rounded font-mono text-xs max-h-64 overflow-y-auto">
+                    {logs.map((log, index) => (
+                      <div key={index}>{log}</div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
         
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Instructions</CardTitle>
+            <CardTitle>Instructions & Debugging</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="list-disc list-inside space-y-2 text-sm">
-              <li>The form above contains the exact parameters sent by the video tracking function</li>
-              <li>"Submit Direct" attempts a direct fetch request (may fail due to CORS)</li>
-              <li>"Submit via Iframe" uses the same iframe method as the app</li>
-              <li>Check the browser console for detailed logs</li>
-              <li>Modify the parameters above to test different scenarios</li>
+              <li><strong>Test Direct Fetch:</strong> Uses fetch() with no-cors mode (same as production)</li>
+              <li><strong>Test Iframe Method:</strong> Creates hidden iframe and submits form (same as production)</li>
+              <li><strong>Test Multiple Endpoints:</strong> Tries different possible endpoint URLs</li>
+              <li><strong>Check Network Tab:</strong> Look for the actual HTTP requests in browser dev tools</li>
+              <li><strong>Watch Debug Logs:</strong> Real-time logging shows exactly what's happening</li>
+              <li><strong>Note:</strong> no-cors mode means you won't see response data, but the request should still go through</li>
             </ul>
           </CardContent>
         </Card>
