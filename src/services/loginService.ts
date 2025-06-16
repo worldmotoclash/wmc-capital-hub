@@ -1,4 +1,3 @@
-
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
