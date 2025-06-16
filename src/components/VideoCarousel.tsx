@@ -30,6 +30,7 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const [isTracking, setIsTracking] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -69,14 +70,32 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
   };
 
   // Handler for clicking a video slide; calls tracking with current video
-  const handleVideoClick = async (video: VideoData) => {
-    if (user?.id) {
-      await trackDocumentClick(
-        user.id,
-        video.videoSrc,
-        'Video View',
-        video.title
-      );
+  const handleVideoClick = async (video: VideoData, event: React.MouseEvent | React.KeyboardEvent) => {
+    // Prevent default behavior and event propagation
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Prevent multiple simultaneous tracking calls
+    if (isTracking) {
+      console.log('Tracking already in progress, ignoring click');
+      return;
+    }
+    
+    setIsTracking(true);
+    
+    try {
+      if (user?.id) {
+        await trackDocumentClick(
+          user.id,
+          video.videoSrc,
+          'Video View',
+          video.title
+        );
+      }
+    } catch (error) {
+      console.error('Error tracking video click:', error);
+    } finally {
+      setIsTracking(false);
     }
   };
 
@@ -108,9 +127,11 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
               tabIndex={0}
               aria-label={`Play ${video.title} Video`}
               role="button"
-              onClick={() => handleVideoClick(video)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' || e.key === ' ') handleVideoClick(video);
+              onClick={(e) => handleVideoClick(video, e)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleVideoClick(video, e);
+                }
               }}
             >
               {/* Gradient overlay */}

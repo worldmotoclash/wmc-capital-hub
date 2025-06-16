@@ -1,5 +1,4 @@
-
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Play } from 'lucide-react';
@@ -13,6 +12,8 @@ import { trackDocumentClick } from '@/services/loginService';
 
 const DashboardOverview: React.FC = () => {
   const { user } = useUser();
+  const [isTrackingVideo, setIsTrackingVideo] = useState(false);
+  
   // Case-insensitive, trimmed logic for hiding chart
   const status = user?.status?.toLowerCase().trim();
   const isSecuredInvestor = status === "secured investor";
@@ -22,22 +23,39 @@ const DashboardOverview: React.FC = () => {
     isSecuredInvestor && !isQualifiedInvestor && !isPotentialInvestor;
 
   // Track play overlay click for main dashboard video
-  const handleMainVideoPlay = useCallback(async () => {
-    if (user?.id) {
-      await trackDocumentClick(
-        user.id,
-        'https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview',
-        'Video View',
-        'WMC Motorsports Reimagined!'
-      );
+  const handleMainVideoPlay = useCallback(async (event: React.MouseEvent | React.KeyboardEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (isTrackingVideo) {
+      console.log('Video tracking already in progress');
+      return;
     }
-    // After tracking, open the video (iframe overlay will become visible)
-    const frame = document.getElementById('dashboard-main-video');
-    if (frame) {
-      frame.classList.remove('opacity-0');
-      frame.classList.add('opacity-100');
+    
+    setIsTrackingVideo(true);
+    
+    try {
+      if (user?.id) {
+        await trackDocumentClick(
+          user.id,
+          'https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview',
+          'Video View',
+          'WMC Motorsports Reimagined!'
+        );
+      }
+      
+      // After tracking, open the video (iframe overlay will become visible)
+      const frame = document.getElementById('dashboard-main-video');
+      if (frame) {
+        frame.classList.remove('opacity-0');
+        frame.classList.add('opacity-100');
+      }
+    } catch (error) {
+      console.error('Error tracking main video:', error);
+    } finally {
+      setIsTrackingVideo(false);
     }
-  }, [user]);
+  }, [user, isTrackingVideo]);
 
   return (
     <div className="space-y-8">
@@ -68,7 +86,7 @@ const DashboardOverview: React.FC = () => {
             role="button"
             onKeyDown={e => {
               if (e.key === 'Enter' || e.key === ' ') {
-                handleMainVideoPlay();
+                handleMainVideoPlay(e);
               }
             }}
           >

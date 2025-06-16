@@ -1,4 +1,3 @@
-
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -323,6 +322,9 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
   }
 };
 
+// Add a simple debounce mechanism to prevent duplicate submissions
+const trackingInProgress = new Set<string>();
+
 /**
  * Track document or video views for analytics using iframe form submission.
  * @param contactId - The user's contact ID.
@@ -336,6 +338,22 @@ export const trackDocumentClick = async (
   actionType: string,
   documentTitle?: string
 ): Promise<void> => {
+  // Create a unique key for this tracking request
+  const trackingKey = `${contactId}-${documentUrl}-${actionType}`;
+  
+  // Prevent duplicate submissions
+  if (trackingInProgress.has(trackingKey)) {
+    console.log(`[trackDocumentClick] Duplicate submission prevented for: ${actionType}`);
+    return;
+  }
+  
+  trackingInProgress.add(trackingKey);
+  
+  // Clear the tracking key after 2 seconds
+  setTimeout(() => {
+    trackingInProgress.delete(trackingKey);
+  }, 2000);
+
   console.log(`[trackDocumentClick] ===== STARTING DOCUMENT TRACKING =====`);
   console.log(`[trackDocumentClick] Action: ${actionType}`);
   console.log(`[trackDocumentClick] Title: ${documentTitle || 'N/A'}`);
@@ -376,7 +394,7 @@ export const trackDocumentClick = async (
           'text_ri__Login_City__c': locationData.city,
         };
 
-        // Add document title if provided - using a field name that might work
+        // Add document title if provided
         if (documentTitle) {
           fields['text_ri__Document_Title__c'] = documentTitle;
         }
@@ -413,6 +431,8 @@ export const trackDocumentClick = async (
     
   } catch(error) {
     console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
+    // Remove from tracking set on error
+    trackingInProgress.delete(trackingKey);
   }
 };
 
