@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -31,7 +30,6 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
-  const [isTracking, setIsTracking] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -70,33 +68,31 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
     setActiveIndex(swiper.realIndex);
   };
 
-  // Handler for clicking a video slide; calls tracking with current video
+  // Simplified video click handler with better logging
   const handleVideoClick = async (video: VideoData, event: React.MouseEvent | React.KeyboardEvent) => {
-    // Prevent default behavior and event propagation
     event.preventDefault();
     event.stopPropagation();
     
-    // Prevent multiple simultaneous tracking calls
-    if (isTracking) {
-      console.log('Tracking already in progress, ignoring click');
+    console.log(`[VideoCarousel] Video click detected - Title: ${video.title}`);
+    
+    if (!user?.id) {
+      console.error('[VideoCarousel] No user ID available for tracking');
       return;
     }
     
-    setIsTracking(true);
-    
     try {
-      if (user?.id) {
-        await trackDocumentClick(
-          user.id,
-          video.videoSrc,
-          'Video Clicked',
-          video.title
-        );
-      }
+      console.log(`[VideoCarousel] About to track video click for: ${video.title}`);
+      
+      await trackDocumentClick(
+        user.id,
+        video.videoSrc,
+        'Video Clicked',
+        video.title
+      );
+      
+      console.log(`[VideoCarousel] Video tracking completed for: ${video.title}`);
     } catch (error) {
-      console.error('Error tracking video click:', error);
-    } finally {
-      setIsTracking(false);
+      console.error('[VideoCarousel] Error tracking video click:', error);
     }
   };
 

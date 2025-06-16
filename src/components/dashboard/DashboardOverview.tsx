@@ -22,36 +22,46 @@ const DashboardOverview: React.FC = () => {
   const showInvestmentPerformance =
     isSecuredInvestor && !isQualifiedInvestor && !isPotentialInvestor;
 
-  // Track play overlay click for main dashboard video
+  // Simplified main video tracking with better logging
   const handleMainVideoPlay = useCallback(async (event: React.MouseEvent | React.KeyboardEvent) => {
     event.preventDefault();
     event.stopPropagation();
     
+    console.log('[DashboardOverview] Main video play button clicked');
+    
     if (isTrackingVideo) {
-      console.log('Video tracking already in progress');
+      console.log('[DashboardOverview] Video tracking already in progress, ignoring click');
+      return;
+    }
+    
+    if (!user?.id) {
+      console.error('[DashboardOverview] No user ID available for tracking');
       return;
     }
     
     setIsTrackingVideo(true);
     
     try {
-      if (user?.id) {
-        await trackDocumentClick(
-          user.id,
-          'https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview',
-          'Video Clicked',
-          'WMC Motorsports Reimagined!'
-        );
-      }
+      console.log('[DashboardOverview] About to track main video click');
       
-      // After tracking, open the video (iframe overlay will become visible)
+      await trackDocumentClick(
+        user.id,
+        'https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview',
+        'Video Clicked',
+        'WMC Motorsports Reimagined!'
+      );
+      
+      console.log('[DashboardOverview] Main video tracking completed');
+      
+      // After tracking, show the video iframe
       const frame = document.getElementById('dashboard-main-video');
       if (frame) {
         frame.classList.remove('opacity-0');
         frame.classList.add('opacity-100');
+        console.log('[DashboardOverview] Video iframe made visible');
       }
     } catch (error) {
-      console.error('Error tracking main video:', error);
+      console.error('[DashboardOverview] Error tracking main video:', error);
     } finally {
       setIsTrackingVideo(false);
     }

@@ -322,7 +322,7 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
   }
 };
 
-// Add a simple debounce mechanism to prevent duplicate submissions
+// Simplified tracking set without aggressive debounce
 const trackingInProgress = new Set<string>();
 
 /**
@@ -338,27 +338,28 @@ export const trackDocumentClick = async (
   actionType: string,
   documentTitle?: string
 ): Promise<void> => {
-  // Create a unique key for this tracking request
-  const trackingKey = `${contactId}-${documentUrl}-${actionType}`;
-  
-  // Prevent duplicate submissions
-  if (trackingInProgress.has(trackingKey)) {
-    console.log(`[trackDocumentClick] Duplicate submission prevented for: ${actionType}`);
-    return;
-  }
-  
-  trackingInProgress.add(trackingKey);
-  
-  // Clear the tracking key after 2 seconds
-  setTimeout(() => {
-    trackingInProgress.delete(trackingKey);
-  }, 2000);
-
-  console.log(`[trackDocumentClick] ===== STARTING DOCUMENT TRACKING =====`);
+  console.log(`[trackDocumentClick] ===== TRACKING REQUEST RECEIVED =====`);
   console.log(`[trackDocumentClick] Action: ${actionType}`);
   console.log(`[trackDocumentClick] Title: ${documentTitle || 'N/A'}`);
   console.log(`[trackDocumentClick] URL: ${documentUrl}`);
   console.log(`[trackDocumentClick] Contact ID: ${contactId}`);
+
+  // Create a unique key for this tracking request
+  const trackingKey = `${contactId}-${actionType}-${Date.now()}`;
+  
+  // Much shorter debounce - only prevent rapid duplicate clicks within 500ms
+  if (trackingInProgress.has(contactId + actionType)) {
+    console.log(`[trackDocumentClick] Duplicate submission prevented for: ${actionType} (within 500ms)`);
+    return;
+  }
+  
+  trackingInProgress.add(contactId + actionType);
+  
+  // Clear the tracking key after only 500ms instead of 2 seconds
+  setTimeout(() => {
+    trackingInProgress.delete(contactId + actionType);
+    console.log(`[trackDocumentClick] Tracking cooldown cleared for: ${actionType}`);
+  }, 500);
 
   try {
     // Get IP and location data first
@@ -371,8 +372,12 @@ export const trackDocumentClick = async (
     // Create iframe for tracking (same approach as trackLogin)
     const trackingIframe = document.createElement('iframe');
     trackingIframe.style.display = 'none';
+    trackingIframe.id = `tracking-iframe-${Date.now()}`;
+    
+    console.log(`[trackDocumentClick] Step 3: Creating tracking iframe with ID: ${trackingIframe.id}`);
     
     trackingIframe.onload = () => {
+      console.log(`[trackDocumentClick] Step 4: Iframe loaded, creating form...`);
       try {
         const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
         if (!iframeDoc) {
@@ -399,6 +404,8 @@ export const trackDocumentClick = async (
           fields['text_ri__Document_Title__c'] = documentTitle;
         }
 
+        console.log(`[trackDocumentClick] Step 5: Form fields prepared:`, fields);
+
         Object.entries(fields).forEach(([name, value]) => {
           const input = iframeDoc.createElement('input');
           input.type = 'hidden';
@@ -408,12 +415,17 @@ export const trackDocumentClick = async (
         });
 
         iframeDoc.body.appendChild(form);
-        console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
+        console.log(`[trackDocumentClick] Step 6: Submitting form for: ${actionType}`);
         form.submit();
+        console.log(`[trackDocumentClick] Step 7: Form submitted successfully!`);
         
       } catch (err) {
         console.error('[trackDocumentClick] Error during form creation/submission:', err);
       }
+    };
+    
+    trackingIframe.onerror = (error) => {
+      console.error('[trackDocumentClick] Iframe error:', error);
     };
     
     document.body.appendChild(trackingIframe);
@@ -423,16 +435,16 @@ export const trackDocumentClick = async (
     setTimeout(() => {
       if (document.body.contains(trackingIframe)) {
         document.body.removeChild(trackingIframe);
-        console.log(`[trackDocumentClick] Request completed and iframe removed for: ${actionType}`);
+        console.log(`[trackDocumentClick] Step 8: Request completed and iframe removed for: ${actionType}`);
       }
-    }, 5000); // 5 seconds to ensure request completes
+    }, 3000); // Reduced from 5 seconds to 3 seconds
     
-    console.log(`[trackDocumentClick] ===== TRACKING COMPLETED SUCCESSFULLY =====`);
+    console.log(`[trackDocumentClick] ===== TRACKING SETUP COMPLETED =====`);
     
   } catch(error) {
     console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
     // Remove from tracking set on error
-    trackingInProgress.delete(trackingKey);
+    trackingInProgress.delete(contactId + actionType);
   }
 };
 

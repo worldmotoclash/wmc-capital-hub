@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -78,17 +77,36 @@ const Documents: React.FC = () => {
     ? [...ndaDocuments, ...baseDocuments] 
     : [...baseDocuments, blankNdaDocument];
 
-  // Centralized click tracking with corrected action values
-  const handleTrackedClick =
-    (url: string, type: string, title: string) =>
-    async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  // Simplified click tracking with better logging
+  const handleTrackedClick = (url: string, type: string, title: string) => {
+    return async (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
-      if (user?.id) {
-        const action = type === 'Video' ? 'Video Clicked' : 'Document Clicked';
-        await trackDocumentClick(user.id, url, action, title);
+      e.stopPropagation();
+      
+      console.log(`[Documents] Click detected - Type: ${type}, Title: ${title}`);
+      
+      if (!user?.id) {
+        console.error('[Documents] No user ID available for tracking');
+        window.open(url, '_blank', 'noopener,noreferrer');
+        return;
       }
-      window.open(url, '_blank', 'noopener,noreferrer');
+      
+      try {
+        const action = type === 'Video' ? 'Video Clicked' : 'Document Clicked';
+        console.log(`[Documents] About to track with action: ${action}`);
+        
+        await trackDocumentClick(user.id, url, action, title);
+        console.log(`[Documents] Tracking completed, opening URL: ${url}`);
+        
+        // Open the URL after tracking
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } catch (error) {
+        console.error('[Documents] Error during tracking:', error);
+        // Still open the URL even if tracking fails
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
     };
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -139,8 +157,6 @@ const Documents: React.FC = () => {
                     <Button variant="ghost" size="sm" className="text-gray-500" asChild>
                       <a
                         href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         onClick={handleTrackedClick(doc.url, doc.type, doc.title)}
                       >
                         <ExternalLink className="w-4 h-4" />
