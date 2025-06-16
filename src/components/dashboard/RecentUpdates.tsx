@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -23,9 +24,9 @@ const RecentUpdates: React.FC = () => {
       e.preventDefault();
       if (user?.id) {
         let action: string;
-        if (type === 'video') action = 'Video View';
+        if (type === 'video') action = 'Video Clicked';
         else if (type === 'website') action = 'Website Visit';
-        else action = 'Document View';
+        else action = 'Document Clicked';
         await trackDocumentClick(user.id, url, action, title);
       }
       window.open(url, '_blank', 'noopener,noreferrer');
