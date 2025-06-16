@@ -371,23 +371,35 @@ export const trackDocumentClick = async (
     trackingIframe.style.display = 'none';
     trackingIframe.style.position = 'absolute';
     trackingIframe.style.top = '-9999px';
+    trackingIframe.style.left = '-9999px';
+    trackingIframe.style.width = '1px';
+    trackingIframe.style.height = '1px';
+    
+    // Track iframe creation and loading
+    let iframeLoaded = false;
+    let formSubmitted = false;
     
     // Set up iframe load handler
     trackingIframe.onload = () => {
       console.log(`[trackDocumentClick] Step 4: Iframe loaded, creating form...`);
+      iframeLoaded = true;
       
       try {
         const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
         if (!iframeDoc) {
-          console.error('[trackDocumentClick] Could not access iframe document');
+          console.error('[trackDocumentClick] Could not access iframe document - possible CORS issue');
           return;
         }
+
+        console.log(`[trackDocumentClick] Step 4.1: Iframe document accessible, creating form elements...`);
 
         // Create form
         const form = iframeDoc.createElement('form');
         form.method = 'POST';
         form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
         form.enctype = 'multipart/form-data';
+        
+        console.log(`[trackDocumentClick] Step 4.2: Form created with action: ${form.action}`);
           
         // Prepare form fields
         const fields: Record<string, string> = {
@@ -405,6 +417,8 @@ export const trackDocumentClick = async (
           fields['text_ri__Doc_Title__c'] = documentTitle;
         }
 
+        console.log(`[trackDocumentClick] Step 4.3: Form fields prepared:`, fields);
+
         // Add fields to form
         Object.entries(fields).forEach(([name, value]) => {
           const input = iframeDoc.createElement('input');
@@ -412,30 +426,54 @@ export const trackDocumentClick = async (
           input.name = name;
           input.value = value;
           form.appendChild(input);
+          console.log(`[trackDocumentClick] Added field: ${name} = ${value}`);
         });
 
         iframeDoc.body.appendChild(form);
-        console.log(`[trackDocumentClick] Step 5: Submitting form for: ${actionType}`);
+        console.log(`[trackDocumentClick] Step 5: Form appended to iframe body, submitting...`);
+        
+        // Submit form and track it
         form.submit();
+        formSubmitted = true;
+        console.log(`[trackDocumentClick] Step 5.1: Form.submit() called successfully`);
         
       } catch (err) {
         console.error('[trackDocumentClick] Error during form creation/submission:', err);
       }
     };
     
+    // Track iframe errors
+    trackingIframe.onerror = (error) => {
+      console.error('[trackDocumentClick] Iframe error:', error);
+    };
+    
     // Add iframe to document and set source
     document.body.appendChild(trackingIframe);
-    trackingIframe.src = 'about:blank';
+    console.log(`[trackDocumentClick] Step 3.1: Iframe added to document body`);
     
-    // Clean up iframe after tracking request completes
+    trackingIframe.src = 'about:blank';
+    console.log(`[trackDocumentClick] Step 3.2: Iframe source set to about:blank`);
+    
+    // Clean up iframe after tracking request completes and log status
     setTimeout(() => {
+      console.log(`[trackDocumentClick] Step 6: Cleanup timeout reached`);
+      console.log(`[trackDocumentClick] Iframe loaded: ${iframeLoaded}, Form submitted: ${formSubmitted}`);
+      
       if (document.body.contains(trackingIframe)) {
         document.body.removeChild(trackingIframe);
-        console.log(`[trackDocumentClick] Step 6: Tracking completed and iframe removed for: ${actionType}`);
+        console.log(`[trackDocumentClick] Step 6.1: Tracking iframe removed for: ${actionType}`);
+      }
+      
+      // Log final status
+      if (iframeLoaded && formSubmitted) {
+        console.log(`[trackDocumentClick] ===== TRACKING COMPLETED SUCCESSFULLY =====`);
+      } else {
+        console.warn(`[trackDocumentClick] ===== TRACKING MAY HAVE FAILED =====`);
+        console.warn(`[trackDocumentClick] iframeLoaded: ${iframeLoaded}, formSubmitted: ${formSubmitted}`);
       }
     }, 5000);
     
-    console.log(`[trackDocumentClick] ===== TRACKING INITIATED SUCCESSFULLY =====`);
+    console.log(`[trackDocumentClick] ===== TRACKING INITIATED =====`);
     
   } catch(error) {
     console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
