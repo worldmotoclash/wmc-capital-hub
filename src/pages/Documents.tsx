@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -77,7 +78,7 @@ const Documents: React.FC = () => {
     ? [...ndaDocuments, ...baseDocuments] 
     : [...baseDocuments, blankNdaDocument];
 
-  // Centralized click tracking
+  // Centralized click tracking with corrected action values
   const handleTrackedClick =
     (url: string, type: string, title: string) =>
     async (e: React.MouseEvent<HTMLAnchorElement>) => {
