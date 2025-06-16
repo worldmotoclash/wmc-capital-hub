@@ -1,4 +1,3 @@
-
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -350,128 +349,82 @@ export const trackDocumentClick = async (
     
     console.log(`[trackDocumentClick] Step 2: Got IP: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
     
-    // Store debug info in localStorage
-    const trackingData = {
-      contactId,
-      actionType,
-      documentTitle: documentTitle || 'Untitled',
-      documentUrl,
-      currentIp,
-      location: locationData,
-      timestamp: new Date().toISOString()
+    // Create a hidden iframe for the submission target
+    console.log(`[trackDocumentClick] Step 3: Creating hidden iframe...`);
+    const hiddenIframe = document.createElement('iframe');
+    hiddenIframe.name = 'tracking-frame-' + Date.now();
+    hiddenIframe.style.display = 'none';
+    hiddenIframe.style.position = 'absolute';
+    hiddenIframe.style.top = '-9999px';
+    hiddenIframe.style.left = '-9999px';
+    hiddenIframe.style.width = '1px';
+    hiddenIframe.style.height = '1px';
+    
+    document.body.appendChild(hiddenIframe);
+    console.log(`[trackDocumentClick] Step 3.1: Hidden iframe created and added to document`);
+    
+    // Create form in the main document
+    console.log(`[trackDocumentClick] Step 4: Creating form in main document...`);
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+    form.target = hiddenIframe.name; // Target the hidden iframe
+    form.enctype = 'multipart/form-data';
+    form.style.display = 'none';
+    
+    console.log(`[trackDocumentClick] Step 4.1: Form created with action: ${form.action}, target: ${form.target}`);
+    
+    // Prepare form fields
+    const fields: Record<string, string> = {
+      'sObj': 'ri__Portal__c',
+      'string_ri__Contact__c': contactId,
+      'text_ri__Login_URL__c': documentUrl,
+      'text_ri__Action__c': actionType,
+      'text_ri__IP_Address__c': currentIp,
+      'text_ri__Login_Country__c': locationData.country,
+      'text_ri__Login_City__c': locationData.city,
     };
-    
-    const existingTracking = JSON.parse(localStorage.getItem('document_tracking_debug') || '[]');
-    existingTracking.push(trackingData);
-    localStorage.setItem('document_tracking_debug', JSON.stringify(existingTracking));
-    
-    // Create iframe for tracking
-    console.log(`[trackDocumentClick] Step 3: Creating tracking iframe...`);
-    const trackingIframe = document.createElement('iframe');
-    trackingIframe.style.display = 'none';
-    trackingIframe.style.position = 'absolute';
-    trackingIframe.style.top = '-9999px';
-    trackingIframe.style.left = '-9999px';
-    trackingIframe.style.width = '1px';
-    trackingIframe.style.height = '1px';
-    
-    // Track iframe creation and loading
-    let iframeLoaded = false;
-    let formSubmitted = false;
-    
-    // Set up iframe load handler
-    trackingIframe.onload = () => {
-      console.log(`[trackDocumentClick] Step 4: Iframe loaded, creating form...`);
-      iframeLoaded = true;
-      
-      try {
-        const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
-        if (!iframeDoc) {
-          console.error('[trackDocumentClick] Could not access iframe document - possible CORS issue');
-          return;
-        }
 
-        console.log(`[trackDocumentClick] Step 4.1: Iframe document accessible, creating form elements...`);
+    // Add document title if provided
+    if (documentTitle) {
+      fields['text_ri__Doc_Title__c'] = documentTitle;
+    }
 
-        // Create form
-        const form = iframeDoc.createElement('form');
-        form.method = 'POST';
-        form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-        form.enctype = 'multipart/form-data';
-        
-        console.log(`[trackDocumentClick] Step 4.2: Form created with action: ${form.action}`);
-          
-        // Prepare form fields
-        const fields: Record<string, string> = {
-          'sObj': 'ri__Portal__c',
-          'string_ri__Contact__c': contactId,
-          'text_ri__Login_URL__c': documentUrl,
-          'text_ri__Action__c': actionType,
-          'text_ri__IP_Address__c': currentIp,
-          'text_ri__Login_Country__c': locationData.country,
-          'text_ri__Login_City__c': locationData.city,
-        };
+    console.log(`[trackDocumentClick] Step 4.2: Form fields prepared:`, fields);
 
-        // Add document title if provided
-        if (documentTitle) {
-          fields['text_ri__Doc_Title__c'] = documentTitle;
-        }
+    // Add fields to form
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+      console.log(`[trackDocumentClick] Added field: ${name} = ${value}`);
+    });
 
-        console.log(`[trackDocumentClick] Step 4.3: Form fields prepared:`, fields);
-
-        // Add fields to form
-        Object.entries(fields).forEach(([name, value]) => {
-          const input = iframeDoc.createElement('input');
-          input.type = 'hidden';
-          input.name = name;
-          input.value = value;
-          form.appendChild(input);
-          console.log(`[trackDocumentClick] Added field: ${name} = ${value}`);
-        });
-
-        iframeDoc.body.appendChild(form);
-        console.log(`[trackDocumentClick] Step 5: Form appended to iframe body, submitting...`);
-        
-        // Submit form and track it
-        form.submit();
-        formSubmitted = true;
-        console.log(`[trackDocumentClick] Step 5.1: Form.submit() called successfully`);
-        
-      } catch (err) {
-        console.error('[trackDocumentClick] Error during form creation/submission:', err);
-      }
-    };
+    // Add form to document and submit
+    document.body.appendChild(form);
+    console.log(`[trackDocumentClick] Step 5: Form appended to document body, submitting...`);
     
-    // Track iframe errors
-    trackingIframe.onerror = (error) => {
-      console.error('[trackDocumentClick] Iframe error:', error);
-    };
+    form.submit();
+    console.log(`[trackDocumentClick] Step 5.1: Form submitted successfully`);
     
-    // Add iframe to document and set source
-    document.body.appendChild(trackingIframe);
-    console.log(`[trackDocumentClick] Step 3.1: Iframe added to document body`);
-    
-    trackingIframe.src = 'about:blank';
-    console.log(`[trackDocumentClick] Step 3.2: Iframe source set to about:blank`);
-    
-    // Clean up iframe after tracking request completes and log status
+    // Clean up after submission
     setTimeout(() => {
       console.log(`[trackDocumentClick] Step 6: Cleanup timeout reached`);
-      console.log(`[trackDocumentClick] Iframe loaded: ${iframeLoaded}, Form submitted: ${formSubmitted}`);
       
-      if (document.body.contains(trackingIframe)) {
-        document.body.removeChild(trackingIframe);
-        console.log(`[trackDocumentClick] Step 6.1: Tracking iframe removed for: ${actionType}`);
+      if (document.body.contains(form)) {
+        document.body.removeChild(form);
+        console.log(`[trackDocumentClick] Step 6.1: Form removed from document`);
       }
       
-      // Log final status
-      if (iframeLoaded && formSubmitted) {
-        console.log(`[trackDocumentClick] ===== TRACKING COMPLETED SUCCESSFULLY =====`);
-      } else {
-        console.warn(`[trackDocumentClick] ===== TRACKING MAY HAVE FAILED =====`);
-        console.warn(`[trackDocumentClick] iframeLoaded: ${iframeLoaded}, formSubmitted: ${formSubmitted}`);
+      if (document.body.contains(hiddenIframe)) {
+        document.body.removeChild(hiddenIframe);
+        console.log(`[trackDocumentClick] Step 6.2: Hidden iframe removed from document`);
       }
-    }, 5000);
+      
+      console.log(`[trackDocumentClick] ===== TRACKING COMPLETED SUCCESSFULLY =====`);
+    }, 3000); // Reduced timeout since we don't need to wait for iframe loading
     
     console.log(`[trackDocumentClick] ===== TRACKING INITIATED =====`);
     
