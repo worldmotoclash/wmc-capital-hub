@@ -1,3 +1,4 @@
+
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -341,31 +342,100 @@ export const trackDocumentClick = async (
   console.log(`[trackDocumentClick] URL: ${documentUrl}`);
   console.log(`[trackDocumentClick] Contact ID: ${contactId}`);
 
-  // Simple tracking - just log it for now to confirm it's being called
   try {
-    console.log(`[trackDocumentClick] FUNCTION IS BEING CALLED SUCCESSFULLY!`);
+    // Get IP and location data first
+    console.log(`[trackDocumentClick] Step 1: Fetching IP and location data...`);
+    const currentIp = await getCurrentIpAddress();
+    const locationData = await getIPLocation(currentIp);
     
-    // Get current timestamp for debugging
-    const timestamp = new Date().toISOString();
-    console.log(`[trackDocumentClick] Timestamp: ${timestamp}`);
+    console.log(`[trackDocumentClick] Step 2: Got IP: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
     
-    // Try the simplest possible tracking approach
+    // Store debug info in localStorage
     const trackingData = {
       contactId,
       actionType,
       documentTitle: documentTitle || 'Untitled',
       documentUrl,
-      timestamp
+      currentIp,
+      location: locationData,
+      timestamp: new Date().toISOString()
     };
     
-    console.log(`[trackDocumentClick] Tracking data prepared:`, trackingData);
-    
-    // Store in localStorage for debugging
     const existingTracking = JSON.parse(localStorage.getItem('document_tracking_debug') || '[]');
     existingTracking.push(trackingData);
     localStorage.setItem('document_tracking_debug', JSON.stringify(existingTracking));
     
-    console.log(`[trackDocumentClick] ===== TRACKING COMPLETED SUCCESSFULLY =====`);
+    // Create iframe for tracking
+    console.log(`[trackDocumentClick] Step 3: Creating tracking iframe...`);
+    const trackingIframe = document.createElement('iframe');
+    trackingIframe.style.display = 'none';
+    trackingIframe.style.position = 'absolute';
+    trackingIframe.style.top = '-9999px';
+    
+    // Set up iframe load handler
+    trackingIframe.onload = () => {
+      console.log(`[trackDocumentClick] Step 4: Iframe loaded, creating form...`);
+      
+      try {
+        const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
+        if (!iframeDoc) {
+          console.error('[trackDocumentClick] Could not access iframe document');
+          return;
+        }
+
+        // Create form
+        const form = iframeDoc.createElement('form');
+        form.method = 'POST';
+        form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
+        form.enctype = 'multipart/form-data';
+          
+        // Prepare form fields
+        const fields: Record<string, string> = {
+          'sObj': 'ri__Portal__c',
+          'string_ri__Contact__c': contactId,
+          'text_ri__Login_URL__c': documentUrl,
+          'text_ri__Action__c': actionType,
+          'text_ri__IP_Address__c': currentIp,
+          'text_ri__Login_Country__c': locationData.country,
+          'text_ri__Login_City__c': locationData.city,
+        };
+
+        // Add document title if provided
+        if (documentTitle) {
+          fields['text_ri__Doc_Title__c'] = documentTitle;
+        }
+
+        // Add fields to form
+        Object.entries(fields).forEach(([name, value]) => {
+          const input = iframeDoc.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        });
+
+        iframeDoc.body.appendChild(form);
+        console.log(`[trackDocumentClick] Step 5: Submitting form for: ${actionType}`);
+        form.submit();
+        
+      } catch (err) {
+        console.error('[trackDocumentClick] Error during form creation/submission:', err);
+      }
+    };
+    
+    // Add iframe to document and set source
+    document.body.appendChild(trackingIframe);
+    trackingIframe.src = 'about:blank';
+    
+    // Clean up iframe after tracking request completes
+    setTimeout(() => {
+      if (document.body.contains(trackingIframe)) {
+        document.body.removeChild(trackingIframe);
+        console.log(`[trackDocumentClick] Step 6: Tracking completed and iframe removed for: ${actionType}`);
+      }
+    }, 5000);
+    
+    console.log(`[trackDocumentClick] ===== TRACKING INITIATED SUCCESSFULLY =====`);
     
   } catch(error) {
     console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
