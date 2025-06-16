@@ -1,3 +1,4 @@
+
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -209,10 +210,9 @@ export const sendVerificationEmail = async (contactId: string, ipInfo?: {ip: str
   }
 };
 
-// Track login activity using direct form submission
+// Track login activity using a simple image request instead of iframe
 export const trackLogin = async (contactId: string, action: string = 'Login'): Promise<void> => {
-  console.log(`[trackLogin] ===== TRACKING START =====`);
-  console.log(`[trackLogin] Action: ${action} for contact ID: ${contactId}`);
+  console.log(`[trackLogin] Start: Action: ${action} for contact ID: ${contactId}`);
   
   try {
     // Pre-fetch IP and location data
@@ -221,14 +221,9 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
     
     console.log(`[trackLogin] IP data fetched: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
     
-    // Create a hidden form for direct submission
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-    form.target = '_blank';
-    form.style.display = 'none';
-      
-    const fields: Record<string, string> = {
+    // Use image request for tracking
+    const img = new Image();
+    const params = new URLSearchParams({
       'sObj': 'ri__Portal__c',
       'string_ri__Contact__c': contactId,
       'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
@@ -236,43 +231,25 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
       'text_ri__IP_Address__c': currentIp,
       'text_ri__Login_Country__c': locationData.country,
       'text_ri__Login_City__c': locationData.city,
-    };
-
-    console.log(`[trackLogin] Creating form fields...`);
-    Object.entries(fields).forEach(([name, value]) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-      console.log(`[trackLogin] Added field: ${name} = ${value}`);
     });
 
-    document.body.appendChild(form);
-    console.log(`[trackLogin] Submitting form for: ${action}`);
-    form.submit();
+    img.src = `https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php?${params.toString()}`;
     
-    // Remove form after submission
-    setTimeout(() => {
-      if (document.body.contains(form)) {
-        document.body.removeChild(form);
-        console.log(`[trackLogin] ===== TRACKING COMPLETED =====`);
-      }
-    }, 1000);
+    console.log(`[trackLogin] Request sent for: ${action}`);
     
   } catch (error) {
-    console.error('[trackLogin] ===== ERROR OCCURRED =====', error);
+    console.error('[trackLogin] Error:', error);
   }
 };
 
-// Document tracking using direct form submission
+// Simple tracking without debounce or complex iframe manipulation
 export const trackDocumentClick = async (
   contactId: string,
   documentUrl: string,
   actionType: string,
   documentTitle?: string
 ): Promise<void> => {
-  console.log(`[trackDocumentClick] ===== DIRECT FORM TRACKING START =====`);
+  console.log(`[trackDocumentClick] ===== SIMPLE TRACKING START =====`);
   console.log(`[trackDocumentClick] Action: ${actionType}`);
   console.log(`[trackDocumentClick] Title: ${documentTitle || 'N/A'}`);
   console.log(`[trackDocumentClick] URL: ${documentUrl}`);
@@ -285,14 +262,9 @@ export const trackDocumentClick = async (
     
     console.log(`[trackDocumentClick] Got IP: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
     
-    // Create a hidden form for direct submission
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-    form.target = '_blank';
-    form.style.display = 'none';
-      
-    const fields: Record<string, string> = {
+    // Use simple image request for tracking
+    const img = new Image();
+    const params = new URLSearchParams({
       'sObj': 'ri__Portal__c',
       'string_ri__Contact__c': contactId,
       'text_ri__Login_URL__c': documentUrl,
@@ -300,34 +272,18 @@ export const trackDocumentClick = async (
       'text_ri__IP_Address__c': currentIp,
       'text_ri__Login_Country__c': locationData.country,
       'text_ri__Login_City__c': locationData.city,
-    };
-
-    // Add document title if provided - using the correct field name
-    if (documentTitle) {
-      fields['Document_Title__c'] = documentTitle;
-    }
-
-    console.log(`[trackDocumentClick] Creating form fields...`);
-    Object.entries(fields).forEach(([name, value]) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-      console.log(`[trackDocumentClick] Added field: ${name} = ${value}`);
     });
 
-    document.body.appendChild(form);
-    console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
-    form.submit();
+    // Add document title if provided
+    if (documentTitle) {
+      params.append('text_ri__Document_Title__c', documentTitle);
+    }
+
+    console.log(`[trackDocumentClick] Sending request with params:`, Object.fromEntries(params));
+
+    img.src = `https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php?${params.toString()}`;
     
-    // Remove form after submission
-    setTimeout(() => {
-      if (document.body.contains(form)) {
-        document.body.removeChild(form);
-        console.log(`[trackDocumentClick] ===== TRACKING REQUEST COMPLETED =====`);
-      }
-    }, 1000);
+    console.log(`[trackDocumentClick] ===== TRACKING REQUEST SENT =====`);
     
   } catch(error) {
     console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
