@@ -66,19 +66,6 @@ const DashboardOverview: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Investment Opportunity Banner */}
-      <div className="rounded-lg overflow-hidden border border-red-200 bg-gradient-to-r from-red-50 to-amber-50 shadow-sm dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-700 dark:border-red-900">
-        <div className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">🚨 New Investment Opportunity</h3>
-            <p className="text-gray-600 mt-1 dark:text-gray-300">Learn about investing in World Moto Clash, a revolutionary motorsport league.</p>
-          </div>
-          <Button asChild className="bg-red-600 hover:bg-red-700">
-            <Link to="/investment-opportunity">View Opportunity</Link>
-          </Button>
-        </div>
-      </div>
-      
       {/* Video spanning full width */}
       <div className="rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700">
         <div className="aspect-video w-full relative">

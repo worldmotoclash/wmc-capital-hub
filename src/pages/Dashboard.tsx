@@ -57,6 +57,10 @@ const Dashboard: React.FC = () => {
     navigate('/updates');
   };
 
+  const navigateToPerks = () => {
+    window.open('https://id-preview--e0a76573-7507-4fa2-91b5-edf4d8045121.lovable.app/investment-opportunity', '_blank', 'noopener,noreferrer');
+  };
+
   if (!user) {
     return null; // Don't render anything while redirecting
   }
@@ -116,8 +120,7 @@ const Dashboard: React.FC = () => {
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="documents" onClick={navigateToDocuments}>Documents</TabsTrigger>
               {hasBusinessPlanAccess && <TabsTrigger value="financials">Financials</TabsTrigger>}
-              {/* Commented out Events tab for now */}
-              {/* <TabsTrigger value="events">Events</TabsTrigger> */}
+              <TabsTrigger value="perks" onClick={navigateToPerks}>Perks</TabsTrigger>
               <TabsTrigger value="updates" onClick={navigateToUpdates}>Updates</TabsTrigger>
             </TabsList>
             
@@ -143,14 +146,13 @@ const Dashboard: React.FC = () => {
               </TabsContent>
             )}
             
-            {/* Commented out Events tab content for now */}
-            {/* <TabsContent value="events">
+            <TabsContent value="perks">
               <TabContent 
-                title="Investor Events" 
-                description="Upcoming and past investor events"
-                message="Calendar of investor events, calls, and meetings would be displayed here"
+                title="Investment Perks" 
+                description="Explore the benefits and perks of investing"
+                message="Investment perks and benefits information would be displayed here"
               />
-            </TabsContent> */}
+            </TabsContent>
             
             <TabsContent value="updates">
               <TabContent 
