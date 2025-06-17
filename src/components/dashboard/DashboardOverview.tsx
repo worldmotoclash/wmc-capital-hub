@@ -111,6 +111,12 @@ const DashboardOverview: React.FC = () => {
         </div>
       </div>
       
+      {/* Key Documents and Investor Support moved here */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <KeyDocuments />
+        <InvestorSupport />
+      </div>
+      
       {/* Investor Information and Recent Updates */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <UserInfoCard />
@@ -122,11 +128,6 @@ const DashboardOverview: React.FC = () => {
           <InvestmentPerformance />
         </div>
       )}
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <KeyDocuments />
-        <InvestorSupport />
-      </div>
     </div>
   );
 };
