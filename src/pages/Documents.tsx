@@ -40,7 +40,7 @@ const Documents: React.FC = () => {
       type: "PDF",
       source: "Google Drive",
       thumbnail: "/lovable-uploads/sponsor-primier-thumbnail.png",
-      url: "https://drive.google.com/file/d/1jrylnZVCZLt1aQxnRJt-FMPQZtfMTcNS/view?usp=drive_link"
+      url: "https://drive.google.com/file/d/1LZTSnrgpVAVZjq9DAORgzQaLpNG0R28v/view?usp=drive_link"
     },
     {
       title: "WMC 2 Minute Sizzle Reel",

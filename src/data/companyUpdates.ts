@@ -7,7 +7,7 @@ export const companyUpdates: CompanyUpdate[] = [
     date: "Jun 10, 2025",
     description: "We've released an updated Executive Summary Deck with the latest information about our investment opportunity and business strategy.",
     category: "Content Update",
-    documentUrl: "https://drive.google.com/file/d/1jrylnZVCZLt1aQxnRJt-FMPQZtfMTcNS/view?usp=drive_link",
+    documentUrl: "https://drive.google.com/file/d/1LZTSnrgpVAVZjq9DAORgzQaLpNG0R28v/view?usp=drive_link",
     documentType: "document"
   },
   {

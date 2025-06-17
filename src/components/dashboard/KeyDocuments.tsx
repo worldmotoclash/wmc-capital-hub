@@ -108,11 +108,11 @@ const KeyDocuments: React.FC = () => {
           </div>
           <Button variant="ghost" size="sm" className="text-gray-500 dark:text-gray-400" asChild>
             <a
-              href="https://drive.google.com/file/d/1jrylnZVCZLt1aQxnRJt-FMPQZtfMTcNS/view?usp=drive_link"
+              href="https://drive.google.com/file/d/1LZTSnrgpVAVZjq9DAORgzQaLpNG0R28v/view?usp=drive_link"
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleTrackedClick(
-                "https://drive.google.com/file/d/1jrylnZVCZLt1aQxnRJt-FMPQZtfMTcNS/view?usp=drive_link",
+                "https://drive.google.com/file/d/1LZTSnrgpVAVZjq9DAORgzQaLpNG0R28v/view?usp=drive_link",
                 "Document Clicked",
                 "Investor Executive Summary Deck"
               )}
