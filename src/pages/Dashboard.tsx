@@ -90,8 +90,8 @@ const Dashboard: React.FC = () => {
             Welcome back {user.name}, 
             {hasBusinessPlanAccess 
               ? " you now have access to the " 
-              : " here's your potential investor information."}
-            {hasBusinessPlanAccess && (
+              : " here's your potential investor information. Check out our "}
+            {hasBusinessPlanAccess ? (
               <a 
                 href="/documents" 
                 className="text-blue-600 hover:underline font-medium"
@@ -101,6 +101,15 @@ const Dashboard: React.FC = () => {
                 }}
               >
                 business plan
+              </a>
+            ) : (
+              <a 
+                href="https://drive.google.com/file/d/1LZTSnrgpVAVZjq9DAORgzQaLpNG0R28v/view?usp=drive_link" 
+                className="text-blue-600 hover:underline font-medium"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Investor Executive Summary Deck
               </a>
             )}
             {hasBusinessPlanAccess && "."}
