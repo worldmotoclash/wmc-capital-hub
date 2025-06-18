@@ -74,7 +74,7 @@ const Dashboard: React.FC = () => {
           <Alert variant="default" className="mb-6 bg-yellow-50 border-yellow-200">
             <FileText className="h-5 w-5 text-yellow-600" />
             <AlertDescription className="text-yellow-700">
-              You need to complete the NDA to gain access to the business plan and other information. 
+              You need to complete the NDA to gain access to the business plan. 
               Download the blank NDA and send it to <span className="font-semibold">investors@worldmotoclash.com</span>.
             </AlertDescription>
           </Alert>
