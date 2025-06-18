@@ -90,7 +90,7 @@ const Dashboard: React.FC = () => {
             Welcome back {user.name}, 
             {hasBusinessPlanAccess 
               ? " you now have access to the " 
-              : " here's your potential investor information. Check out our "}
+              : " check out our "}
             {hasBusinessPlanAccess ? (
               <a 
                 href="/documents" 
