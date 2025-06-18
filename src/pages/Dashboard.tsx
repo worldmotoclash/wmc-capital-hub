@@ -5,8 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { FileText } from 'lucide-react';
 
 // Import our newly created components
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
@@ -70,16 +68,6 @@ const Dashboard: React.FC = () => {
       <DashboardHeader handleSignOut={handleSignOut} />
       
       <main className="container mx-auto px-6 py-12">
-        {isPotentialInvestor && (
-          <Alert variant="default" className="mb-6 bg-yellow-50 border-yellow-200">
-            <FileText className="h-5 w-5 text-yellow-600" />
-            <AlertDescription className="text-yellow-700">
-              You need to complete the NDA to gain access to the business plan. 
-              Download the blank NDA and send it to <span className="font-semibold">investors@worldmotoclash.com</span>.
-            </AlertDescription>
-          </Alert>
-        )}
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

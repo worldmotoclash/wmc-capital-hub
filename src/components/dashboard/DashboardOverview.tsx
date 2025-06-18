@@ -2,7 +2,8 @@
 import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Play } from 'lucide-react';
+import { Play, FileText } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import UserInfoCard from '@/components/UserInfoCard';
 import RecentUpdates from './RecentUpdates';
 import InvestmentPerformance from './InvestmentPerformance';
@@ -110,6 +111,17 @@ const DashboardOverview: React.FC = () => {
           Experience the future of motorsports with WMC's innovative approach to racing entertainment
         </div>
       </div>
+
+      {/* NDA Alert for potential investors - moved here after video */}
+      {isPotentialInvestor && (
+        <Alert variant="default" className="bg-yellow-50 border-yellow-200">
+          <FileText className="h-5 w-5 text-yellow-600" />
+          <AlertDescription className="text-yellow-700">
+            You need to complete the NDA to gain access to the business plan. 
+            Download the blank NDA and send it to <span className="font-semibold">investors@worldmotoclash.com</span>.
+          </AlertDescription>
+        </Alert>
+      )}
       
       {/* Key Documents and Investor Support moved here */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
