@@ -43,16 +43,19 @@ const LoginFormComponent: React.FC = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlEmail = urlParams.get('user');
     const urlPassword = urlParams.get('pass');
+    const urlContent = urlParams.get('content');
     
     console.log('URL Email parameter:', urlEmail);
     console.log('URL Password parameter exists:', !!urlPassword);
     console.log('URL Password length:', urlPassword ? urlPassword.length : 0);
+    console.log('URL Content parameter:', urlContent);
     console.log('Full URL:', window.location.href);
     
     if (urlEmail && urlPassword) {
       console.log('=== AUTO-LOGIN CREDENTIALS DETECTED ===');
       console.log('Email:', urlEmail);
       console.log('Password length:', urlPassword.length);
+      console.log('Content destination:', urlContent);
       
       setAutoLoginProcessed(true);
       
@@ -60,14 +63,31 @@ const LoginFormComponent: React.FC = () => {
       setEmail(urlEmail);
       setPassword(urlPassword);
       
+      // Determine redirect path based on content parameter
+      const getRedirectPath = (content: string | null): string => {
+        switch (content) {
+          case 'updates':
+            return '/updates';
+          case 'documents':
+            return '/documents';
+          case 'dashboard':
+            return '/dashboard';
+          default:
+            return '/dashboard'; // Default fallback
+        }
+      };
+      
+      const redirectPath = getRedirectPath(urlContent);
+      console.log('Determined redirect path:', redirectPath);
+      
       // Clear URL parameters immediately for security
       const newUrl = window.location.pathname;
       console.log('Clearing URL params, new URL will be:', newUrl);
       window.history.replaceState({}, '', newUrl);
       
-      // Start auto-login process
-      console.log('Starting performAutoLogin...');
-      performAutoLogin(urlEmail, urlPassword);
+      // Start auto-login process with redirect path
+      console.log('Starting performAutoLogin with redirect path:', redirectPath);
+      performAutoLogin(urlEmail, urlPassword, redirectPath);
     } else {
       console.log('No auto-login credentials found in URL');
       setAutoLoginProcessed(true);
@@ -76,10 +96,11 @@ const LoginFormComponent: React.FC = () => {
     console.log('=== LoginFormComponent useEffect END ===');
   }, []); // Empty dependency array to run only once
   
-  const performAutoLogin = async (email: string, password: string) => {
+  const performAutoLogin = async (email: string, password: string, redirectPath: string = '/dashboard') => {
     console.log('=== performAutoLogin STARTED ===');
     console.log('Email:', email);
     console.log('Password length:', password.length);
+    console.log('Redirect path:', redirectPath);
     console.log('Current user state:', user);
     
     setIsLoading(true);
@@ -103,8 +124,8 @@ const LoginFormComponent: React.FC = () => {
           position: 'top-center'
         });
         
-        console.log('Navigating to dashboard...');
-        navigate('/dashboard', { replace: true });
+        console.log('Navigating to:', redirectPath);
+        navigate(redirectPath, { replace: true });
         
         console.log('Auto-login process completed successfully');
       } else {
