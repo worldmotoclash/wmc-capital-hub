@@ -136,16 +136,12 @@ const Updates: React.FC = () => {
                           </a>
                         </Button>
                       )}
-                      {update.documentUrl && (
+                      {update.documentUrl && update.documentType !== 'audio' && (
                         <Button 
                           variant="outline" 
                           size="sm"
                           asChild
-                          className={`transition-colors ${
-                            update.documentType === 'audio' 
-                              ? 'text-orange-600 hover:text-orange-800' 
-                              : 'text-emerald-600 hover:text-emerald-800'
-                          }`}
+                          className="text-emerald-600 hover:text-emerald-800 transition-colors"
                         >
                           <a
                             href={update.documentUrl}
@@ -157,11 +153,6 @@ const Updates: React.FC = () => {
                               <>
                                 <Video className="mr-2 h-4 w-4" />
                                 View Video
-                              </>
-                            ) : update.documentType === 'audio' ? (
-                              <>
-                                <Headphones className="mr-2 h-4 w-4" />
-                                Listen to Audio
                               </>
                             ) : (
                               <>
