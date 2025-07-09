@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, FileText, Video } from 'lucide-react';
+import { ExternalLink, FileText, Video, Headphones } from 'lucide-react';
 import { companyUpdates } from '@/data/companyUpdates';
 import { useUser } from '@/contexts/UserContext';
 import { trackDocumentClick } from '@/services/loginService';
@@ -25,6 +25,7 @@ const RecentUpdates: React.FC = () => {
       if (user?.id) {
         let action: string;
         if (type === 'video') action = 'Video Clicked';
+        else if (type === 'audio') action = 'Audio Clicked';
         else if (type === 'website') action = 'Website Visit';
         else action = 'Document Clicked';
         await trackDocumentClick(user.id, url, action, title);
@@ -67,7 +68,9 @@ const RecentUpdates: React.FC = () => {
                   variant="outline" 
                   size="sm"
                   asChild
-                  className="h-8 text-xs text-emerald-600"
+                  className={`h-8 text-xs ${
+                    update.documentType === 'audio' ? 'text-orange-600' : 'text-emerald-600'
+                  }`}
                 >
                   <a
                     href={update.documentUrl}
@@ -79,6 +82,11 @@ const RecentUpdates: React.FC = () => {
                       <>
                         <Video className="mr-1 h-3 w-3" />
                         Video
+                      </>
+                    ) : update.documentType === 'audio' ? (
+                      <>
+                        <Headphones className="mr-1 h-3 w-3" />
+                        Audio
                       </>
                     ) : (
                       <>

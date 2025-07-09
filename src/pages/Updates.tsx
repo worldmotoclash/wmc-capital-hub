@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Bell, ExternalLink, FileText, Video } from 'lucide-react';
+import { ArrowLeft, Bell, ExternalLink, FileText, Video, Headphones } from 'lucide-react';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import BuzzsproutPlayer from '@/components/BuzzsproutPlayer';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { companyUpdates } from '@/data/companyUpdates';
@@ -42,6 +43,7 @@ const Updates: React.FC = () => {
       if (user?.id) {
         let action: string;
         if (type === 'video') action = 'Video View';
+        else if (type === 'audio') action = 'Audio Clicked';
         else if (type === 'website') action = 'Website Visit';
         else action = 'Document View';
         await trackDocumentClick(user.id, url, action, title);
@@ -102,6 +104,19 @@ const Updates: React.FC = () => {
                       </div>
                     </div>
                     <p className="text-gray-600 mb-2">{update.description}</p>
+                    
+                    {/* Render embedded Buzzsprout player for audio */}
+                    {update.documentType === 'audio' && update.embedCode && (
+                      <div className="mb-4">
+                        <BuzzsproutPlayer 
+                          embedCode={update.embedCode}
+                          title={update.title}
+                          documentUrl={update.documentUrl || ''}
+                          className="my-4"
+                        />
+                      </div>
+                    )}
+                    
                     <div className="flex flex-wrap gap-2 mt-3">
                       {update.url && (
                         <Button 
@@ -126,7 +141,11 @@ const Updates: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           asChild
-                          className="text-emerald-600 hover:text-emerald-800 transition-colors"
+                          className={`transition-colors ${
+                            update.documentType === 'audio' 
+                              ? 'text-orange-600 hover:text-orange-800' 
+                              : 'text-emerald-600 hover:text-emerald-800'
+                          }`}
                         >
                           <a
                             href={update.documentUrl}
@@ -138,6 +157,11 @@ const Updates: React.FC = () => {
                               <>
                                 <Video className="mr-2 h-4 w-4" />
                                 View Video
+                              </>
+                            ) : update.documentType === 'audio' ? (
+                              <>
+                                <Headphones className="mr-2 h-4 w-4" />
+                                Listen to Audio
                               </>
                             ) : (
                               <>

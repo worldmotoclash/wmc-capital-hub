@@ -6,5 +6,6 @@ export interface CompanyUpdate {
   category: string;
   url?: string;
   documentUrl?: string;
-  documentType?: 'document' | 'video'; // Added to differentiate between document and video
+  documentType?: 'document' | 'video' | 'audio'; // Added audio type
+  embedCode?: string; // For Buzzsprout embed HTML
 }

@@ -11,6 +11,15 @@ export const companyUpdates: CompanyUpdate[] = [
     documentType: "document"
   },
   {
+    title: "Investment Opportunity for a WMC Investor",
+    date: "Jul 5, 2025",
+    description: "Listen to our latest podcast episode discussing the exciting investment opportunity with WMC Motorsports.",
+    category: "Content Update",
+    documentUrl: "https://www.buzzsprout.com/2471755/episodes/17463406-investment-opportunity-for-a-wmc-investor",
+    documentType: "audio",
+    embedCode: `<div id="buzzsprout-player-17463406"></div><script src="https://www.buzzsprout.com/2471755/episodes/17463406-investment-opportunity-for-a-wmc-investor.js?container_id=buzzsprout-player-17463406&player=small" type="text/javascript" charset="utf-8"></script>`
+  },
+  {
     title: "New Team Owners Video added to the portal",
     date: "Apr 10, 2025",
     description: "A new video featuring WMC Team Owners has been uploaded to the investor portal.",
