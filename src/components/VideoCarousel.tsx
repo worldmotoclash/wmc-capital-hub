@@ -62,9 +62,8 @@ const VideoCarousel: React.FC<VideoCarouselProps> = ({ videos }) => {
     return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&disablekb=1&modestbranding=1&origin=${window.location.origin}`;
   };
 
-  // Handle slide change and log for debugging
+  // Handle slide change
   const handleSlideChange = (swiper: SwiperType) => {
-    console.log('Slide changed to:', swiper.realIndex);
     setActiveIndex(swiper.realIndex);
   };
 
