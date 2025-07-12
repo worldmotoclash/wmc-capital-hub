@@ -10,6 +10,7 @@ import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { companyUpdates } from '@/data/companyUpdates';
 import { trackDocumentClick } from '@/services/loginService';
+import { TRACKING_ACTIONS } from '@/constants/trackingActions';
 
 const Updates: React.FC = () => {
   const navigate = useNavigate();
@@ -42,10 +43,10 @@ const Updates: React.FC = () => {
       e.preventDefault();
       if (user?.id) {
         let action: string;
-        if (type === 'video') action = 'Video View';
-        else if (type === 'audio') action = 'Audio Clicked';
-        else if (type === 'website') action = 'Website Visit';
-        else action = 'Document View';
+        if (type === 'video') action = TRACKING_ACTIONS.VIDEO_CLICKED;
+        else if (type === 'audio') action = TRACKING_ACTIONS.AUDIO_CLICKED;
+        else if (type === 'website') action = TRACKING_ACTIONS.DOCUMENT_CLICKED;
+        else action = TRACKING_ACTIONS.DOCUMENT_CLICKED;
         await trackDocumentClick(user.id, url, action, title);
       }
       window.open(url, '_blank', 'noopener,noreferrer');

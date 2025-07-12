@@ -7,6 +7,7 @@ import { ExternalLink, FileText, Video, Headphones } from 'lucide-react';
 import { companyUpdates } from '@/data/companyUpdates';
 import { useUser } from '@/contexts/UserContext';
 import { trackDocumentClick } from '@/services/loginService';
+import { TRACKING_ACTIONS } from '@/constants/trackingActions';
 
 const RecentUpdates: React.FC = () => {
   const navigate = useNavigate();
@@ -24,10 +25,10 @@ const RecentUpdates: React.FC = () => {
       e.preventDefault();
       if (user?.id) {
         let action: string;
-        if (type === 'video') action = 'Video Clicked';
-        else if (type === 'audio') action = 'Audio Clicked';
-        else if (type === 'website') action = 'Website Visit';
-        else action = 'Document Clicked';
+        if (type === 'video') action = TRACKING_ACTIONS.VIDEO_CLICKED;
+        else if (type === 'audio') action = TRACKING_ACTIONS.AUDIO_CLICKED;
+        else if (type === 'website') action = TRACKING_ACTIONS.DOCUMENT_CLICKED;
+        else action = TRACKING_ACTIONS.DOCUMENT_CLICKED;
         await trackDocumentClick(user.id, url, action, title);
       }
       window.open(url, '_blank', 'noopener,noreferrer');
