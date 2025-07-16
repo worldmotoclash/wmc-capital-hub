@@ -3,6 +3,15 @@ import { CompanyUpdate } from '../types/companyUpdates';
 
 export const companyUpdates: CompanyUpdate[] = [
   {
+    title: "World Moto Clash Investment Opportunity in 7 Minutes",
+    date: "Jul 16, 2025",
+    description: "Get a comprehensive overview of the WMC investment opportunity in just 7 minutes with our latest podcast episode.",
+    category: "Content Update",
+    documentUrl: "https://www.buzzsprout.com/2471755/episodes/17491005-world-moto-clash-investment-opportunity-in-7-minutes",
+    documentType: "audio",
+    embedCode: `<div id="buzzsprout-player-17491005"></div><script src="https://www.buzzsprout.com/2471755/episodes/17491005-world-moto-clash-investment-opportunity-in-7-minutes.js?container_id=buzzsprout-player-17491005&player=small" type="text/javascript" charset="utf-8"></script>`
+  },
+  {
     title: "Investment Opportunity for a WMC Investor",
     date: "Jul 5, 2025",
     description: "Listen to our latest podcast episode discussing the exciting investment opportunity with WMC Motorsports.",
