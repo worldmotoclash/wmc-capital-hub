@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useUser } from '@/contexts/UserContext';
 import { trackDocumentClick } from '@/services/loginService';
 import { TRACKING_ACTIONS } from '@/constants/trackingActions';
-import { Button } from '@/components/ui/button';
+import { Play } from 'lucide-react';
+import PodcastPlayerModal from './PodcastPlayerModal';
 
 interface BuzzsproutPlayerProps {
   embedCode: string;
@@ -18,14 +19,13 @@ const BuzzsproutPlayer: React.FC<BuzzsproutPlayerProps> = ({
   className = '' 
 }) => {
   const { user } = useUser();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isPlayerLoaded, setIsPlayerLoaded] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Manual tracking function for fallback button
-  const handleManualTrack = async () => {
+  const handleThumbnailClick = async () => {
     if (!user?.id) return;
     
-    console.log('[BuzzsproutPlayer] Manual track button clicked');
+    console.log('[BuzzsproutPlayer] Thumbnail clicked for:', title);
+    
     try {
       await trackDocumentClick(
         user.id,
@@ -33,151 +33,45 @@ const BuzzsproutPlayer: React.FC<BuzzsproutPlayerProps> = ({
         TRACKING_ACTIONS.AUDIO_CLICKED,
         title
       );
-      console.log('[BuzzsproutPlayer] Manual audio tracking completed');
+      console.log('[BuzzsproutPlayer] Audio tracking completed successfully');
+      setIsModalOpen(true);
     } catch (error) {
-      console.error('[BuzzsproutPlayer] Error in manual tracking:', error);
+      console.error('[BuzzsproutPlayer] Error tracking audio:', error);
+      // Still open modal even if tracking fails
+      setIsModalOpen(true);
     }
   };
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    console.log('[BuzzsproutPlayer] Loading player for:', title);
-    
-    // Clear any existing content
-    containerRef.current.innerHTML = '';
-
-    // Create a temporary div to parse the embed code
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = embedCode;
-
-    // Extract the script elements and container div
-    const scriptElements = tempDiv.querySelectorAll('script');
-    const containerDiv = tempDiv.querySelector('div');
-
-    if (containerDiv) {
-      // Add the container div
-      containerRef.current.appendChild(containerDiv.cloneNode(true));
-    }
-
-    // Add script elements
-    scriptElements.forEach(script => {
-      const newScript = document.createElement('script');
-      if (script.src) {
-        newScript.src = script.src;
-        newScript.onload = () => {
-          console.log('[BuzzsproutPlayer] Script loaded, player should be ready');
-          setIsPlayerLoaded(true);
-        };
-      }
-      if (script.innerHTML) {
-        newScript.innerHTML = script.innerHTML;
-      }
-      Array.from(script.attributes).forEach(attr => {
-        newScript.setAttribute(attr.name, attr.value);
-      });
-      
-      containerRef.current?.appendChild(newScript);
-    });
-
-    // Enhanced click tracking
-    const handlePlayerClick = async (event: Event) => {
-      if (!user?.id) return;
-      
-      console.log('[BuzzsproutPlayer] Player interaction detected:', event.type);
-      console.log('[BuzzsproutPlayer] Target element:', event.target);
-      
-      try {
-        await trackDocumentClick(
-          user.id,
-          documentUrl,
-          TRACKING_ACTIONS.AUDIO_CLICKED,
-          title
-        );
-        console.log('[BuzzsproutPlayer] Audio tracking completed successfully');
-      } catch (error) {
-        console.error('[BuzzsproutPlayer] Error tracking audio:', error);
-      }
-    };
-
-    // Add event listener for clicks on the container
-    const container = containerRef.current;
-    if (container) {
-      // Add multiple event types for better detection
-      container.addEventListener('click', handlePlayerClick);
-      container.addEventListener('mousedown', handlePlayerClick);
-      
-      // Enhanced player button detection with MutationObserver
-      const observer = new MutationObserver(() => {
-        const playerButtons = container.querySelectorAll(
-          'button, [role="button"], .spp-player-button, .buzzsprout-track, .play-button, [class*="play"], [class*="button"]'
-        );
-        
-        console.log('[BuzzsproutPlayer] Found', playerButtons.length, 'potential player buttons');
-        
-        playerButtons.forEach((button, index) => {
-          console.log(`[BuzzsproutPlayer] Button ${index}:`, button.className, button.getAttribute('role'));
-          button.addEventListener('click', handlePlayerClick);
-          button.addEventListener('mousedown', handlePlayerClick);
-        });
-      });
-
-      // Start observing
-      observer.observe(container, {
-        childList: true,
-        subtree: true,
-        attributes: true
-      });
-
-      // Also check periodically with higher frequency
-      let checkCount = 0;
-      const maxChecks = 40; // 10 seconds at 250ms intervals
-      
-      const interval = setInterval(() => {
-        checkCount++;
-        
-        const playerElements = container.querySelectorAll(
-          'button, [role="button"], .spp-player-button, .buzzsprout-track, [class*="play"], [class*="button"]'
-        );
-        
-        if (playerElements.length > 0) {
-          console.log('[BuzzsproutPlayer] Found player elements on check', checkCount, ':', playerElements.length);
-          playerElements.forEach(element => {
-            element.addEventListener('click', handlePlayerClick);
-            element.addEventListener('mousedown', handlePlayerClick);
-          });
-        }
-        
-        if (checkCount >= maxChecks) {
-          console.log('[BuzzsproutPlayer] Stopped checking for player buttons after', maxChecks, 'attempts');
-          clearInterval(interval);
-        }
-      }, 250);
-      
-      // Cleanup
-      return () => {
-        observer.disconnect();
-        container.removeEventListener('click', handlePlayerClick);
-        container.removeEventListener('mousedown', handlePlayerClick);
-        clearInterval(interval);
-      };
-    }
-  }, [embedCode, user, documentUrl, title]);
-
   return (
-    <div className={`buzzsprout-player-container ${className}`}>
-      <div ref={containerRef} className="w-full" />
-      <div className="mt-2 flex justify-center">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleManualTrack}
-          className="text-xs"
-        >
-          🎧 Track Podcast Listen
-        </Button>
+    <>
+      <div 
+        className={`podcast-thumbnail cursor-pointer hover:opacity-80 transition-opacity ${className}`}
+        onClick={handleThumbnailClick}
+      >
+        <div className="relative bg-gradient-to-br from-primary/10 to-primary/5 border border-border rounded-lg p-4 flex items-center space-x-4 hover:shadow-md transition-shadow">
+          <div className="flex-shrink-0">
+            <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+              <Play className="w-6 h-6 text-primary fill-current" />
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h4 className="text-sm font-medium text-foreground truncate">
+              {title}
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              Click to play podcast episode
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <PodcastPlayerModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        embedCode={embedCode}
+        title={title}
+      />
+    </>
   );
 };
 
