@@ -288,94 +288,46 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
   }
 };
 
-// Track document clicks using iframe method (same as test page)
+// Track document clicks using Supabase Edge Function
 export const trackDocumentClick = async (
   contactId: string,
   documentUrl: string,
   actionType: string,
   documentTitle?: string
 ): Promise<void> => {
-  console.log(`[trackDocumentClick] ===== IFRAME METHOD START =====`);
+  console.log(`[trackDocumentClick] ===== EDGE FUNCTION METHOD START =====`);
   console.log(`[trackDocumentClick] Action: ${actionType}`);
   console.log(`[trackDocumentClick] Title: ${documentTitle || 'N/A'}`);
   console.log(`[trackDocumentClick] URL: ${documentUrl}`);
   console.log(`[trackDocumentClick] Contact ID: ${contactId}`);
 
   try {
-    // Get IP and location data
-    const currentIp = await getCurrentIpAddress();
-    const locationData = await getIPLocation(currentIp);
-    
-    console.log(`[trackDocumentClick] Got IP: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
-    
-    // Use iframe method (same as working test)
-    const trackingIframe = document.createElement('iframe');
-    trackingIframe.style.display = 'none';
-    
-    trackingIframe.onload = () => {
-      try {
-        console.log(`[trackDocumentClick] Iframe loaded, creating form...`);
-        
-        const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
-        if (!iframeDoc) {
-          console.log(`[trackDocumentClick] ERROR: Could not access iframe document`);
-          return;
-        }
+    // Call our Supabase Edge Function to handle the tracking
+    const response = await fetch('https://vlwumuuolvxhiixqbnub.supabase.co/functions/v1/track-document-action', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contactId,
+        documentUrl,
+        actionType,
+        documentTitle
+      })
+    });
 
-        console.log(`[trackDocumentClick] Creating form fields...`);
-        
-        const form = iframeDoc.createElement('form');
-        form.method = 'POST';
-        form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-          
-        const fields: Record<string, string> = {
-          'sObj': 'ri__Portal__c',
-          'string_ri__Contact__c': contactId,
-          'text_ri__Login_URL__c': documentUrl,
-          'text_ri__Action__c': actionType,
-          'text_ri__IP_Address__c': currentIp,
-          'text_ri__Login_Country__c': locationData.country,
-          'text_ri__Login_City__c': locationData.city,
-        };
-
-        // Add document title if provided
-        if (documentTitle) {
-          fields['text_Document_Title__c'] = documentTitle;
-        }
-
-        Object.entries(fields).forEach(([name, value]) => {
-          const input = iframeDoc.createElement('input');
-          input.type = 'hidden';
-          input.name = name;
-          input.value = value;
-          form.appendChild(input);
-          console.log(`[trackDocumentClick] Added field: ${name} = ${value}`);
-        });
-
-        iframeDoc.body.appendChild(form);
-        console.log(`[trackDocumentClick] Submitting form for: ${actionType}`);
-        form.submit();
-        
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown iframe error';
-        console.log(`[trackDocumentClick] Error during form creation/submission: ${errorMessage}`);
+    if (response.ok) {
+      const result = await response.json();
+      if (result.success) {
+        console.log(`[trackDocumentClick] ===== SUCCESS =====`);
+      } else {
+        console.error(`[trackDocumentClick] Edge Function returned error: ${result.error}`);
       }
-    };
+    } else {
+      console.error(`[trackDocumentClick] Failed to call tracking Edge Function: ${response.status} ${response.statusText}`);
+    }
     
-    document.body.appendChild(trackingIframe);
-    trackingIframe.src = 'about:blank';
-    
-    console.log(`[trackDocumentClick] Iframe created and added to document`);
-    
-    // Remove iframe after sufficient time for request to complete
-    setTimeout(() => {
-      if (document.body.contains(trackingIframe)) {
-        document.body.removeChild(trackingIframe);
-        console.log(`[trackDocumentClick] ===== IFRAME REMOVED =====`);
-      }
-    }, 5000);
-    
-  } catch(error) {
+  } catch (error) {
     console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
   }
 };
