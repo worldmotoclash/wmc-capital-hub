@@ -231,31 +231,8 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
 
     if (response.ok) {
       const result = await response.json();
-      if (result.success || result.formData) {
+      if (result.success) {
         console.log(`[trackLogin] ===== SUCCESS =====`);
-        
-        // FOR DEBUGGING: Open form submission in new window
-        if (result.formData && result.targetUrl) {
-          console.log(`[trackLogin] Opening debug window with form data:`, result.formData);
-          
-          const newWindow = window.open('', '_blank');
-          if (newWindow) {
-            const form = newWindow.document.createElement('form');
-            form.method = 'POST';
-            form.action = result.targetUrl;
-            
-            Object.entries(result.formData).forEach(([name, value]) => {
-              const input = newWindow.document.createElement('input');
-              input.type = 'hidden';
-              input.name = name;
-              input.value = value as string;
-              form.appendChild(input);
-            });
-            
-            newWindow.document.body.appendChild(form);
-            form.submit();
-          }
-        }
       } else {
         console.error(`[trackLogin] Edge Function returned error: ${result.error}`);
       }

@@ -115,35 +115,14 @@ serve(async (req) => {
       ipInfo
     );
 
-    // Return form data for debugging (client can open in new window)
-    const formData = {
-      'sObj': 'ri__Portal__c',
-      'string_ri__Contact__c': contactId,
-      'text_ri__Login_URL__c': documentUrl,
-      'text_ri__Action__c': actionType,
-      'text_ri__Document_Title__c': documentTitle || '',
-      'text_ri__IP_Address__c': ipInfo.ip,
-      'text_ri__Login_Country__c': ipInfo.country,
-      'text_ri__Login_City__c': ipInfo.city,
-    };
-
     if (success) {
       console.log('Successfully tracked document action');
-      return new Response(JSON.stringify({ 
-        success: true, 
-        formData,
-        targetUrl: 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php'
-      }), {
+      return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } else {
       console.error('Failed to submit to tracking engine');
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Tracking engine submission failed',
-        formData,
-        targetUrl: 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php'
-      }), {
+      return new Response(JSON.stringify({ success: false, error: 'Tracking engine submission failed' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
