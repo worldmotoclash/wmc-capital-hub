@@ -209,82 +209,39 @@ export const sendVerificationEmail = async (contactId: string, ipInfo?: {ip: str
   }
 };
 
-// Track login activity using iframe method (same as working trackDocumentClick)
+// Track login activity using Edge Function (same as trackDocumentClick)
 export const trackLogin = async (contactId: string, action: string = 'Login'): Promise<void> => {
-  console.log(`[trackLogin] ===== IFRAME METHOD START =====`);
+  console.log(`[trackLogin] ===== EDGE FUNCTION METHOD START =====`);
   console.log(`[trackLogin] Action: ${action} for contact ID: ${contactId}`);
-  
+
   try {
-    // Pre-fetch IP and location data
-    const currentIp = await getCurrentIpAddress();
-    const locationData = await getIPLocation(currentIp);
-    
-    console.log(`[trackLogin] IP data fetched: ${currentIp}, Location: ${locationData.city}, ${locationData.country}`);
-    
-    // Use iframe method (same as working trackDocumentClick)
-    const trackingIframe = document.createElement('iframe');
-    trackingIframe.style.display = 'none';
-    
-    trackingIframe.onload = () => {
-      try {
-        console.log(`[trackLogin] Iframe loaded, creating form...`);
-        
-        const iframeDoc = trackingIframe.contentDocument || trackingIframe.contentWindow?.document;
-        if (!iframeDoc) {
-          console.log(`[trackLogin] ERROR: Could not access iframe document`);
-          return;
-        }
+    // Call our Supabase Edge Function to handle the tracking
+    const response = await fetch('https://vlwumuuolvxhiixqbnub.supabase.co/functions/v1/track-document-action', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contactId,
+        documentUrl: 'https://invest.worldmotoclash.com',
+        actionType: action,
+        documentTitle: ''
+      })
+    });
 
-        console.log(`[trackLogin] Creating form fields...`);
-        
-        const form = iframeDoc.createElement('form');
-        form.method = 'POST';
-        form.action = "https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php";
-          
-        const fields: Record<string, string> = {
-          'sObj': 'ri__Portal__c',
-          'string_ri__Contact__c': contactId,
-          'text_ri__Login_URL__c': 'https://invest.worldmotoclash.com',
-          'text_ri__Action__c': action,
-          'text_ri__IP_Address__c': currentIp,
-          'text_ri__Login_Country__c': locationData.country,
-          'text_ri__Login_City__c': locationData.city,
-        };
-
-        Object.entries(fields).forEach(([name, value]) => {
-          const input = iframeDoc.createElement('input');
-          input.type = 'hidden';
-          input.name = name;
-          input.value = value;
-          form.appendChild(input);
-          console.log(`[trackLogin] Added field: ${name} = ${value}`);
-        });
-
-        iframeDoc.body.appendChild(form);
-        console.log(`[trackLogin] Submitting form for: ${action}`);
-        form.submit();
-        
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Unknown iframe error';
-        console.log(`[trackLogin] Error during form creation/submission: ${errorMessage}`);
+    if (response.ok) {
+      const result = await response.json();
+      if (result.success) {
+        console.log(`[trackLogin] ===== SUCCESS =====`);
+      } else {
+        console.error(`[trackLogin] Edge Function returned error: ${result.error}`);
       }
-    };
-    
-    document.body.appendChild(trackingIframe);
-    trackingIframe.src = 'about:blank';
-    
-    console.log(`[trackLogin] Iframe created and added to document`);
-    
-    // Remove iframe after sufficient time for request to complete
-    setTimeout(() => {
-      if (document.body.contains(trackingIframe)) {
-        document.body.removeChild(trackingIframe);
-        console.log(`[trackLogin] ===== IFRAME REMOVED =====`);
-      }
-    }, 5000);
+    } else {
+      console.error(`[trackLogin] Failed to call tracking Edge Function: ${response.status} ${response.statusText}`);
+    }
     
   } catch (error) {
-    console.error('[trackLogin] ===== ERROR OCCURRED =====', error);
+    console.error(`[trackLogin] ===== ERROR OCCURRED =====`, error);
   }
 };
 
