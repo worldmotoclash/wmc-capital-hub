@@ -104,7 +104,7 @@ const Updates: React.FC = () => {
                         <span className="ml-2 px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">{update.category}</span>
                       </div>
                     </div>
-                    <p className="text-gray-600 mb-2">{update.description}</p>
+                    <p className="text-muted-foreground mb-2">{update.description}</p>
                     
                     {/* Render embedded Buzzsprout player for audio */}
                     {update.documentType === 'audio' && update.embedCode && (
