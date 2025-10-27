@@ -3,6 +3,13 @@ import { CompanyUpdate } from '../types/companyUpdates';
 
 export const companyUpdates: CompanyUpdate[] = [
   {
+    title: "World Moto Clash Introduces Rule-Breaking Grand Prix Model",
+    date: "Oct 27, 2025",
+    description: "International Business Times covers WMC's innovative approach that's redefining racing for riders and fans alike.",
+    category: "Press Coverage",
+    url: "https://www.ibtimes.com/world-moto-clash-introduces-rule-breaking-grand-prix-model-that-redefines-racing-riders-fans-3787184"
+  },
+  {
     title: "World Moto Clash Investment Opportunity in 7 Minutes",
     date: "Jul 16, 2025",
     description: "Get a comprehensive overview of the WMC investment opportunity in just 7 minutes with our latest podcast episode.",
