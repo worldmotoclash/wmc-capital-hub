@@ -1,5 +1,6 @@
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
+import { submitTrackingViaIframe } from '@/utils/trackingSubmission';
 
 // Cache duration in milliseconds (24 hours)
 const IP_CACHE_DURATION = 24 * 60 * 60 * 1000;
@@ -209,35 +210,33 @@ export const sendVerificationEmail = async (contactId: string, ipInfo?: {ip: str
   }
 };
 
-// Track login activity using Edge Function (same as trackDocumentClick)
+// Track login activity using iframe submission to w2x-engine.php
 export const trackLogin = async (contactId: string, action: string = 'Login'): Promise<void> => {
-  console.log(`[trackLogin] ===== EDGE FUNCTION METHOD START =====`);
+  console.log(`[trackLogin] ===== IFRAME METHOD START =====`);
   console.log(`[trackLogin] Action: ${action} for contact ID: ${contactId}`);
 
   try {
-    // Call our Supabase Edge Function to handle the tracking
-    const response = await fetch('https://vlwumuuolvxhiixqbnub.supabase.co/functions/v1/track-document-action', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contactId,
-        documentUrl: 'https://invest.worldmotoclash.com',
-        actionType: action,
-        documentTitle: ''
-      })
+    // Get IP address and location
+    const ipAddress = await getCurrentIpAddress();
+    const locationData = await getIPLocation(ipAddress);
+    
+    console.log(`[trackLogin] IP: ${ipAddress}, Location: ${locationData.city}, ${locationData.country}`);
+
+    // Submit via iframe to w2x-engine.php
+    const success = await submitTrackingViaIframe({
+      contactId,
+      documentUrl: 'https://invest.worldmotoclash.com',
+      actionType: action,
+      documentTitle: '',
+      ipAddress,
+      country: locationData.country,
+      city: locationData.city
     });
 
-    if (response.ok) {
-      const result = await response.json();
-      if (result.success) {
-        console.log(`[trackLogin] ===== SUCCESS =====`);
-      } else {
-        console.error(`[trackLogin] Edge Function returned error: ${result.error}`);
-      }
+    if (success) {
+      console.log(`[trackLogin] ===== SUCCESS =====`);
     } else {
-      console.error(`[trackLogin] Failed to call tracking Edge Function: ${response.status} ${response.statusText}`);
+      console.error(`[trackLogin] Iframe submission failed`);
     }
     
   } catch (error) {
@@ -245,43 +244,41 @@ export const trackLogin = async (contactId: string, action: string = 'Login'): P
   }
 };
 
-// Track document clicks using Supabase Edge Function
+// Track document clicks using iframe submission to w2x-engine.php
 export const trackDocumentClick = async (
   contactId: string,
   documentUrl: string,
   actionType: string,
   documentTitle?: string
 ): Promise<void> => {
-  console.log(`[trackDocumentClick] ===== EDGE FUNCTION METHOD START =====`);
+  console.log(`[trackDocumentClick] ===== IFRAME METHOD START =====`);
   console.log(`[trackDocumentClick] Action: ${actionType}`);
   console.log(`[trackDocumentClick] Title: ${documentTitle || 'N/A'}`);
   console.log(`[trackDocumentClick] URL: ${documentUrl}`);
   console.log(`[trackDocumentClick] Contact ID: ${contactId}`);
 
   try {
-    // Call our Supabase Edge Function to handle the tracking
-    const response = await fetch('https://vlwumuuolvxhiixqbnub.supabase.co/functions/v1/track-document-action', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contactId,
-        documentUrl,
-        actionType,
-        documentTitle
-      })
+    // Get IP address and location
+    const ipAddress = await getCurrentIpAddress();
+    const locationData = await getIPLocation(ipAddress);
+    
+    console.log(`[trackDocumentClick] IP: ${ipAddress}, Location: ${locationData.city}, ${locationData.country}`);
+
+    // Submit via iframe to w2x-engine.php
+    const success = await submitTrackingViaIframe({
+      contactId,
+      documentUrl,
+      actionType,
+      documentTitle,
+      ipAddress,
+      country: locationData.country,
+      city: locationData.city
     });
 
-    if (response.ok) {
-      const result = await response.json();
-      if (result.success) {
-        console.log(`[trackDocumentClick] ===== SUCCESS =====`);
-      } else {
-        console.error(`[trackDocumentClick] Edge Function returned error: ${result.error}`);
-      }
+    if (success) {
+      console.log(`[trackDocumentClick] ===== SUCCESS =====`);
     } else {
-      console.error(`[trackDocumentClick] Failed to call tracking Edge Function: ${response.status} ${response.statusText}`);
+      console.error(`[trackDocumentClick] Iframe submission failed`);
     }
     
   } catch (error) {
