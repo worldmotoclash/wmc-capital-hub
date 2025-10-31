@@ -28,42 +28,57 @@ export const submitTrackingViaIframe = async (
       iframe.name = 'tracking_frame';
       document.body.appendChild(iframe);
 
-      // Create a form
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php';
-      form.target = 'tracking_frame';
+      // Prepare a helper to setup and submit the form inside the iframe document
+      const setupAndSubmit = () => {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (!iframeDoc) return;
 
-      // Add form fields matching the w2x-engine.php expected format
-      const fields: { [key: string]: string } = {
-        'sObj': 'ri__Portal__c',
-        'string_ri__Contact__c': params.contactId,
-        'text_ri__Login_URL__c': params.documentUrl,
-        'text_ri__Action__c': params.actionType,
-        'text_ri__IP_Address__c': params.ipAddress,
-        'text_ri__Login_Country__c': params.country,
-        'text_ri__Login_City__c': params.city
+        // Create the form within the iframe's document context
+        const form = iframeDoc.createElement('form');
+        form.method = 'POST';
+        form.action = 'https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php';
+        form.target = 'tracking_frame';
+
+        // Add form fields matching the w2x-engine.php expected format
+        const fields: { [key: string]: string } = {
+          'sObj': 'ri__Portal__c',
+          'string_ri__Contact__c': params.contactId,
+          'text_ri__Login_URL__c': params.documentUrl,
+          'text_ri__Action__c': params.actionType,
+          'text_ri__IP_Address__c': params.ipAddress,
+          'text_ri__Login_Country__c': params.country,
+          'text_ri__Login_City__c': params.city
+        };
+
+        // Add document title if provided
+        if (params.documentTitle) {
+          fields['text_ri__Document_Title__c'] = params.documentTitle;
+        }
+
+        // Create hidden input fields inside the iframe document
+        Object.entries(fields).forEach(([name, value]) => {
+          const input = iframeDoc.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        });
+
+        // Append form to iframe and submit
+        iframeDoc.body.appendChild(form);
+
+        console.log('[submitTrackingViaIframe] Submitting form to w2x-engine.php');
+        form.submit();
       };
 
-      // Add document title if provided
-      if (params.documentTitle) {
-        fields['text_ri__Document_Title__c'] = params.documentTitle;
+      // Ensure the iframe document is ready
+      if (iframe.contentDocument?.readyState === 'complete') {
+        setupAndSubmit();
+      } else {
+        iframe.onload = setupAndSubmit;
+        // Load about:blank to guarantee a same-origin document we can write into
+        iframe.src = 'about:blank';
       }
-
-      // Create hidden input fields
-      Object.entries(fields).forEach(([name, value]) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = value;
-        form.appendChild(input);
-      });
-
-      // Append form to iframe and submit
-      iframe.contentDocument?.body.appendChild(form);
-      
-      console.log('[submitTrackingViaIframe] Submitting form to w2x-engine.php');
-      form.submit();
 
       // Clean up after a delay
       setTimeout(() => {
