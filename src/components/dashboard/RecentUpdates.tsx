@@ -21,17 +21,20 @@ const RecentUpdates: React.FC = () => {
   // Centralized click tracking
   const handleTrackedClick =
     (url: string, type: string, title: string) =>
-    async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
+      // Open window immediately to avoid popup blocking
+      window.open(url, '_blank', 'noopener,noreferrer');
+      
+      // Track in background (fire and forget)
       if (user?.id) {
         let action: string;
         if (type === 'video') action = TRACKING_ACTIONS.VIDEO_CLICKED;
         else if (type === 'audio') action = TRACKING_ACTIONS.AUDIO_CLICKED;
         else if (type === 'website') action = TRACKING_ACTIONS.DOCUMENT_CLICKED;
         else action = TRACKING_ACTIONS.DOCUMENT_CLICKED;
-        await trackDocumentClick(user.id, url, action, title);
+        trackDocumentClick(user.id, url, action, title).catch(() => {});
       }
-      window.open(url, '_blank', 'noopener,noreferrer');
     };
 
   return (

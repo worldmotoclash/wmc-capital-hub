@@ -47,7 +47,7 @@ export const submitTrackingViaIframe = async (
 
       // Add document title if provided
       if (params.documentTitle) {
-        fields['text_Document_Title__c'] = params.documentTitle;
+        fields['text_ri__Document_Title__c'] = params.documentTitle;
       }
 
       // Create hidden input fields
