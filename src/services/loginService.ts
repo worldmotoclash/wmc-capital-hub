@@ -1,6 +1,7 @@
 import { User } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { submitTrackingViaIframe } from '@/utils/trackingSubmission';
+import { supabase } from '@/integrations/supabase/client';
 
 // Cache duration in milliseconds (24 hours)
 const IP_CACHE_DURATION = 24 * 60 * 60 * 1000;
@@ -251,20 +252,38 @@ export const trackDocumentClick = async (
   actionType: string,
   documentTitle?: string
 ): Promise<void> => {
-  console.log(`[trackDocumentClick] ===== IFRAME METHOD START =====`);
+  console.log(`[trackDocumentClick] ===== START =====`);
   console.log(`[trackDocumentClick] Action: ${actionType}`);
   console.log(`[trackDocumentClick] Title: ${documentTitle || 'N/A'}`);
   console.log(`[trackDocumentClick] URL: ${documentUrl}`);
   console.log(`[trackDocumentClick] Contact ID: ${contactId}`);
 
   try {
-    // Get IP address and location
+    // Detect if app is running embedded in the Lovable preview (inside an iframe)
+    const isEmbeddedPreview = (() => {
+      try { return window.self !== window.top; } catch { return true; }
+    })();
+
+    if (isEmbeddedPreview) {
+      console.log('[trackDocumentClick] Embedded preview detected — using Edge Function fallback');
+      await supabase.functions.invoke('track-document-action', {
+        body: {
+          contactId,
+          documentUrl,
+          actionType,
+          documentTitle: documentTitle || ''
+        }
+      });
+      console.log('[trackDocumentClick] ===== EDGE FUNCTION INVOKED =====');
+      return;
+    }
+
+    // Standard path (published site): submit directly via hidden iframe
     const ipAddress = await getCurrentIpAddress();
     const locationData = await getIPLocation(ipAddress);
-    
+
     console.log(`[trackDocumentClick] IP: ${ipAddress}, Location: ${locationData.city}, ${locationData.country}`);
 
-    // Submit via iframe to w2x-engine.php
     const success = await submitTrackingViaIframe({
       contactId,
       documentUrl,
@@ -280,7 +299,7 @@ export const trackDocumentClick = async (
     } else {
       console.error(`[trackDocumentClick] Iframe submission failed`);
     }
-    
+
   } catch (error) {
     console.error(`[trackDocumentClick] ===== ERROR OCCURRED =====`, error);
   }

@@ -72,7 +72,7 @@ async function submitToTrackingEngine(contactId: string, documentUrl: string, ac
   
   // Add document title if provided
   if (documentTitle && documentTitle !== 'Unknown Document') {
-    formData.append('text_Document_Title__c', documentTitle);
+    formData.append('text_ri__Document_Title__c', documentTitle);
   }
 
   const response = await fetch('https://realintelligence.com/customers/expos/00D5e000000HEcP/exhibitors/engine/w2x-engine.php', {
