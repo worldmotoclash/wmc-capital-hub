@@ -3,7 +3,7 @@ import { CompanyUpdate } from '../types/companyUpdates';
 
 export const companyUpdates: CompanyUpdate[] = [
   {
-    title: "World Moto Clash Cash Sizzle Reel",
+    title: "World Moto Clash Cast Sizzle Reel",
     date: "Oct 31, 2025",
     description: "Watch our exciting 9-minute sizzle reel showcasing the cast and personalities that make World Moto Clash unique.",
     category: "Content Update",
