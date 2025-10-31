@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { trackDocumentClick } from '@/services/loginService';
+import { TRACKING_ACTIONS } from '@/constants/trackingActions';
 
 const KeyDocuments: React.FC = () => {
   const { user } = useUser();
@@ -12,15 +13,19 @@ const KeyDocuments: React.FC = () => {
   const isQualifiedInvestor = user?.status?.toLowerCase().trim() === "qualified investor"; 
   const hasBusinessPlanAccess = isSecuredInvestor || isQualifiedInvestor || user?.ndaSigned || false;
 
-  // Helper to track and open in new tab
+  // Helper to track and open in new tab (fire-and-forget pattern)
   const handleTrackedClick =
     (url: string, actionType: string, documentTitle: string) =>
-    async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
-      if (user?.id) {
-        await trackDocumentClick(user.id, url, actionType, documentTitle);
-      }
+      // Open immediately to preserve user gesture
       window.open(url, '_blank', 'noopener,noreferrer');
+      // Track in background
+      if (user?.id) {
+        trackDocumentClick(user.id, url, actionType, documentTitle).catch((err) => {
+          console.error('[KeyDocuments] Background tracking failed:', err);
+        });
+      }
     };
 
   return (
@@ -52,7 +57,7 @@ const KeyDocuments: React.FC = () => {
                 rel="noopener noreferrer"
                 onClick={handleTrackedClick(
                   "https://drive.google.com/file/d/1CxlugbtMGzRGZQWWPhbVRka65yIGjXJw/view?usp=sharing",
-                  "Document Clicked",
+                  TRACKING_ACTIONS.DOCUMENT_CLICKED,
                   "WMC March 2025 Business Plan"
                 )}
               >
@@ -83,7 +88,7 @@ const KeyDocuments: React.FC = () => {
               rel="noopener noreferrer"
               onClick={handleTrackedClick(
                 "https://drive.google.com/file/d/1ZDIK7ACuHd8GRvIXtiVBabDx3D3Aski7/preview",
-                "Video Clicked",
+                TRACKING_ACTIONS.VIDEO_CLICKED,
                 "WMC Motorsports Reimagined!"
               )}
             >
@@ -113,7 +118,7 @@ const KeyDocuments: React.FC = () => {
               rel="noopener noreferrer"
               onClick={handleTrackedClick(
                 "https://drive.google.com/file/d/1LZTSnrgpVAVZjq9DAORgzQaLpNG0R28v/view?usp=drive_link",
-                "Document Clicked",
+                TRACKING_ACTIONS.DOCUMENT_CLICKED,
                 "Investor Executive Summary Deck"
               )}
             >
@@ -144,7 +149,7 @@ const KeyDocuments: React.FC = () => {
                 rel="noopener noreferrer"
                 onClick={handleTrackedClick(
                   "/lovable-uploads/wmc-nda-2025-blank.docx",
-                  "Document Clicked",
+                  TRACKING_ACTIONS.DOCUMENT_CLICKED,
                   "WMC NDA 2025 (Blank)"
                 )}
               >
