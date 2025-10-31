@@ -3,6 +3,14 @@ import { CompanyUpdate } from '../types/companyUpdates';
 
 export const companyUpdates: CompanyUpdate[] = [
   {
+    title: "World Moto Clash Cash Sizzle Reel",
+    date: "Oct 31, 2025",
+    description: "Watch our exciting 9-minute sizzle reel showcasing the cast and personalities that make World Moto Clash unique.",
+    category: "Content Update",
+    documentUrl: "https://media.worldmotoclash.com/WMC%20FINAL%20SIZZLES/WMC%20CAST%20SIZZLE%209%20min%20revised%20CAST%20SIZZLE.m4v",
+    documentType: "video"
+  },
+  {
     title: "World Moto Clash Introduces Rule-Breaking Grand Prix Model",
     date: "Oct 27, 2025",
     description: "International Business Times covers WMC's innovative approach that's redefining racing for riders and fans alike.",
