@@ -98,7 +98,7 @@ const HeroSection: React.FC = () => {
               <Button asChild className="bg-science-blue hover:bg-science-blue/80 text-white px-6 md:px-8 py-4 md:py-6 rounded-md text-sm md:text-base">
                 <Link to="/login">Investor Login</Link>
               </Button>
-              <Button asChild variant="outline" className="border-black text-black hover:bg-black/5 px-6 md:px-8 py-4 md:py-6 rounded-md text-sm md:text-base">
+              <Button asChild variant="outline" className="border-white text-white hover:bg-white/10 px-6 md:px-8 py-4 md:py-6 rounded-md text-sm md:text-base">
                 <a href="#contact">Contact Us</a>
               </Button>
             </motion.div>
