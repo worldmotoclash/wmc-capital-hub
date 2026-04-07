@@ -1,48 +1,85 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import VideoCarousel, { VideoData } from '@/components/VideoCarousel';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const PLAYLIST_API_URL =
+  'https://api.realintelligence.com/api/wmc-content-playlist.py?orgId=00D5e000000HEcP&playlistId=a2H5e000002JD7g&sandbox=False';
+
+const FALLBACK_VIDEOS: VideoData[] = [
+  {
+    id: 1,
+    videoSrc: 'https://www.youtube.com/embed/Ka2X73qTQ5Y',
+    videoTitle: 'Laguna Seca Racing',
+    title: 'NO RULES, ONE CLASS',
+    subtitle: 'Where speed meets innovation',
+    duration: 8000,
+  },
+  {
+    id: 2,
+    videoSrc: 'https://www.youtube.com/embed/mVkp_elkgQk?start=55',
+    videoTitle: 'The Corkscrew',
+    title: 'NOTHING LIKE IT',
+    subtitle: 'Danger. Danger. Danger',
+    duration: 8000,
+  },
+];
+
+const stripCdata = (text: string | null | undefined): string => {
+  if (!text) return '';
+  return text.replace(/^<!\[CDATA\[/, '').replace(/\]\]>$/, '').trim();
+};
+
+const parsePlaylistXml = (xml: string): VideoData[] => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xml, 'text/xml');
+  const items = doc.querySelectorAll('content');
+  const videos: VideoData[] = [];
+
+  items.forEach((item) => {
+    const order = parseInt(item.querySelector('playlistorder')?.textContent || '0', 10);
+    const url = stripCdata(item.querySelector('contenturl')?.textContent);
+    const title = stripCdata(item.querySelector('fullname')?.textContent);
+    const subtitle = stripCdata(item.querySelector('subtitle')?.textContent);
+    const contentName = stripCdata(item.querySelector('contentname')?.textContent);
+
+    if (url) {
+      videos.push({
+        id: order || videos.length + 1,
+        videoSrc: url,
+        videoTitle: contentName || title,
+        title: title || contentName || '',
+        subtitle: subtitle || '',
+        duration: 8000,
+      });
+    }
+  });
+
+  videos.sort((a, b) => a.id - b.id);
+  return videos;
+};
 
 const HeroSection: React.FC = () => {
-  // Array of video data with improved YouTube URLs and better titles
-  const videos: VideoData[] = [
-    {
-      id: 1,
-      videoSrc: "https://www.youtube.com/embed/mVkp_elkgQk?start=55",
-      videoTitle: "The Corkscrew",
-      title: "NOTHING LIKE IT",
-      subtitle: "Danger. Danger. Danger",
-      duration: 8000
-    },
-    {
-      id: 2,
-      videoSrc: "https://www.youtube.com/embed/Ka2X73qTQ5Y",
-      videoTitle: "Laguna Seca Racing",
-      title: "NO RULES, ONE CLASS",
-      subtitle: "Where speed meets innovation",
-      duration: 8000
-    },
-    // Commented out video ID3
-    // {
-    //   id: 3,
-    //   videoSrc: "https://youtu.be/ilJTemepdME",
-    //   videoTitle: "WMC TEAMS OWNERS",
-    //   title: "WMC TEAMS OWNERS",
-    //   subtitle: "The Owners",
-    //  },
-    // Commented out fourth video
-    // {
-    //   id: 4,
-    //   videoSrc: "https://www.youtube.com/embed/kopVOs0gfRM",
-    //   videoTitle: "Norman Reedus",
-    //   title: "ACTION STARS RACING",
-    //   subtitle: "Walking Dead Star Norman Reedus",
-    //   duration: 8000
-    // }
-  ];
-  
+  const [videos, setVideos] = useState<VideoData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(PLAYLIST_API_URL)
+      .then((res) => res.text())
+      .then((xml) => {
+        const parsed = parsePlaylistXml(xml);
+        setVideos(parsed.length > 0 ? parsed : FALLBACK_VIDEOS);
+      })
+      .catch((err) => {
+        console.error('[HeroSection] Playlist fetch failed, using fallback:', err);
+        setVideos(FALLBACK_VIDEOS);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <section className="min-h-screen w-full flex items-center justify-center relative overflow-hidden pt-16 md:pt-20">
       {/* Background gradient effects */}
@@ -111,7 +148,11 @@ const HeroSection: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
             <div className="w-full h-[280px] sm:h-[350px] md:h-[400px] lg:h-[500px] relative rounded-2xl overflow-hidden">
-              <VideoCarousel videos={videos} />
+              {loading ? (
+                <Skeleton className="w-full h-full rounded-2xl" />
+              ) : (
+                <VideoCarousel videos={videos} />
+              )}
             </div>
           </motion.div>
         </div>
