@@ -7,9 +7,11 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useUser } from '@/contexts/UserContext';
 import { trackDocumentClick } from '@/services/loginService';
 
-// Import Swiper styles
+// @ts-ignore - Swiper CSS imports
 import 'swiper/css';
+// @ts-ignore
 import 'swiper/css/autoplay';
+// @ts-ignore
 import 'swiper/css/navigation';
 
 // Define the video data structure
