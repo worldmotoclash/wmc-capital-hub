@@ -259,14 +259,17 @@ export const trackDocumentClick = async (
   console.log(`[trackDocumentClick] Contact ID: ${contactId}`);
 
   try {
-    // Detect if app is running embedded in the Lovable preview (inside an iframe)
+    // Detect if running in preview: embedded iframe OR lovableproject.com domain
     const isEmbeddedPreview = (() => {
       try { return window.self !== window.top; } catch { return true; }
     })();
+    const isLovablePreviewDomain = /\.lovableproject\.com$/.test(window.location.hostname);
+    const useEdgeFunction = isEmbeddedPreview || isLovablePreviewDomain;
 
-    if (isEmbeddedPreview) {
-      console.log('[trackDocumentClick] Embedded preview detected — using Edge Function fallback');
-      await supabase.functions.invoke('track-document-action', {
+    if (useEdgeFunction) {
+      const reason = isEmbeddedPreview ? 'Embedded preview' : 'lovableproject.com domain';
+      console.log(`[trackDocumentClick] ${reason} detected — using Edge Function fallback`);
+      const { data, error } = await supabase.functions.invoke('track-document-action', {
         body: {
           contactId,
           documentUrl,
@@ -274,6 +277,11 @@ export const trackDocumentClick = async (
           documentTitle: documentTitle || ''
         }
       });
+      if (error) {
+        console.error('[trackDocumentClick] Edge function error:', error);
+      } else {
+        console.log('[trackDocumentClick] Edge function result:', data);
+      }
       console.log('[trackDocumentClick] ===== EDGE FUNCTION INVOKED =====');
       return;
     }

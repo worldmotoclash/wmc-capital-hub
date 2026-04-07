@@ -78,33 +78,19 @@ const Documents: React.FC = () => {
     ? [...ndaDocuments, ...baseDocuments] 
     : [...baseDocuments, blankNdaDocument];
 
-  // Simplified click tracking with better logging
+  // Open first, track in background (fire-and-forget)
   const handleTrackedClick = (url: string, type: string, title: string) => {
-    return async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    return (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
       e.stopPropagation();
       
       console.log(`[Documents] Click detected - Type: ${type}, Title: ${title}`);
+      window.open(url, '_blank', 'noopener,noreferrer');
       
-      if (!user?.id) {
-        console.error('[Documents] No user ID available for tracking');
-        window.open(url, '_blank', 'noopener,noreferrer');
-        return;
-      }
-      
-      try {
-        const action = type === 'Video' ? 'Video Clicked' : 'Document Clicked';
-        console.log(`[Documents] About to track with action: ${action}`);
-        
-        await trackDocumentClick(user.id, url, action, title);
-        console.log(`[Documents] Tracking completed, opening URL: ${url}`);
-        
-        // Open the URL after tracking
-        window.open(url, '_blank', 'noopener,noreferrer');
-      } catch (error) {
-        console.error('[Documents] Error during tracking:', error);
-        // Still open the URL even if tracking fails
-        window.open(url, '_blank', 'noopener,noreferrer');
+      if (user?.id) {
+        const action = type === 'Video' ? TRACKING_ACTIONS.VIDEO_CLICKED : TRACKING_ACTIONS.DOCUMENT_CLICKED;
+        trackDocumentClick(user.id, url, action, title)
+          .catch(err => console.error('[Documents] Background tracking failed:', err));
       }
     };
   };
