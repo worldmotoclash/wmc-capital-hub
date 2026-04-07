@@ -1,63 +1,36 @@
 
-Plan to make preview tracking 100% reliable while keeping production unchanged
 
-1) Harden preview detection (in src/services/loginService.ts)
-- Add a utility inside trackDocumentClick to treat BOTH scenarios as “preview”:
-  - embedded in an iframe (window.self !== window.top or cross-origin access throws)
-  - running on a lovableproject.com host (window.location.hostname endsWith('lovableproject.com'))
+# Fetch Video Playlist from API
 
-Code change:
-- In trackDocumentClick:
-  - Add:
-    const isEmbeddedPreview = (() => { try { return window.self !== window.top; } catch { return true; } })();
-    const isLovablePreviewDomain = /\.lovableproject\.com$/.test(window.location.hostname);
-    const useEdgeFunction = isEmbeddedPreview || isLovablePreviewDomain;
-  - If useEdgeFunction is true, call supabase.functions.invoke('track-document-action', ...) and:
-    - Log both success and any error explicitly.
-    - Return early.
+## Overview
+Replace the hardcoded video array in the home page hero section with a dynamic fetch from the Real Intelligence content playlist API. The API returns XML with video entries including YouTube URLs, titles, subtitles, and ordering.
 
-2) Switch Documents page to the “open first, track in background” pattern (src/pages/Documents.tsx)
-- Current handler awaits trackDocumentClick and only then opens the URL. That risks popup blocking in preview.
-- Replace with fire-and-forget:
-  - e.preventDefault()
-  - window.open(url, '_blank', 'noopener,noreferrer') immediately
-  - trackDocumentClick(...) .catch(console.error) afterward
-- Also switch action strings to TRACKING_ACTIONS constants for consistency:
-  - const action = type === 'Video' ? TRACKING_ACTIONS.VIDEO_CLICKED : TRACKING_ACTIONS.DOCUMENT_CLICKED
+## API Details
+- **URL**: `https://api.realintelligence.com/api/wmc-content-playlist.py?orgId=00D5e000000HEcP&playlistId=a2H5e000002JD7g&sandbox=False`
+- **Format**: XML with `<content>` elements containing `<contenturl>`, `<fullname>` (title), `<subtitle>`, `<contentname>`, `<playlistorder>`, `<lengthinseconds>`
+- Currently returns 5 videos: Laguna Seca Racing, Norman Reedus, Miguel Duhamel, Colin Edwards, Night Street Racing
 
-Example:
-const handleTrackedClick = (url: string, type: string, title: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-  e.preventDefault();
-  e.stopPropagation();
-  window.open(url, '_blank', 'noopener,noreferrer');
-  if (user?.id) {
-    const action = type === 'Video' ? TRACKING_ACTIONS.VIDEO_CLICKED : TRACKING_ACTIONS.DOCUMENT_CLICKED;
-    trackDocumentClick(user.id, url, action, title).catch(err => console.error('[Documents] Background tracking failed:', err));
-  }
-};
+## Changes
 
-3) Confirm KeyDocuments and RecentUpdates already use the safe pattern
-- They now open immediately and track in the background. No change needed.
+### 1. Update `src/components/HeroSection.tsx`
+- Remove the hardcoded `videos` array
+- Add a `useEffect` + `useState` to fetch and parse the XML API on mount
+- Parse XML using `DOMParser`, extract each `<content>` element, and map to `VideoData[]`:
+  - `id` from `<playlistorder>`
+  - `videoSrc` from `<contenturl>` (strip CDATA wrappers)
+  - `videoTitle` from `<contentname>`
+  - `title` from `<fullname>` (strip CDATA)
+  - `subtitle` from `<subtitle>` (strip CDATA)
+  - `duration` default 8000
+- Sort by `playlistorder`
+- Show a loading state while fetching; render `VideoCarousel` once data arrives
+- Keep a small hardcoded fallback array in case the API fails
 
-4) Improve logs so you can verify in preview, fast
-- In trackDocumentClick when we use the edge function, log:
-  - “[trackDocumentClick] Edge function invoked”
-  - “Edge function result: success” or error details
-- This gives you immediate console confirmation in preview while CRM may lag.
+### 2. No changes to `VideoCarousel.tsx`
+The carousel already accepts `VideoData[]` and handles YouTube embed URLs. The API provides URLs in the same embed format the carousel expects.
 
-5) Quick sanity tests to close the loop
-- In preview (inside the editor OR opened in a new tab with a lovableproject.com domain):
-  - Dashboard > Key Documents
-    - Click “WMC Motorsports Reimagined!”
-    - Click “Investor Executive Summary Deck”
-  - Documents page
-    - Click both items
-- Expected console:
-  - [trackDocumentClick] START
-  - [trackDocumentClick] Embedded preview detected — using Edge Function fallback OR lovableproject.com detected — using Edge Function fallback
-  - [trackDocumentClick] ===== EDGE FUNCTION INVOKED =====
-  - And in Edge Function logs: “Successfully tracked document action”
+## Technical Notes
+- The API returns XML, not JSON — will use browser-native `DOMParser` to parse
+- CDATA content in the XML appears as HTML comments (`<!--[CDATA[...]]-->`) in the fetched response; the parser should extract text content which strips these
+- The `contenturl` already includes autoplay/mute/loop parameters matching what `getEnhancedVideoUrl` in VideoCarousel generates, so videos will play correctly
 
-Notes
-- Production keeps using the iframe method (which you confirmed works).
-- Preview always uses the edge function after this change (embedded or not), eliminating the last preview-specific inconsistencies.
