@@ -14,7 +14,563 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      character_library: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          element_type: string
+          id: string
+          image_url: string
+          name: string
+          source_asset_id: string | null
+          style_profile: Json | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          element_type: string
+          id?: string
+          image_url: string
+          name: string
+          source_asset_id?: string | null
+          style_profile?: Json | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          element_type?: string
+          id?: string
+          image_url?: string
+          name?: string
+          source_asset_id?: string | null
+          style_profile?: Json | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "character_library_source_asset_id_fkey"
+            columns: ["source_asset_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_review_activities: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          media_asset_id: string
+          performed_by: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          media_asset_id: string
+          performed_by?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          media_asset_id?: string
+          performed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_review_activities_media_asset_id_fkey"
+            columns: ["media_asset_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      image_generations: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          generation_data: Json
+          id: string
+          image_url: string | null
+          progress: number
+          prompt: string
+          reference_image_url: string | null
+          status: string
+          template: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          generation_data?: Json
+          id?: string
+          image_url?: string | null
+          progress?: number
+          prompt: string
+          reference_image_url?: string | null
+          status?: string
+          template?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          generation_data?: Json
+          id?: string
+          image_url?: string | null
+          progress?: number
+          prompt?: string
+          reference_image_url?: string | null
+          status?: string
+          template?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      media_albums: {
+        Row: {
+          asset_count: number
+          cover_image_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          source: string
+          updated_at: string
+          wasabi_path: string | null
+        }
+        Insert: {
+          asset_count?: number
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          source?: string
+          updated_at?: string
+          wasabi_path?: string | null
+        }
+        Update: {
+          asset_count?: number
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          source?: string
+          updated_at?: string
+          wasabi_path?: string | null
+        }
+        Relationships: []
+      }
+      media_asset_tags: {
+        Row: {
+          created_at: string
+          id: string
+          media_asset_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          media_asset_id: string
+          tag_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          media_asset_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_asset_tags_media_asset_id_fkey"
+            columns: ["media_asset_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_asset_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "media_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      media_assets: {
+        Row: {
+          album_id: string | null
+          approved_at: string | null
+          approved_by: string | null
+          asset_type: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          duration: number | null
+          file_format: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          master_id: string | null
+          metadata: Json | null
+          platform: string | null
+          resolution: string | null
+          s3_key: string | null
+          salesforce_id: string | null
+          source: Database["public"]["Enums"]["media_source"]
+          source_id: string | null
+          status: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          variant_name: string | null
+        }
+        Insert: {
+          album_id?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          asset_type?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration?: number | null
+          file_format?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          master_id?: string | null
+          metadata?: Json | null
+          platform?: string | null
+          resolution?: string | null
+          s3_key?: string | null
+          salesforce_id?: string | null
+          source: Database["public"]["Enums"]["media_source"]
+          source_id?: string | null
+          status?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          variant_name?: string | null
+        }
+        Update: {
+          album_id?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          asset_type?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration?: number | null
+          file_format?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          master_id?: string | null
+          metadata?: Json | null
+          platform?: string | null
+          resolution?: string | null
+          s3_key?: string | null
+          salesforce_id?: string | null
+          source?: Database["public"]["Enums"]["media_source"]
+          source_id?: string | null
+          status?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          variant_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_assets_album_id_fkey"
+            columns: ["album_id"]
+            isOneToOne: false
+            referencedRelation: "media_albums"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      media_diary_entries: {
+        Row: {
+          audio_count: number
+          content_items: Json
+          created_at: string
+          date: string
+          id: string
+          image_count: number
+          salesforce_synced: boolean
+          summary_text: string | null
+          updated_at: string
+          video_count: number
+          week_start: string | null
+        }
+        Insert: {
+          audio_count?: number
+          content_items?: Json
+          created_at?: string
+          date: string
+          id?: string
+          image_count?: number
+          salesforce_synced?: boolean
+          summary_text?: string | null
+          updated_at?: string
+          video_count?: number
+          week_start?: string | null
+        }
+        Update: {
+          audio_count?: number
+          content_items?: Json
+          created_at?: string
+          date?: string
+          id?: string
+          image_count?: number
+          salesforce_synced?: boolean
+          summary_text?: string | null
+          updated_at?: string
+          video_count?: number
+          week_start?: string | null
+        }
+        Relationships: []
+      }
+      media_tags: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      s3_bucket_configs: {
+        Row: {
+          bucket_name: string
+          cdn_base_url: string | null
+          created_at: string
+          endpoint_url: string
+          id: string
+          is_active: boolean | null
+          last_scanned_at: string | null
+          name: string
+          region: string | null
+          scan_frequency_hours: number | null
+          updated_at: string
+        }
+        Insert: {
+          bucket_name: string
+          cdn_base_url?: string | null
+          created_at?: string
+          endpoint_url: string
+          id?: string
+          is_active?: boolean | null
+          last_scanned_at?: string | null
+          name: string
+          region?: string | null
+          scan_frequency_hours?: number | null
+          updated_at?: string
+        }
+        Update: {
+          bucket_name?: string
+          cdn_base_url?: string | null
+          created_at?: string
+          endpoint_url?: string
+          id?: string
+          is_active?: boolean | null
+          last_scanned_at?: string | null
+          name?: string
+          region?: string | null
+          scan_frequency_hours?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      social_kit_jobs: {
+        Row: {
+          completed_variants: number
+          created_at: string
+          error_message: string | null
+          failed_variants: number
+          id: string
+          master_asset_id: string
+          salesforce_master_id: string | null
+          selected_model: string
+          status: string
+          total_variants: number
+          updated_at: string
+          user_id: string
+          variants: Json
+        }
+        Insert: {
+          completed_variants?: number
+          created_at?: string
+          error_message?: string | null
+          failed_variants?: number
+          id?: string
+          master_asset_id: string
+          salesforce_master_id?: string | null
+          selected_model?: string
+          status?: string
+          total_variants?: number
+          updated_at?: string
+          user_id?: string
+          variants?: Json
+        }
+        Update: {
+          completed_variants?: number
+          created_at?: string
+          error_message?: string | null
+          failed_variants?: number
+          id?: string
+          master_asset_id?: string
+          salesforce_master_id?: string | null
+          selected_model?: string
+          status?: string
+          total_variants?: number
+          updated_at?: string
+          user_id?: string
+          variants?: Json
+        }
+        Relationships: []
+      }
+      video_generations: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          generation_data: Json
+          google_operation_id: string | null
+          id: string
+          media_url_key: string | null
+          progress: number
+          provider: string
+          salesforce_record_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          generation_data: Json
+          google_operation_id?: string | null
+          id?: string
+          media_url_key?: string | null
+          progress?: number
+          provider?: string
+          salesforce_record_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          generation_data?: Json
+          google_operation_id?: string | null
+          id?: string
+          media_url_key?: string | null
+          progress?: number
+          provider?: string
+          salesforce_record_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      video_scene_detections: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          error_message: string | null
+          id: string
+          media_asset_id: string | null
+          processed_at: string | null
+          processing_status: string
+          results: Json | null
+          threshold: number
+          total_scenes: number
+          updated_at: string
+          video_duration: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          id?: string
+          media_asset_id?: string | null
+          processed_at?: string | null
+          processing_status?: string
+          results?: Json | null
+          threshold?: number
+          total_scenes?: number
+          updated_at?: string
+          video_duration?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          id?: string
+          media_asset_id?: string | null
+          processed_at?: string | null
+          processing_status?: string
+          results?: Json | null
+          threshold?: number
+          total_scenes?: number
+          updated_at?: string
+          video_duration?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_scene_detections_media_asset_id_fkey"
+            columns: ["media_asset_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +579,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      media_source:
+        | "salesforce"
+        | "s3_bucket"
+        | "youtube"
+        | "generated"
+        | "local_upload"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +711,14 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      media_source: [
+        "salesforce",
+        "s3_bucket",
+        "youtube",
+        "generated",
+        "local_upload",
+      ],
+    },
   },
 } as const
