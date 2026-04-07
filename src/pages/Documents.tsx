@@ -8,6 +8,7 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { trackDocumentClick } from '@/services/loginService';
+import { TRACKING_ACTIONS } from '@/constants/trackingActions';
 
 const Documents: React.FC = () => {
   const navigate = useNavigate();
